@@ -1,0 +1,2 @@
+ADD_SUBDIRECTORY(triangle_1)
+ADD_SUBDIRECTORY(triangle_2)
