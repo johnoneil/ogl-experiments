@@ -2,8 +2,9 @@
 
 //#include <glad/glad.h>
 #ifdef __APPLE__
+#include <OpenGL/gl.h>
 #include <OpenGL/gl3.h>
-//#include <OpenGL/gl3ext.h>
+#include <OpenGL/gl3ext.h>
 #else
 //#include <GL/gl.h>
 //#include <GL/glew.h>
@@ -195,12 +196,14 @@ int main()
     // as we only have a single shader, we could also just activate our shader once beforehand if we want to 
     glUseProgram(shaderProgram);
 
-#if 0
+#if 1
     GLuint texture;
-    unsigned char* image = loadJPG("brick.jpg");
-    glGenTextures(1, texture);
-    glBindTexture(GL_TEXTURE_RECTANGLE_ARB, texture);
-    glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, depth, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+    //unsigned char* image = loadJPG("brick.jpg");
+    int w = 0, h = 0, channels = 0, force_channels = 0;
+	unsigned char* image = SOIL_load_image( "brick.jpg", &w, &h, &channels, force_channels);
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
     free(image);
 #endif
 
