@@ -1,6 +1,6 @@
 
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
-project(ogl VERSION 0.1 LANGUAGES CXX)
+project(ogl VERSION 0.1 LANGUAGES C CXX)
 
 # TODO: configure builds
 set(CMAKE_BUILD_TYPE Debug)
@@ -15,4 +15,8 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall")
 #include_directories(include)
 #include(cmake/includes.cmake)
 
-ADD_SUBDIRECTORY(demos)
+# third party libraries from source
+ADD_SUBDIRECTORY (thirdparty)
+
+#demos
+ADD_SUBDIRECTORY (demos)
