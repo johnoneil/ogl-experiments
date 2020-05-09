@@ -12,8 +12,11 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall")
 
 #set(EXTERNAL_INSTALL_LOCATION ${CMAKE_BINARY_DIR}/external)
 
-#include_directories(include)
-#include(cmake/includes.cmake)
+#everyone has access to stb image headers
+include_directories(thirdparty/stb)
+
+# we want all assets at the root of our build
+FILE(COPY ${CMAKE_SOURCE_DIR}/assets DESTINATION ${CMAKE_BINARY_DIR})
 
 # third party libraries from source
 ADD_SUBDIRECTORY (thirdparty)

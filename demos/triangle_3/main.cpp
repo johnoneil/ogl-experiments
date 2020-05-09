@@ -13,55 +13,10 @@
 
 #include <iostream>
 
-// OGL Image loading library
-#include "SOIL/SOIL.h"
-
-#if 0
-
-#include "jpeglib.h"
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
 
 
-/*
-    Clients must free returned buffer
-    TODO: return RAII class
- */
-unsigned char* loadJPG(const char* path) {
-    FILE *fd;
-    unsigned char *image;
-    int width, height, depth;
-    fd = fopen(path, "rb");
-    // TODO: check file ptr
-    struct jpeg_decompress_struct cinfo;
-    struct jpeg_error_mgr jerr;
-    JSAMPROW row_pointer[1];
-    unsigned long location = 0;
-    cinfo.err = jpeg_std_error(&jerr);
-    jpeg_create_decompress(&cinfo);
-    jpeg_stdio_src(&cinfo, fd);
-    jpeg_read_header(&cinfo, 0);
-    cinfo.scale_num = 1;
-    cinfo.scale_denom = SCALE;
-    jpeg_start_decompress(&cinfo);
-    width = cinfo.output_width;
-    height = cinfo.output_height;
-    depth = cinfo.num_components; //should always be 3
-    image = (unsigned char *) malloc(width * height * depth);
-    row_pointer[0] = (unsigned char *) malloc(width * depth);
-    /* read one scan line at a time */
-    while( cinfo.output_scanline < cinfo.output_height )
-    {
-        jpeg_read_scanlines( &cinfo, row_pointer, 1 );
-        for( i=0; i< (width * depth); i++)
-        image[location++] = row_pointer[0][i];
-    }
-    fclose(fd);
-    jpeg_finish_decompress(&cinfo);
-    jpeg_destroy_decompress(&cinfo);
-    free(row_pointer[1]);
-    return image;
-}
-
-#endif
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
@@ -73,19 +28,24 @@ const unsigned int SCR_HEIGHT = 600;
 const char *vertexShaderSource ="#version 330 core\n"
     "layout (location = 0) in vec3 aPos;\n"
     "layout (location = 1) in vec3 aColor;\n"
+    "layout (location = 2) in vec2 aTexCoord;\n"
     "out vec3 ourColor;\n"
+    "out vec2 TexCoord;\n"
     "void main()\n"
     "{\n"
     "   gl_Position = vec4(aPos, 1.0);\n"
     "   ourColor = aColor;\n"
+    "   TexCoord = aTexCoord;\n"
     "}\0";
 
 const char *fragmentShaderSource = "#version 330 core\n"
     "out vec4 FragColor;\n"
     "in vec3 ourColor;\n"
+    "in vec2 TexCoord;\n"
+    "uniform sampler2D ourTexture;\n"
     "void main()\n"
     "{\n"
-    "   FragColor = vec4(ourColor, 1.0f);\n"
+    "   FragColor = texture(ourTexture, TexCoord);\n"
     "}\n\0";
 
 int main()
@@ -166,10 +126,10 @@ int main()
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
     float vertices[] = {
-        // positions         // colors
-         0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  // bottom right
-        -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  // bottom left
-         0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f   // top 
+        // positions         // colors          // tex coords
+         0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  0.0f, 0.0f, // bottom right
+        -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  1.0f, 0.0f, // bottom left
+         0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f,  0.5f, 1.0f,// top 
 
     };
 
@@ -183,11 +143,14 @@ int main()
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
     // color attribute
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
+
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
 
     // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
     // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
@@ -198,13 +161,26 @@ int main()
 
 #if 1
     GLuint texture;
-    //unsigned char* image = loadJPG("brick.jpg");
-    int w = 0, h = 0, channels = 0, force_channels = 0;
-	unsigned char* image = SOIL_load_image( "brick.jpg", &w, &h, &channels, force_channels);
+    auto w = 0, h = 0, c = 0;
+    stbi_set_flip_vertically_on_load(true);
+    auto image = stbi_load("assets/brick.jpg",
+                                    &w,
+                                    &h,
+                                    &c,
+                                    STBI_rgb_alpha);
+
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
-    free(image);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    stbi_image_free(image);
 #endif
 
     // render loop
@@ -221,6 +197,7 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
 
         // render the triangle
+        glBindTexture(GL_TEXTURE_2D, texture);
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
