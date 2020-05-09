@@ -15,6 +15,9 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall")
 #everyone has access to stb image headers
 include_directories(thirdparty/stb)
 
+# Framework library
+ADD_SUBDIRECTORY(src/framework)
+
 # we want all assets at the root of our build
 FILE(COPY ${CMAKE_SOURCE_DIR}/assets DESTINATION ${CMAKE_BINARY_DIR})
 
