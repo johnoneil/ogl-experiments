@@ -237,7 +237,7 @@ int main( void )
 			GL_FLOAT,           // type
 			GL_FALSE,           // normalized?
 			5*sizeof(float),    // stride
-			(void*)3            // array buffer offset
+			(void*)(3 * sizeof(float))// array buffer offset
 		);
 
 		// Draw the triangle !
