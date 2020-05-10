@@ -88,9 +88,9 @@ int main( void )
 								glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
 						   );
 	// Model matrix : an identity matrix (model will be at the origin)
-	glm::mat4 Model      = glm::mat4(1.0f);
+	glm::mat4 model      = glm::mat4(1.0f);
 	// Our ModelViewProjection : multiplication of our 3 matrices
-	glm::mat4 MVP        = Projection * View * Model; // Remember, matrix multiplication is the other way around
+	glm::mat4 MVP        = Projection * View * model; // Remember, matrix multiplication is the other way around
 
 	// Our vertices. Tree consecutive floats give a 3D vertex; Three consecutive vertices give a triangle.
 	// A cube has 6 faces with 2 triangles each, so this makes 6*2=12 triangles, and 12*3 vertices
@@ -146,21 +146,21 @@ int main( void )
 		__GREEN,
 		__GREEN,
 		__GREEN,
-		__GREEN,
-		__GREEN,
-		__GREEN,
-		__GREEN,
-		__GREEN,
-		__GREEN,
 		__BLUE,
 		__BLUE,
 		__BLUE,
+		__GREEN,
+		__GREEN,
+		__GREEN,
+		__RED,
+		__RED,
+		__RED,
 		__BLUE,
 		__BLUE,
 		__BLUE,
-		__CYAN,
-		__CYAN,
-		__CYAN,
+		__MAGENTA,
+		__MAGENTA,
+		__MAGENTA,
 		__YELLOW,
 		__YELLOW,
 		__YELLOW,
@@ -188,7 +188,10 @@ int main( void )
 	glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(g_color_buffer_data), g_color_buffer_data, GL_STATIC_DRAW);
 
+	float angle_deg = 0;
+
 	do{
+		angle_deg += 0.33f;
 
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -198,6 +201,15 @@ int main( void )
 
 		// Send our transformation to the currently bound shader, 
 		// in the "MVP" uniform
+		model = glm::mat4(1.0f);
+
+		model = glm::translate(model,glm::vec3(0,0,0)); //position = 0,0,0
+		model = glm::rotate(model,glm::radians(angle_deg),glm::vec3(1,0,0));//rotation x = 0.0 degrees
+		model = glm::rotate(model,glm::radians(angle_deg),glm::vec3(0,1,0));//rotation y = 0.0 degrees
+		model = glm::rotate(model,glm::radians(0.0f),glm::vec3(0,0,1));//rotation z = 0.0 degrees
+		model = glm::scale(model,glm::vec3(1,1,1));//scale = 1,1,1
+		// Our ModelViewProjection : multiplication of our 3 matrices
+		MVP = Projection * View * model; // Remember, matrix multiplication is the other way around
 		glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
 
 		// 1rst attribute buffer : vertices
