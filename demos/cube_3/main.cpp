@@ -17,23 +17,75 @@ using namespace glm;
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
+#if 0
+
 const char *vertexShaderSource = "#version 330 core\n"
-"layout(location = 0) in vec3 vertexPosition_modelspace;\n"
-"layout(location = 1) in vec2 aTexCoord;\n"
+"layout (location = 0) in vec3 aPos;\n"
+"layout (location = 1) in vec2 aTexCoord;\n"
+"layout (location = 2) in vec3 aNormal;\n"
 "out vec2 TexCoord;\n"
+"out vec3 Normal;\n"
 "uniform mat4 MVP;\n"
 "void main(){\n"
-"	gl_Position =  MVP * vec4(vertexPosition_modelspace,1);\n"
+"	gl_Position =  MVP * vec4(aPos,1);\n"
 "   TexCoord = aTexCoord;\n"
+"   Normal = aNormal;\n"
 "}\n";
+
+
 
 const char *fragmentShaderSource = "#version 330 core\n"
 "in vec2 TexCoord;\n"
+"in vec3 Normal;\n"
 "out vec4 color;\n"
 "uniform sampler2D ourTexture;\n"
 "void main(){\n"
 "   color = texture(ourTexture, TexCoord);\n"
 "}\n";
+
+#else
+
+const char *vertexShaderSource = "#version 330 core\n"
+"layout (location = 0) in vec3 aPos;\n"
+"layout (location = 1) in vec2 aTexCoord;\n"
+"layout (location = 2) in vec3 aNormal;\n"
+"out vec2 TexCoord;\n"
+"out vec3 FragPos;\n"
+"out vec3 Normal;\n"
+"uniform mat4 model;\n"
+"uniform mat4 view;\n"
+"uniform mat4 projection;\n"
+"void main()\n"
+"{\n"
+"    TexCoord = aTexCoord;\n"
+"    FragPos = vec3(model * vec4(aPos, 1.0));\n"
+"    Normal = aNormal;  \n"
+//"    Normal = ( view * projection * vec4(aNormal,0)).xyz;\n"
+"    gl_Position = projection * view * vec4(FragPos, 1.0);\n"
+"}\n";
+
+const char *fragmentShaderSource = "#version 330 core\n"
+"out vec4 FragColor;\n"
+"in vec2 TexCoord;\n"
+"in vec3 Normal;  \n"
+"in vec3 FragPos;  \n"
+"uniform vec3 lightPos; \n"
+"uniform vec3 lightColor;\n"
+"uniform vec3 objectColor;\n"
+"void main()\n"
+"{\n"
+"    // ambient\n"
+"    float ambientStrength = 0.2;\n"
+"    vec3 ambient = ambientStrength * lightColor;\n"
+"    // diffuse \n"
+"    vec3 norm = normalize(Normal);\n"
+"    vec3 lightDir = normalize(lightPos - FragPos);\n"
+"    float diff = max(dot(norm, lightDir), 0.0);\n"
+"    vec3 diffuse = diff * lightColor;     \n"
+"    vec3 result = (ambient + diffuse) * objectColor;\n"
+"    FragColor = vec4(result, 1.0);\n"
+"}\n";
+#endif
 
 int main( void )
 {
@@ -91,7 +143,12 @@ int main( void )
 	GLuint programID = LoadShaderFromSource( vertexShaderSource, fragmentShaderSource);
 
 	// Get a handle for our "MVP" uniform
-	GLuint MatrixID = glGetUniformLocation(programID, "MVP");
+	GLuint modelUniformLoc = glGetUniformLocation(programID, "model");
+	GLuint viewUniformLoc = glGetUniformLocation(programID, "view");
+	GLuint projUniformLoc = glGetUniformLocation(programID, "projection");
+	GLuint lightPosUniformLoc = glGetUniformLocation(programID, "lightPos");
+	GLuint lightColorUniformLoc = glGetUniformLocation(programID, "lightColor");
+	GLuint objectColorUniformLoc = glGetUniformLocation(programID, "objectColor");
 
 	// Projection matrix : 45� Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
 	glm::mat4 Projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
@@ -104,7 +161,7 @@ int main( void )
 	// Model matrix : an identity matrix (model will be at the origin)
 	glm::mat4 model      = glm::mat4(1.0f);
 	// Our ModelViewProjection : multiplication of our 3 matrices
-	glm::mat4 MVP        = Projection * View * model; // Remember, matrix multiplication is the other way around
+	//glm::mat4 MVP        = Projection * View * model; // Remember, matrix multiplication is the other way around
 
 	// Our vertices. Tree consecutive floats give a 3D vertex; Three consecutive vertices give a triangle.
 	// A cube has 6 faces with 2 triangles each, so this makes 6*2=12 triangles, and 12*3 vertices
@@ -197,7 +254,6 @@ int main( void )
 
 	glBindVertexArray(0);
 
-
 	#if 1
     GLuint texture;
     auto w = 0, h = 0, c = 0;
@@ -242,10 +298,21 @@ int main( void )
 		model = glm::rotate(model,glm::radians(angle_deg),glm::vec3(1,0,0));//rotation x = 0.0 degrees
 		model = glm::rotate(model,glm::radians(angle_deg),glm::vec3(0,1,0));//rotation y = 0.0 degrees
 		model = glm::rotate(model,glm::radians(0.0f),glm::vec3(0,0,1));//rotation z = 0.0 degrees
-		model = glm::scale(model,glm::vec3(2,2,2));//scale = 2,2,2, because mesh is 0.5 based geom.
+		model = glm::scale(model,glm::vec3(1,1,1));//scale = 2,2,2, because mesh is 0.5 based geom.
 		// Our ModelViewProjection : multiplication of our 3 matrices
-		MVP = Projection * View * model; // Remember, matrix multiplication is the other way around
-		glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+		//MVP = Projection * View * model; // Remember, matrix multiplication is the other way around
+		//glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+
+		// Uniforms:
+		glUniformMatrix4fv(modelUniformLoc, 1, GL_FALSE, &model[0][0]);
+		glUniformMatrix4fv(viewUniformLoc, 1, GL_FALSE, &View[0][0]);
+		glUniformMatrix4fv(projUniformLoc, 1, GL_FALSE, &Projection[0][0]);
+		glm::vec3 lightPos(6,3,-3);
+		glUniform3fv(lightPosUniformLoc, 1, &lightPos[0]);
+		glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
+		glUniform3fv(lightColorUniformLoc, 1, &lightColor[0]);
+		glm::vec3 objectColor(1.0f, 1.0f, 1.0f);
+		glUniform3fv(objectColorUniformLoc, 1, &objectColor[0]);
 
 		// Draw the triangle !
 		glBindTexture(GL_TEXTURE_2D, texture);
