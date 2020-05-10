@@ -159,14 +159,40 @@ int main( void )
         -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 	};
 
+	GLuint VAO;
+	glGenVertexArrays(1, &VAO);
+    // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+    glBindVertexArray(VAO);
+
 	GLuint vertexbuffer;
 	glGenBuffers(1, &vertexbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
 
-	glGenBuffers(1, &vertexbuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+	// 1rst attribute buffer : vertices
+	glEnableVertexAttribArray(0);
+	//glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+	glVertexAttribPointer(
+		0,                  // attribute. No particular reason for 0, but must match the layout in the shader.
+		3,                  // size
+		GL_FLOAT,           // type
+		GL_FALSE,           // normalized?
+		5*sizeof(float),    // stride
+		(void*)0            // array buffer offset
+	);
+
+	glEnableVertexAttribArray(1);
+	//glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+	glVertexAttribPointer(
+		1,                  // attribute. No particular reason for 0, but must match the layout in the shader.
+		2,                  // size
+		GL_FLOAT,           // type
+		GL_FALSE,           // normalized?
+		5*sizeof(float),    // stride
+		(void*)(3 * sizeof(float))// array buffer offset
+	);
+
+	glBindVertexArray(0);
 
 
 	#if 1
@@ -202,6 +228,7 @@ int main( void )
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// Use our shader
+		glBindVertexArray(VAO);
 		glUseProgram(programID);
 
 		// Send our transformation to the currently bound shader, 
@@ -217,36 +244,13 @@ int main( void )
 		MVP = Projection * View * model; // Remember, matrix multiplication is the other way around
 		glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
 
-		// 1rst attribute buffer : vertices
-		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-		glVertexAttribPointer(
-			0,                  // attribute. No particular reason for 0, but must match the layout in the shader.
-			3,                  // size
-			GL_FLOAT,           // type
-			GL_FALSE,           // normalized?
-			5*sizeof(float),    // stride
-			(void*)0            // array buffer offset
-		);
-
-		glEnableVertexAttribArray(1);
-		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-		glVertexAttribPointer(
-			1,                  // attribute. No particular reason for 0, but must match the layout in the shader.
-			2,                  // size
-			GL_FLOAT,           // type
-			GL_FALSE,           // normalized?
-			5*sizeof(float),    // stride
-			(void*)(3 * sizeof(float))// array buffer offset
-		);
-
 		// Draw the triangle !
 		glBindTexture(GL_TEXTURE_2D, texture);
 		glDrawArrays(GL_TRIANGLES, 0, 12*3); // 12*3 indices starting at 0 -> 12 triangles
 
-		glDisableVertexAttribArray(0);
-		glDisableVertexAttribArray(1);
-
+		glBindVertexArray(0);
+		glUseProgram(0);
+		
 		// Swap buffers
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -256,6 +260,7 @@ int main( void )
 		   glfwWindowShouldClose(window) == 0 );
 
 	// Cleanup VBO and shader
+	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &vertexbuffer);
 	glDeleteProgram(programID);
 
