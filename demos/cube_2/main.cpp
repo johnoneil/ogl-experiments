@@ -21,6 +21,24 @@ using namespace glm;
 
 #include <framework/shaders.h>
 
+const char *vertexShaderSource = "#version 330 core\n"
+"layout(location = 0) in vec3 vertexPosition_modelspace;\n"
+"layout(location = 1) in vec2 texCoord;\n"
+"layout(location = 2) in vec3 vertexColor;\n"
+"out vec3 fragmentColor;\n"
+"uniform mat4 MVP;\n"
+"void main(){\n"
+"	gl_Position =  MVP * vec4(vertexPosition_modelspace,1);\n"
+"	fragmentColor = vertexColor;\n"
+"}\n";
+
+const char *fragmentShaderSource = "#version 330 core\n"
+"in vec3 fragmentColor;\n"
+"out vec3 color;\n"
+"void main(){\n"
+"	color = fragmentColor;\n"
+"}\n";
+
 int main( void )
 {
 	// Initialise GLFW
@@ -74,7 +92,7 @@ int main( void )
 	glBindVertexArray(VertexArrayID);
 
 	// Create and compile our GLSL program from the shaders
-	GLuint programID = LoadShaderFromFiles( "assets/TransformVertexShader.vertexshader", "assets/ColorFragmentShader.fragmentshader" );
+	GLuint programID = LoadShaderFromSource( vertexShaderSource, fragmentShaderSource);
 
 	// Get a handle for our "MVP" uniform
 	GLuint MatrixID = glGetUniformLocation(programID, "MVP");
