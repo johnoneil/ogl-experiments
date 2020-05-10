@@ -2,17 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#ifdef __APPLE__
-#include <OpenGL/gl.h>
-#include <OpenGL/gl3.h>
-#include <OpenGL/gl3ext.h>
-#else
-//#include <GL/gl.h>
-//#include <GL/glew.h>
-#endif
-#include <GLFW/glfw3.h>
-
-GLFWwindow* window;
+#include <framework/gl.h>
 
 // Include GLM
 #include <glm/glm.hpp>
@@ -20,6 +10,9 @@ GLFWwindow* window;
 using namespace glm;
 
 #include <framework/shaders.h>
+#include <GLFW/glfw3.h>
+
+GLFWwindow* window;
 
 int main( void )
 {

@@ -5,4 +5,4 @@ find_package(glfw3 3.3 REQUIRED)
 
 include_directories( ${OPENGL_INCLUDE_DIRS} )
 
-target_link_libraries(triangle_1 OpenGL::GL glfw)
+target_link_libraries(triangle_1 OpenGL::GL glfw framework)
