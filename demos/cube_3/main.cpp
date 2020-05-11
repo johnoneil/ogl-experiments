@@ -59,7 +59,9 @@ const char *vertexShaderSource = "#version 330 core\n"
 "{\n"
 "    TexCoord = aTexCoord;\n"
 "    FragPos = vec3(model * vec4(aPos, 1.0));\n"
-"    Normal = aNormal;  \n"
+//"    Normal = aNormal;  \n"
+"    mat3 normalMatrix = transpose(inverse(mat3(model)));\n"
+"    Normal = normalize(normalMatrix * aNormal);\n"
 //"    Normal = ( view * projection * vec4(aNormal,0)).xyz;\n"
 "    gl_Position = projection * view * vec4(FragPos, 1.0);\n"
 "}\n";
@@ -307,7 +309,7 @@ int main( void )
 		glUniformMatrix4fv(modelUniformLoc, 1, GL_FALSE, &model[0][0]);
 		glUniformMatrix4fv(viewUniformLoc, 1, GL_FALSE, &View[0][0]);
 		glUniformMatrix4fv(projUniformLoc, 1, GL_FALSE, &Projection[0][0]);
-		glm::vec3 lightPos(6,3,-3);
+		glm::vec3 lightPos(4, 3, -3);
 		glUniform3fv(lightPosUniformLoc, 1, &lightPos[0]);
 		glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
 		glUniform3fv(lightColorUniformLoc, 1, &lightColor[0]);
