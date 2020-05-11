@@ -17,33 +17,6 @@ using namespace glm;
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-#if 0
-
-const char *vertexShaderSource = "#version 330 core\n"
-"layout (location = 0) in vec3 aPos;\n"
-"layout (location = 1) in vec2 aTexCoord;\n"
-"layout (location = 2) in vec3 aNormal;\n"
-"out vec2 TexCoord;\n"
-"out vec3 Normal;\n"
-"uniform mat4 MVP;\n"
-"void main(){\n"
-"	gl_Position =  MVP * vec4(aPos,1);\n"
-"   TexCoord = aTexCoord;\n"
-"   Normal = aNormal;\n"
-"}\n";
-
-
-
-const char *fragmentShaderSource = "#version 330 core\n"
-"in vec2 TexCoord;\n"
-"in vec3 Normal;\n"
-"out vec4 color;\n"
-"uniform sampler2D ourTexture;\n"
-"void main(){\n"
-"   color = texture(ourTexture, TexCoord);\n"
-"}\n";
-
-#else
 
 const char *vertexShaderSource = "#version 330 core\n"
 "layout (location = 0) in vec3 aPos;\n"
@@ -59,10 +32,8 @@ const char *vertexShaderSource = "#version 330 core\n"
 "{\n"
 "    TexCoord = aTexCoord;\n"
 "    FragPos = vec3(model * vec4(aPos, 1.0));\n"
-//"    Normal = aNormal;  \n"
 "    mat3 normalMatrix = transpose(inverse(mat3(model)));\n"
 "    Normal = normalize(normalMatrix * aNormal);\n"
-//"    Normal = ( view * projection * vec4(aNormal,0)).xyz;\n"
 "    gl_Position = projection * view * vec4(FragPos, 1.0);\n"
 "}\n";
 
@@ -74,20 +45,22 @@ const char *fragmentShaderSource = "#version 330 core\n"
 "uniform vec3 lightPos; \n"
 "uniform vec3 lightColor;\n"
 "uniform vec3 objectColor;\n"
+"uniform sampler2D uTexture;\n"
 "void main()\n"
 "{\n"
 "    // ambient\n"
-"    float ambientStrength = 0.2;\n"
+"    float ambientStrength = 0.1;\n"
 "    vec3 ambient = ambientStrength * lightColor;\n"
+"    // Texture\n"
+"    vec3 modulatedColor = (texture(uTexture, TexCoord)).xyz;\n"
 "    // diffuse \n"
 "    vec3 norm = normalize(Normal);\n"
 "    vec3 lightDir = normalize(lightPos - FragPos);\n"
 "    float diff = max(dot(norm, lightDir), 0.0);\n"
 "    vec3 diffuse = diff * lightColor;     \n"
-"    vec3 result = (ambient + diffuse) * objectColor;\n"
+"    vec3 result = (ambient + diffuse) * modulatedColor;\n"
 "    FragColor = vec4(result, 1.0);\n"
 "}\n";
-#endif
 
 int main( void )
 {
@@ -115,22 +88,11 @@ int main( void )
 	}
 	glfwMakeContextCurrent(window);
 
-#if 0
-	// Initialize GLEW
-	glewExperimental = true; // Needed for core profile
-	if (glewInit() != GLEW_OK) {
-		fprintf(stderr, "Failed to initialize GLEW\n");
-		getchar();
-		glfwTerminate();
-		return -1;
-	}
-#endif
-
 	// Ensure we can capture the escape key being pressed below
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 
 	// Dark blue background
-	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
+	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
 	// Enable depth test
 	glEnable(GL_DEPTH_TEST);
@@ -224,7 +186,6 @@ int main( void )
 
 	// 1rst attribute buffer : vertices
 	glEnableVertexAttribArray(0);
-	//glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
 	glVertexAttribPointer(
 		0,                  // attribute. No particular reason for 0, but must match the layout in the shader.
 		3,                  // size
@@ -300,7 +261,7 @@ int main( void )
 		model = glm::rotate(model,glm::radians(angle_deg),glm::vec3(1,0,0));//rotation x = 0.0 degrees
 		model = glm::rotate(model,glm::radians(angle_deg),glm::vec3(0,1,0));//rotation y = 0.0 degrees
 		model = glm::rotate(model,glm::radians(0.0f),glm::vec3(0,0,1));//rotation z = 0.0 degrees
-		model = glm::scale(model,glm::vec3(1,1,1));//scale = 2,2,2, because mesh is 0.5 based geom.
+		model = glm::scale(model,glm::vec3(2, 2, 2));//scale = 2,2,2, because mesh is 0.5 based geom.
 		// Our ModelViewProjection : multiplication of our 3 matrices
 		//MVP = Projection * View * model; // Remember, matrix multiplication is the other way around
 		//glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
