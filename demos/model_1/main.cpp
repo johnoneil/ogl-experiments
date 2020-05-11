@@ -10,17 +10,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#if 0
-#include <learnopengl/filesystem.h>
-#include <learnopengl/shader_m.h>
-#include <learnopengl/camera.h>
-#include <learnopengl/model.h>
-#else
-#include <framework/filesystem.h>
 #include <framework/shader_m.h>
 #include <framework/camera.h>
 #include <framework/model.h>
-#endif
 
 #include <iostream>
 
@@ -73,16 +65,6 @@ int main()
     // tell GLFW to capture our mouse
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-#if 0
-    // glad: load all OpenGL function pointers
-    // ---------------------------------------
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
-        std::cout << "Failed to initialize GLAD" << std::endl;
-        return -1;
-    }
-#endif
-
     // tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
     stbi_set_flip_vertically_on_load(true);
 
@@ -92,11 +74,11 @@ int main()
 
     // build and compile shaders
     // -------------------------
-    Shader ourShader("/Users/joneil/code/ogl/assets/1.model_loading.vs", "/Users/joneil/code/ogl/assets/1.model_loading.fs");
+    Shader ourShader("assets/1.model_loading.vs", "assets/1.model_loading.fs");
 
     // load models
     // -----------
-    Model ourModel(FileSystem::getPath("/Users/joneil/code/ogl/assets/backpack/backpack.obj"));
+    Model ourModel("assets/backpack/backpack.obj");
 
     
     // draw in wireframe

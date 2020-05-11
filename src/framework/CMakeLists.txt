@@ -1,4 +1,4 @@
-add_library(framework STATIC shaders.cpp mesh.cpp model.cpp filesystem.cpp)
+add_library(framework STATIC shaders.cpp mesh.cpp model.cpp)
 
 target_link_libraries(framework glm assimp)
 
