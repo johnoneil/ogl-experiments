@@ -96,7 +96,7 @@ int main()
 
     // load models
     // -----------
-    Model ourModel(FileSystem::getPath("/Users/joneil/code/ogl/assets/backpack.obj"));
+    Model ourModel(FileSystem::getPath("/Users/joneil/code/ogl/assets/backpack/backpack.obj"));
 
     
     // draw in wireframe
