@@ -12,7 +12,74 @@ using namespace glm;
 #include <framework/shaders.h>
 #include <GLFW/glfw3.h>
 
-GLFWwindow* window;
+// Isolated render loop to aid porting
+GLFWwindow* window = nullptr;
+GLuint programID = 0;
+GLuint VBO = 0, VAO = 0;
+float angle_deg = 0.0f;
+glm::mat4 Projection;
+glm::mat4 View;
+glm::mat4 MVP;
+glm::mat4 model;
+GLuint vertexbuffer = 0;
+GLuint colorbuffer = 0;
+GLuint MatrixID = 0;
+void renderLoop(void) {
+	angle_deg += 0.33f;
+
+	// Clear the screen
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// Use our shader
+	glUseProgram(programID);
+
+	// Send our transformation to the currently bound shader, 
+	// in the "MVP" uniform
+	model = glm::mat4(1.0f);
+
+	model = glm::translate(model,glm::vec3(0,0,0)); //position = 0,0,0
+	model = glm::rotate(model,glm::radians(angle_deg),glm::vec3(1,0,0));//rotation x = 0.0 degrees
+	model = glm::rotate(model,glm::radians(angle_deg),glm::vec3(0,1,0));//rotation y = 0.0 degrees
+	model = glm::rotate(model,glm::radians(0.0f),glm::vec3(0,0,1));//rotation z = 0.0 degrees
+	model = glm::scale(model,glm::vec3(1,1,1));//scale = 1,1,1
+	// Our ModelViewProjection : multiplication of our 3 matrices
+	MVP = Projection * View * model; // Remember, matrix multiplication is the other way around
+	glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+
+	// 1rst attribute buffer : vertices
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+	glVertexAttribPointer(
+		0,                  // attribute. No particular reason for 0, but must match the layout in the shader.
+		3,                  // size
+		GL_FLOAT,           // type
+		GL_FALSE,           // normalized?
+		0,                  // stride
+		(void*)0            // array buffer offset
+	);
+
+	// 2nd attribute buffer : colors
+	glEnableVertexAttribArray(1);
+	glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
+	glVertexAttribPointer(
+		1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
+		3,                                // size
+		GL_FLOAT,                         // type
+		GL_FALSE,                         // normalized?
+		0,                                // stride
+		(void*)0                          // array buffer offset
+	);
+
+	// Draw the triangle !
+	glDrawArrays(GL_TRIANGLES, 0, 12*3); // 12*3 indices starting at 0 -> 12 triangles
+
+	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
+
+	// Swap buffers
+	glfwSwapBuffers(window);
+	glfwPollEvents();
+}
 
 int main( void )
 {
@@ -67,23 +134,27 @@ int main( void )
 	glBindVertexArray(VertexArrayID);
 
 	// Create and compile our GLSL program from the shaders
-	GLuint programID = LoadShaderFromFiles( "assets/TransformVertexShader.vertexshader", "assets/ColorFragmentShader.fragmentshader" );
+	#if defined(__EMSCRIPTEN__)
+	programID = LoadShaderFromFiles( "assets/webgl.TransformVertexShader.glsl", "assets/webgl.ColorFragmentShader.glsl" );
+	#else
+	programID = LoadShaderFromFiles( "assets/TransformVertexShader.vertexshader", "assets/ColorFragmentShader.fragmentshader" );
+	#endif
 
 	// Get a handle for our "MVP" uniform
-	GLuint MatrixID = glGetUniformLocation(programID, "MVP");
+	MatrixID = glGetUniformLocation(programID, "MVP");
 
 	// Projection matrix : 45� Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
-	glm::mat4 Projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
+	Projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
 	// Camera matrix
-	glm::mat4 View       = glm::lookAt(
+	View       = glm::lookAt(
 								glm::vec3(4,3,-3), // Camera is at (4,3,-3), in World Space
 								glm::vec3(0,0,0), // and looks at the origin
 								glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
 						   );
 	// Model matrix : an identity matrix (model will be at the origin)
-	glm::mat4 model      = glm::mat4(1.0f);
+	model      = glm::mat4(1.0f);
 	// Our ModelViewProjection : multiplication of our 3 matrices
-	glm::mat4 MVP        = Projection * View * model; // Remember, matrix multiplication is the other way around
+	MVP        = Projection * View * model; // Remember, matrix multiplication is the other way around
 
 	// Our vertices. Tree consecutive floats give a 3D vertex; Three consecutive vertices give a triangle.
 	// A cube has 6 faces with 2 triangles each, so this makes 6*2=12 triangles, and 12*3 vertices
@@ -171,17 +242,27 @@ int main( void )
 		__MAGENTA,
 	};
 
-	GLuint vertexbuffer;
 	glGenBuffers(1, &vertexbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
 
-	GLuint colorbuffer;
 	glGenBuffers(1, &colorbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(g_color_buffer_data), g_color_buffer_data, GL_STATIC_DRAW);
 
-	float angle_deg = 0;
+	#if 1
+    // render loop
+    // -----------
+    #if defined(__EMSCRIPTEN__)
+    emscripten_set_main_loop(renderLoop, 0, 1 /*simulate infinite loop */);
+    #else
+    while (!glfwWindowShouldClose(window))
+    {
+        renderLoop();
+        //sleep(1);
+    }
+    #endif
+	#else
 
 	do{
 		angle_deg += 0.33f;
@@ -242,6 +323,7 @@ int main( void )
 	} // Check if the ESC key was pressed or the window was closed
 	while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
 		   glfwWindowShouldClose(window) == 0 );
+	#endif
 
 	// Cleanup VBO and shader
 	glDeleteBuffers(1, &vertexbuffer);
