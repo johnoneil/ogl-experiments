@@ -1,6 +1,7 @@
-add_executable (triangle_3 main.cpp)
+SET (PROJECT_NAME triangle_3)
 
-find_package(OpenGL REQUIRED)
-#find_package(glfw REQUIRED)
+add_executable (${PROJECT_NAME} main.cpp)
 
-target_link_libraries(triangle_3 framework)
+target_link_libraries(${PROJECT_NAME} framework)
+
+INCLUDE (ogl)

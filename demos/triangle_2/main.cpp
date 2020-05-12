@@ -63,7 +63,6 @@ void renderLoop(void) {
     glfwPollEvents();
 }
 
-
 int main()
 {
     // glfw: initialize and configure

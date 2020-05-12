@@ -8,8 +8,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-
-
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
 
@@ -17,7 +15,12 @@ void processInput(GLFWwindow *window);
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
-const char *vertexShaderSource ="#version 330 core\n"
+#ifdef __EMSCRIPTEN__
+const char *vertexShaderSource = "#version 300 es\n"
+#else
+const char *vertexShaderSource = "#version 330 core\n"
+#endif
+    "precision mediump float;\n"
     "layout (location = 0) in vec3 aPos;\n"
     "layout (location = 1) in vec3 aColor;\n"
     "layout (location = 2) in vec2 aTexCoord;\n"
@@ -30,7 +33,12 @@ const char *vertexShaderSource ="#version 330 core\n"
     "   TexCoord = aTexCoord;\n"
     "}\0";
 
+#ifdef __EMSCRIPTEN__
+const char *fragmentShaderSource = "#version 300 es\n"
+#else
 const char *fragmentShaderSource = "#version 330 core\n"
+#endif
+    "precision mediump float;\n"
     "out vec4 FragColor;\n"
     "in vec3 ourColor;\n"
     "in vec2 TexCoord;\n"
@@ -39,6 +47,32 @@ const char *fragmentShaderSource = "#version 330 core\n"
     "{\n"
     "   FragColor = texture(ourTexture, TexCoord);\n"
     "}\n\0";
+
+GLFWwindow* window = nullptr;
+GLuint VBO = 0;
+GLuint VAO = 0;
+GLuint texture = 0;
+
+void renderLoop(void) {
+    // input
+    // -----
+    processInput(window);
+
+    // render
+    // ------
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // render the triangle
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glBindVertexArray(VAO);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
+    // -------------------------------------------------------------------------------
+    glfwSwapBuffers(window);
+    glfwPollEvents();
+}
 
 int main()
 {
@@ -55,7 +89,7 @@ int main()
 
     // glfw window creation
     // --------------------
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+    window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -125,7 +159,6 @@ int main()
 
     };
 
-    unsigned int VBO, VAO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
@@ -151,8 +184,6 @@ int main()
     // as we only have a single shader, we could also just activate our shader once beforehand if we want to 
     glUseProgram(shaderProgram);
 
-#if 1
-    GLuint texture;
     auto w = 0, h = 0, c = 0;
     stbi_set_flip_vertically_on_load(true);
     auto image = stbi_load("assets/brick.jpg",
@@ -173,31 +204,18 @@ int main()
     glGenerateMipmap(GL_TEXTURE_2D);
 
     stbi_image_free(image);
-#endif
 
     // render loop
     // -----------
+    #if defined(__EMSCRIPTEN__)
+    emscripten_set_main_loop(renderLoop, 0, 1 /*simulate infinite loop */);
+    #else
     while (!glfwWindowShouldClose(window))
     {
-        // input
-        // -----
-        processInput(window);
-
-        // render
-        // ------
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        // render the triangle
-        glBindTexture(GL_TEXTURE_2D, texture);
-        glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-
-        // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-        // -------------------------------------------------------------------------------
-        glfwSwapBuffers(window);
-        glfwPollEvents();
+        renderLoop();
+        //sleep(1);
     }
+    #endif
 
     // optional: de-allocate all resources once they've outlived their purpose:
     // ------------------------------------------------------------------------
