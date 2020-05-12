@@ -20,7 +20,7 @@ const char *vertexShaderSource = "#version 300 es\n"
 #else
 const char *vertexShaderSource = "#version 330 core\n"
 #endif
-    "precision mediump float;\n"
+"precision mediump float;\n"
 "layout(location = 0) in vec3 vertexPosition_modelspace;\n"
 "layout(location = 1) in vec2 aTexCoord;\n"
 "out vec2 TexCoord;\n"
@@ -35,7 +35,7 @@ const char *fragmentShaderSource = "#version 300 es\n"
 #else
 const char *fragmentShaderSource = "#version 330 core\n"
 #endif
-    "precision mediump float;\n"
+"precision mediump float;\n"
 "in vec2 TexCoord;\n"
 "out vec4 color;\n"
 "uniform sampler2D ourTexture;\n"
@@ -263,7 +263,6 @@ int main( void )
 
     stbi_image_free(image);
 
-	#if 1
     // render loop
     // -----------
     #if defined(__EMSCRIPTEN__)
@@ -275,46 +274,6 @@ int main( void )
         //sleep(1);
     }
     #endif
-	#else
-
-	do{
-		angle_deg += 0.33f;
-
-		// Clear the screen
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		// Use our shader
-		glBindVertexArray(VAO);
-		glUseProgram(programID);
-
-		// Send our transformation to the currently bound shader, 
-		// in the "MVP" uniform
-		model = glm::mat4(1.0f);
-
-		model = glm::translate(model,glm::vec3(0,0,0)); //position = 0,0,0
-		model = glm::rotate(model,glm::radians(angle_deg),glm::vec3(1,0,0));//rotation x = 0.0 degrees
-		model = glm::rotate(model,glm::radians(angle_deg),glm::vec3(0,1,0));//rotation y = 0.0 degrees
-		model = glm::rotate(model,glm::radians(0.0f),glm::vec3(0,0,1));//rotation z = 0.0 degrees
-		model = glm::scale(model,glm::vec3(1,1,1));//scale = 1,1,1
-		// Our ModelViewProjection : multiplication of our 3 matrices
-		MVP = Projection * View * model; // Remember, matrix multiplication is the other way around
-		glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
-
-		// Draw the triangle !
-		glBindTexture(GL_TEXTURE_2D, texture);
-		glDrawArrays(GL_TRIANGLES, 0, 12*3); // 12*3 indices starting at 0 -> 12 triangles
-
-		glBindVertexArray(0);
-		glUseProgram(0);
-		
-		// Swap buffers
-		glfwSwapBuffers(window);
-		glfwPollEvents();
-
-	} // Check if the ESC key was pressed or the window was closed
-	while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
-		   glfwWindowShouldClose(window) == 0 );
-	#endif
 
 	// Cleanup VBO and shader
 	glDeleteVertexArrays(1, &VAO);
