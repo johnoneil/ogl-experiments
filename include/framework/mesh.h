@@ -1,7 +1,7 @@
 #pragma once
 
 #include <framework/gl.h>
-#include <framework/shader_m.h>
+#include <framework/shader.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>

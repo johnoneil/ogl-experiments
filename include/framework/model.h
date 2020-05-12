@@ -24,6 +24,10 @@ unsigned int TextureFromFile(const char *path, const std::string &directory, boo
 class Model 
 {
 public:
+    Model() = default;
+    Model& operator=(const Model& rhs) = default;
+    ~Model() = default;
+
     // model data 
     std::vector<Texture> textures_loaded;	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
     std::vector<Mesh>    meshes;
