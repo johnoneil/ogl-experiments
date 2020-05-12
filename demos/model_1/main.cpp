@@ -59,11 +59,14 @@ int main()
     }
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    #if 0
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
 
     // tell GLFW to capture our mouse
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+    #endif
 
     // tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
     stbi_set_flip_vertically_on_load(true);
@@ -100,7 +103,7 @@ int main()
 
         // render
         // ------
-        glClearColor(1.0f, 1.0f, 0.5f, 1.0f);
+        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // don't forget to enable shader before setting uniforms
@@ -112,10 +115,19 @@ int main()
         ourShader.setMat4("projection", projection);
         ourShader.setMat4("view", view);
 
+        #if 0
         // render the loaded model
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
         model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
+        #else
+        glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model,glm::vec3(0,0,0)); //position = 0,0,0
+		model = glm::rotate(model,glm::radians(0.0f),glm::vec3(1,0,0));//rotation x = 0.0 degrees
+		model = glm::rotate(model,glm::radians(currentFrame*30.0f),glm::vec3(0,1,0));//rotation y = 0.0 degrees
+		model = glm::rotate(model,glm::radians(0.0f),glm::vec3(0,0,1));//rotation z = 0.0 degrees
+		model = glm::scale(model,glm::vec3(0.5f, 0.5f, 0.5f));//scale = 2,2,2, because mesh is 0.5 based geom
+        #endif
         ourShader.setMat4("model", model);
         ourModel.Draw(ourShader);
 
@@ -139,6 +151,7 @@ void processInput(GLFWwindow *window)
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
+    #if 0
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         camera.ProcessKeyboard(FORWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
@@ -147,6 +160,7 @@ void processInput(GLFWwindow *window)
         camera.ProcessKeyboard(LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.ProcessKeyboard(RIGHT, deltaTime);
+    #endif
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
