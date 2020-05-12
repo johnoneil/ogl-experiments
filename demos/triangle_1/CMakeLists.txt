@@ -1,30 +1,8 @@
-add_executable (triangle_1 main.cpp)
+SET (PROJECT_NAME triangle_1)
 
-find_package(OpenGL REQUIRED)
-#find_package(glfw REQUIRED)
-if (NOT EMSCRIPTEN)
-    find_package(glfw3 REQUIRED)
-    #target_link_libraries(triangle_1 glfw)
-    target_link_libraries(triangle_1 OpenGL::GL glfw framework)
-endif()
+add_executable (${PROJECT_NAME} main.cpp)
 
-if (EMSCRIPTEN)
-    #if (BUILD_HTML)
-    #    set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".html")
-    #    set_target_properties(client PROPERTIES SUFFIX ".html")
-    #    set_target_properties(server PROPERTIES SUFFIX ".html")
-    #endif()
-    set_target_properties(triangle_1 PROPERTIES SUFFIX ".html")
-    target_link_libraries(triangle_1 framework)
-    #target_compile_definitions(${PROJECT_NAME} PUBLIC -DEMSCRIPTEN=1)
-    set_target_properties(triangle_1 PROPERTIES LINK_FLAGS "--emrun -s USE_GLFW=3 -s USE_WEBGL2=1 -s FULL_ES3=1")
-    #target_compile_definitions(client PUBLIC -DEMSCRIPTEN=1 -DSOCKK=12346)
-    #set_target_properties(client PROPERTIES LINK_FLAGS "-s USE_GLFW=3 -s USE_WEBGL2=1 -s FULL_ES3=1")
-    #target_compile_definitions(server PUBLIC -DEMSCRIPTEN=1 -DSOCKK=12346)
-    #set_target_properties(server PROPERTIES LINK_FLAGS "-s USE_GLFW=3 -s USE_WEBGL2=1 -s FULL_ES3=1")
-endif()
+target_link_libraries(${PROJECT_NAME} framework)
 
-
-include_directories( ${OPENGL_INCLUDE_DIRS} )
-
-#target_link_libraries(triangle_1 framework)
+# custom ogl.cmake module include
+INCLUDE (ogl)

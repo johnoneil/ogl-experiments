@@ -2,6 +2,8 @@
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 project(ogl VERSION 0.1 LANGUAGES C CXX)
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
+
 # TODO: configure builds
 set(CMAKE_BUILD_TYPE Debug)
 
@@ -23,6 +25,11 @@ FILE(COPY ${CMAKE_SOURCE_DIR}/assets DESTINATION ${CMAKE_BINARY_DIR})
 
 # third party libraries from source
 ADD_SUBDIRECTORY (thirdparty)
+
+# TODO: remove auto-generated html in favor of custom template
+IF (EMSCRIPTEN)
+    SET (BUILD_HTML True)
+ENDIF()
 
 #demos
 ADD_SUBDIRECTORY (demos)

@@ -1,10 +1,6 @@
 
 
 #include <framework/gl.h>
-#ifdef __EMSCRIPTEN__
-#include<emscripten/emscripten.h>
-#define GLFW_INCLUDE_ES3
-#endif
 #include <GLFW/glfw3.h>
 
 #include <iostream>
