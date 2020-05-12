@@ -1,8 +1,8 @@
-add_executable (cube_2 main.cpp)
+SET (PROJECT_NAME cube_2)
 
-find_package(OpenGL REQUIRED)
-#find_package(glfw REQUIRED)
+add_executable (${PROJECT_NAME} main.cpp)
 
-include_directories( ${OPENGL_INCLUDE_DIRS} )
+target_link_libraries(${PROJECT_NAME} framework)
 
-target_link_libraries(cube_2 glm framework)
+# custom ogl.cmake module include
+INCLUDE (ogl)
