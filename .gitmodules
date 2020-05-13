@@ -7,3 +7,6 @@
 [submodule "thirdparty/assimp"]
 	path = thirdparty/assimp
 	url = https://github.com/assimp/assimp.git
+[submodule "thirdparty/freetype2"]
+	path = thirdparty/freetype2
+	url = https://github.com/aseprite/freetype2.git
