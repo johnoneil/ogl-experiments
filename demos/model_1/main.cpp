@@ -80,24 +80,19 @@ void renderLoop(void) {
     ourShader.use();
 
     // view/projection transformations
-    glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-    glm::mat4 view = camera.GetViewMatrix();
-    ourShader.setMat4("projection", projection);
-    ourShader.setMat4("view", view);
+    Projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+    View = camera.GetViewMatrix();
+    ourShader.setMat4("projection", Projection);
+    ourShader.setMat4("view", View);
 
-    #if 0
-    // render the loaded model
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
-    model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
-    #else
-    glm::mat4 model = glm::mat4(1.0f);
+
+    model = glm::mat4(1.0f);
     model = glm::translate(model,glm::vec3(0,0,0)); //position = 0,0,0
     model = glm::rotate(model,glm::radians(0.0f),glm::vec3(1,0,0));//rotation x = 0.0 degrees
     model = glm::rotate(model,glm::radians(currentFrame*30.0f),glm::vec3(0,1,0));//rotation y = 0.0 degrees
     model = glm::rotate(model,glm::radians(0.0f),glm::vec3(0,0,1));//rotation z = 0.0 degrees
     model = glm::scale(model,glm::vec3(0.5f, 0.5f, 0.5f));//scale = 2,2,2, because mesh is 0.5 based geom
-    #endif
+
     ourShader.setMat4("model", model);
     ourModel.Draw(ourShader);
 
@@ -150,7 +145,11 @@ int main()
 
     // build and compile shaders
     // -------------------------
+    #if defined(__EMSCRIPTEN__)
+    ourShader = Shader("assets/webgl.model_loading.vs.glsl", "assets/webgl.model_loading.fs.glsl");
+    #else
     ourShader = Shader("assets/1.model_loading.vs", "assets/1.model_loading.fs");
+    #endif
 
     // load models
     // -----------
@@ -160,7 +159,6 @@ int main()
     // draw in wireframe
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-    #if 1
     // render loop
     // -----------
     #if defined(__EMSCRIPTEN__)
@@ -170,59 +168,6 @@ int main()
     {
         renderLoop();
         //sleep(1);
-    }
-    #endif
-    #else
-
-    // render loop
-    // -----------
-    while (!glfwWindowShouldClose(window))
-    {
-        // per-frame time logic
-        // --------------------
-        float currentFrame = glfwGetTime();
-        deltaTime = currentFrame - lastFrame;
-        lastFrame = currentFrame;
-
-        // input
-        // -----
-        processInput(window);
-
-        // render
-        // ------
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        // don't forget to enable shader before setting uniforms
-        ourShader.use();
-
-        // view/projection transformations
-        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-        glm::mat4 view = camera.GetViewMatrix();
-        ourShader.setMat4("projection", projection);
-        ourShader.setMat4("view", view);
-
-        #if 0
-        // render the loaded model
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
-        model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
-        #else
-        glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model,glm::vec3(0,0,0)); //position = 0,0,0
-		model = glm::rotate(model,glm::radians(0.0f),glm::vec3(1,0,0));//rotation x = 0.0 degrees
-		model = glm::rotate(model,glm::radians(currentFrame*30.0f),glm::vec3(0,1,0));//rotation y = 0.0 degrees
-		model = glm::rotate(model,glm::radians(0.0f),glm::vec3(0,0,1));//rotation z = 0.0 degrees
-		model = glm::scale(model,glm::vec3(0.5f, 0.5f, 0.5f));//scale = 2,2,2, because mesh is 0.5 based geom
-        #endif
-        ourShader.setMat4("model", model);
-        ourModel.Draw(ourShader);
-
-
-        // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-        // -------------------------------------------------------------------------------
-        glfwSwapBuffers(window);
-        glfwPollEvents();
     }
     #endif
 

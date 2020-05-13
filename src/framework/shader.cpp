@@ -13,10 +13,14 @@
 #include <iostream>
 
 Shader::~Shader() {
+    // TODO: clean up when this goes out of scope
+    // NOTE: we can't do this until we properly manage copying
+    #if 0
     if(ID) {
         glDeleteShader(ID);
         ID = 0;
     }
+    #endif
 }
 
 // constructor generates the shader on the fly
