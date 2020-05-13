@@ -1,6 +1,13 @@
 SET (PROJECT_NAME framework)
 
-add_library(${PROJECT_NAME} STATIC shaders.cpp mesh.cpp model.cpp shader.cpp)
+SET( SRCS
+    shaders.cpp
+    mesh.cpp
+    model.cpp
+    shader.cpp
+    text.cpp)
+
+add_library(${PROJECT_NAME} STATIC ${SRCS} )
 
 target_link_libraries(${PROJECT_NAME} glm assimp)
 
