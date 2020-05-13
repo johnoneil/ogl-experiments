@@ -10,6 +10,7 @@
 using namespace glm;
 
 #include <framework/shaders.h>
+#include <framework/text.h>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -88,6 +89,7 @@ GLuint projUniformLoc = 0;
 GLuint lightPosUniformLoc = 0;
 GLuint lightColorUniformLoc = 0;
 GLuint objectColorUniformLoc = 0;
+Font font;
 void renderLoop(void) {
 	angle_deg += 0.33f;
 
@@ -128,6 +130,10 @@ void renderLoop(void) {
 
 	glBindVertexArray(0);
 	glUseProgram(0);
+
+	#if 1
+	font.RenderText("text_1 opengl demo.", 10, 20, 1.0, glm::vec3(1.0f, 1.0f, 1.0f));
+	#endif
 	
 	// Swap buffers
 	glfwSwapBuffers(window);
@@ -308,6 +314,12 @@ int main( void )
     glGenerateMipmap(GL_TEXTURE_2D);
 
     stbi_image_free(image);
+
+	#if 1
+	if(!font.Load("assets/arial.ttf")) {
+		printf("Failed to initialize font!\n");
+	}
+	#endif
 
     // render loop
     // -----------

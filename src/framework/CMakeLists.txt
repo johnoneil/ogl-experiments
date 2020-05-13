@@ -1,6 +1,6 @@
 SET (PROJECT_NAME framework)
 
-find_package(Freetype REQUIRED)
+#find_package(Freetype REQUIRED)
 
 SET( SRCS
     shaders.cpp
