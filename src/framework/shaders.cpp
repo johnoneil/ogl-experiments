@@ -1,3 +1,5 @@
+#include <framework/shaders.h>
+
 #include <stdio.h>
 #include <string>
 #include <vector>
@@ -9,9 +11,6 @@ using namespace std;
 
 #include <stdlib.h>
 #include <string.h>
-
-#include <framework/gl.h>
-#include <framework/shaders.h>
 
 GLuint LoadShaderFromSource(const char * const vertex_src, const char * const fragment_src) {
 	// Create the shaders

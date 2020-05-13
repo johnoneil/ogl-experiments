@@ -5,8 +5,6 @@
 #include <framework/gl.h>
 #include <GLFW/glfw3.h>
 
-GLFWwindow* window;
-
 // Include GLM
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -17,7 +15,12 @@ using namespace glm;
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
+#ifdef __EMSCRIPTEN__
+const char *vertexShaderSource = "#version 300 es\n"
+#else
 const char *vertexShaderSource = "#version 330 core\n"
+#endif
+"precision mediump float;\n"
 "layout(location = 0) in vec3 vertexPosition_modelspace;\n"
 "layout(location = 1) in vec2 aTexCoord;\n"
 "out vec2 TexCoord;\n"
@@ -27,13 +30,66 @@ const char *vertexShaderSource = "#version 330 core\n"
 "   TexCoord = aTexCoord;\n"
 "}\n";
 
+#ifdef __EMSCRIPTEN__
+const char *fragmentShaderSource = "#version 300 es\n"
+#else
 const char *fragmentShaderSource = "#version 330 core\n"
+#endif
+"precision mediump float;\n"
 "in vec2 TexCoord;\n"
 "out vec4 color;\n"
 "uniform sampler2D ourTexture;\n"
 "void main(){\n"
 "   color = texture(ourTexture, TexCoord);\n"
 "}\n";
+
+// Isolated render loop to aid porting
+GLFWwindow* window = nullptr;
+GLuint programID = 0;
+GLuint VBO = 0, VAO = 0;
+float angle_deg = 0.0f;
+glm::mat4 Projection;
+glm::mat4 View;
+glm::mat4 MVP;
+glm::mat4 model;
+GLuint vertexbuffer = 0;
+GLuint colorbuffer = 0;
+GLuint MatrixID = 0;
+GLuint texture = 0;
+void renderLoop(void) {
+		angle_deg += 0.33f;
+
+		// Clear the screen
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		// Use our shader
+		glBindVertexArray(VAO);
+		glUseProgram(programID);
+
+		// Send our transformation to the currently bound shader, 
+		// in the "MVP" uniform
+		model = glm::mat4(1.0f);
+
+		model = glm::translate(model,glm::vec3(0,0,0)); //position = 0,0,0
+		model = glm::rotate(model,glm::radians(angle_deg),glm::vec3(1,0,0));//rotation x = 0.0 degrees
+		model = glm::rotate(model,glm::radians(angle_deg),glm::vec3(0,1,0));//rotation y = 0.0 degrees
+		model = glm::rotate(model,glm::radians(0.0f),glm::vec3(0,0,1));//rotation z = 0.0 degrees
+		model = glm::scale(model,glm::vec3(1,1,1));//scale = 1,1,1
+		// Our ModelViewProjection : multiplication of our 3 matrices
+		MVP = Projection * View * model; // Remember, matrix multiplication is the other way around
+		glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+
+		// Draw the triangle !
+		glBindTexture(GL_TEXTURE_2D, texture);
+		glDrawArrays(GL_TRIANGLES, 0, 12*3); // 12*3 indices starting at 0 -> 12 triangles
+
+		glBindVertexArray(0);
+		glUseProgram(0);
+		
+		// Swap buffers
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+}
 
 int main( void )
 {
@@ -88,23 +144,23 @@ int main( void )
 	glBindVertexArray(VertexArrayID);
 
 	// Create and compile our GLSL program from the shaders
-	GLuint programID = LoadShaderFromSource( vertexShaderSource, fragmentShaderSource);
+	programID = LoadShaderFromSource( vertexShaderSource, fragmentShaderSource);
 
 	// Get a handle for our "MVP" uniform
-	GLuint MatrixID = glGetUniformLocation(programID, "MVP");
+	MatrixID = glGetUniformLocation(programID, "MVP");
 
 	// Projection matrix : 45� Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
-	glm::mat4 Projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
+	Projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
 	// Camera matrix
-	glm::mat4 View       = glm::lookAt(
+	View       = glm::lookAt(
 								glm::vec3(4,3,-3), // Camera is at (4,3,-3), in World Space
 								glm::vec3(0,0,0), // and looks at the origin
 								glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
 						   );
 	// Model matrix : an identity matrix (model will be at the origin)
-	glm::mat4 model      = glm::mat4(1.0f);
+	model      = glm::mat4(1.0f);
 	// Our ModelViewProjection : multiplication of our 3 matrices
-	glm::mat4 MVP        = Projection * View * model; // Remember, matrix multiplication is the other way around
+	MVP        = Projection * View * model; // Remember, matrix multiplication is the other way around
 
 	// Our vertices. Tree consecutive floats give a 3D vertex; Three consecutive vertices give a triangle.
 	// A cube has 6 faces with 2 triangles each, so this makes 6*2=12 triangles, and 12*3 vertices
@@ -152,7 +208,6 @@ int main( void )
         -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 	};
 
-	GLuint VAO;
 	glGenVertexArrays(1, &VAO);
     // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
     glBindVertexArray(VAO);
@@ -187,9 +242,6 @@ int main( void )
 
 	glBindVertexArray(0);
 
-
-	#if 1
-    GLuint texture;
     auto w = 0, h = 0, c = 0;
     stbi_set_flip_vertically_on_load(true);
     auto image = stbi_load("assets/brick.jpg",
@@ -210,47 +262,18 @@ int main( void )
     glGenerateMipmap(GL_TEXTURE_2D);
 
     stbi_image_free(image);
-#endif
 
-	float angle_deg = 0;
-
-	do{
-		angle_deg += 0.33f;
-
-		// Clear the screen
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		// Use our shader
-		glBindVertexArray(VAO);
-		glUseProgram(programID);
-
-		// Send our transformation to the currently bound shader, 
-		// in the "MVP" uniform
-		model = glm::mat4(1.0f);
-
-		model = glm::translate(model,glm::vec3(0,0,0)); //position = 0,0,0
-		model = glm::rotate(model,glm::radians(angle_deg),glm::vec3(1,0,0));//rotation x = 0.0 degrees
-		model = glm::rotate(model,glm::radians(angle_deg),glm::vec3(0,1,0));//rotation y = 0.0 degrees
-		model = glm::rotate(model,glm::radians(0.0f),glm::vec3(0,0,1));//rotation z = 0.0 degrees
-		model = glm::scale(model,glm::vec3(1,1,1));//scale = 1,1,1
-		// Our ModelViewProjection : multiplication of our 3 matrices
-		MVP = Projection * View * model; // Remember, matrix multiplication is the other way around
-		glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
-
-		// Draw the triangle !
-		glBindTexture(GL_TEXTURE_2D, texture);
-		glDrawArrays(GL_TRIANGLES, 0, 12*3); // 12*3 indices starting at 0 -> 12 triangles
-
-		glBindVertexArray(0);
-		glUseProgram(0);
-		
-		// Swap buffers
-		glfwSwapBuffers(window);
-		glfwPollEvents();
-
-	} // Check if the ESC key was pressed or the window was closed
-	while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
-		   glfwWindowShouldClose(window) == 0 );
+    // render loop
+    // -----------
+    #if defined(__EMSCRIPTEN__)
+    emscripten_set_main_loop(renderLoop, 0, 1 /*simulate infinite loop */);
+    #else
+    while (!glfwWindowShouldClose(window))
+    {
+        renderLoop();
+        //sleep(1);
+    }
+    #endif
 
 	// Cleanup VBO and shader
 	glDeleteVertexArrays(1, &VAO);

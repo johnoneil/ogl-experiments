@@ -5,9 +5,6 @@
 #include <framework/gl.h>
 #include <GLFW/glfw3.h>
 
-GLFWwindow* window;
-
-// Include GLM
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 using namespace glm;
@@ -18,7 +15,12 @@ using namespace glm;
 #include <stb_image.h>
 
 
+#ifdef __EMSCRIPTEN__
+const char *vertexShaderSource = "#version 300 es\n"
+#else
 const char *vertexShaderSource = "#version 330 core\n"
+#endif
+"precision mediump float;\n"
 "layout (location = 0) in vec3 aPos;\n"
 "layout (location = 1) in vec2 aTexCoord;\n"
 "layout (location = 2) in vec3 aNormal;\n"
@@ -37,7 +39,12 @@ const char *vertexShaderSource = "#version 330 core\n"
 "    gl_Position = projection * view * vec4(FragPos, 1.0);\n"
 "}\n";
 
+#ifdef __EMSCRIPTEN__
+const char *fragmentShaderSource = "#version 300 es\n"
+#else
 const char *fragmentShaderSource = "#version 330 core\n"
+#endif
+"precision mediump float;\n"
 "out vec4 FragColor;\n"
 "in vec2 TexCoord;\n"
 "in vec3 Normal;  \n"
@@ -61,6 +68,71 @@ const char *fragmentShaderSource = "#version 330 core\n"
 "    vec3 result = (ambient + diffuse) * modulatedColor;\n"
 "    FragColor = vec4(result, 1.0);\n"
 "}\n";
+
+// Isolated render loop to aid porting
+GLFWwindow* window = nullptr;
+GLuint programID = 0;
+GLuint VBO = 0, VAO = 0;
+float angle_deg = 0.0f;
+glm::mat4 Projection;
+glm::mat4 View;
+glm::mat4 MVP;
+glm::mat4 model;
+GLuint vertexbuffer = 0;
+GLuint colorbuffer = 0;
+GLuint MatrixID = 0;
+GLuint texture = 0;
+GLuint modelUniformLoc = 0;
+GLuint viewUniformLoc = 0;
+GLuint projUniformLoc = 0;
+GLuint lightPosUniformLoc = 0;
+GLuint lightColorUniformLoc = 0;
+GLuint objectColorUniformLoc = 0;
+void renderLoop(void) {
+	angle_deg += 0.33f;
+
+	// Clear the screen
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// Use our shader
+	glBindVertexArray(VAO);
+	glUseProgram(programID);
+
+	// Send our transformation to the currently bound shader, 
+	// in the "MVP" uniform
+	model = glm::mat4(1.0f);
+
+	model = glm::translate(model,glm::vec3(0,0,0)); //position = 0,0,0
+	model = glm::rotate(model,glm::radians(angle_deg),glm::vec3(1,0,0));//rotation x = 0.0 degrees
+	model = glm::rotate(model,glm::radians(angle_deg),glm::vec3(0,1,0));//rotation y = 0.0 degrees
+	model = glm::rotate(model,glm::radians(0.0f),glm::vec3(0,0,1));//rotation z = 0.0 degrees
+	model = glm::scale(model,glm::vec3(2, 2, 2));//scale = 2,2,2, because mesh is 0.5 based geom.
+	// Our ModelViewProjection : multiplication of our 3 matrices
+	//MVP = Projection * View * model; // Remember, matrix multiplication is the other way around
+	//glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+
+	// Uniforms:
+	glUniformMatrix4fv(modelUniformLoc, 1, GL_FALSE, &model[0][0]);
+	glUniformMatrix4fv(viewUniformLoc, 1, GL_FALSE, &View[0][0]);
+	glUniformMatrix4fv(projUniformLoc, 1, GL_FALSE, &Projection[0][0]);
+	glm::vec3 lightPos(4, 3, -3);
+	glUniform3fv(lightPosUniformLoc, 1, &lightPos[0]);
+	glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
+	glUniform3fv(lightColorUniformLoc, 1, &lightColor[0]);
+	glm::vec3 objectColor(1.0f, 1.0f, 1.0f);
+	glUniform3fv(objectColorUniformLoc, 1, &objectColor[0]);
+
+	// Draw the triangle !
+	glBindTexture(GL_TEXTURE_2D, texture);
+	glDrawArrays(GL_TRIANGLES, 0, 12*3); // 12*3 indices starting at 0 -> 12 triangles
+
+	glBindVertexArray(0);
+	glUseProgram(0);
+	
+	// Swap buffers
+	glfwSwapBuffers(window);
+	glfwPollEvents();
+}
 
 int main( void )
 {
@@ -104,26 +176,26 @@ int main( void )
 	glBindVertexArray(VertexArrayID);
 
 	// Create and compile our GLSL program from the shaders
-	GLuint programID = LoadShaderFromSource( vertexShaderSource, fragmentShaderSource);
+	programID = LoadShaderFromSource( vertexShaderSource, fragmentShaderSource);
 
 	// Get a handle for our "MVP" uniform
-	GLuint modelUniformLoc = glGetUniformLocation(programID, "model");
-	GLuint viewUniformLoc = glGetUniformLocation(programID, "view");
-	GLuint projUniformLoc = glGetUniformLocation(programID, "projection");
-	GLuint lightPosUniformLoc = glGetUniformLocation(programID, "lightPos");
-	GLuint lightColorUniformLoc = glGetUniformLocation(programID, "lightColor");
-	GLuint objectColorUniformLoc = glGetUniformLocation(programID, "objectColor");
+	modelUniformLoc = glGetUniformLocation(programID, "model");
+	viewUniformLoc = glGetUniformLocation(programID, "view");
+	projUniformLoc = glGetUniformLocation(programID, "projection");
+	lightPosUniformLoc = glGetUniformLocation(programID, "lightPos");
+	lightColorUniformLoc = glGetUniformLocation(programID, "lightColor");
+	objectColorUniformLoc = glGetUniformLocation(programID, "objectColor");
 
 	// Projection matrix : 45� Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
-	glm::mat4 Projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
+	Projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
 	// Camera matrix
-	glm::mat4 View       = glm::lookAt(
+	View       = glm::lookAt(
 								glm::vec3(4,3,-3), // Camera is at (4,3,-3), in World Space
 								glm::vec3(0,0,0), // and looks at the origin
 								glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
 						   );
 	// Model matrix : an identity matrix (model will be at the origin)
-	glm::mat4 model      = glm::mat4(1.0f);
+	model      = glm::mat4(1.0f);
 	// Our ModelViewProjection : multiplication of our 3 matrices
 	//glm::mat4 MVP        = Projection * View * model; // Remember, matrix multiplication is the other way around
 
@@ -174,7 +246,6 @@ int main( void )
         -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,	0.0f,  1.0f,  0.0f,
 	};
 
-	GLuint VAO;
 	glGenVertexArrays(1, &VAO);
     // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
     glBindVertexArray(VAO);
@@ -217,8 +288,6 @@ int main( void )
 
 	glBindVertexArray(0);
 
-	#if 1
-    GLuint texture;
     auto w = 0, h = 0, c = 0;
     stbi_set_flip_vertically_on_load(true);
     auto image = stbi_load("assets/brick.jpg",
@@ -239,58 +308,18 @@ int main( void )
     glGenerateMipmap(GL_TEXTURE_2D);
 
     stbi_image_free(image);
-#endif
 
-	float angle_deg = 0;
-
-	do{
-		angle_deg += 0.33f;
-
-		// Clear the screen
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		// Use our shader
-		glBindVertexArray(VAO);
-		glUseProgram(programID);
-
-		// Send our transformation to the currently bound shader, 
-		// in the "MVP" uniform
-		model = glm::mat4(1.0f);
-
-		model = glm::translate(model,glm::vec3(0,0,0)); //position = 0,0,0
-		model = glm::rotate(model,glm::radians(angle_deg),glm::vec3(1,0,0));//rotation x = 0.0 degrees
-		model = glm::rotate(model,glm::radians(angle_deg),glm::vec3(0,1,0));//rotation y = 0.0 degrees
-		model = glm::rotate(model,glm::radians(0.0f),glm::vec3(0,0,1));//rotation z = 0.0 degrees
-		model = glm::scale(model,glm::vec3(2, 2, 2));//scale = 2,2,2, because mesh is 0.5 based geom.
-		// Our ModelViewProjection : multiplication of our 3 matrices
-		//MVP = Projection * View * model; // Remember, matrix multiplication is the other way around
-		//glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
-
-		// Uniforms:
-		glUniformMatrix4fv(modelUniformLoc, 1, GL_FALSE, &model[0][0]);
-		glUniformMatrix4fv(viewUniformLoc, 1, GL_FALSE, &View[0][0]);
-		glUniformMatrix4fv(projUniformLoc, 1, GL_FALSE, &Projection[0][0]);
-		glm::vec3 lightPos(4, 3, -3);
-		glUniform3fv(lightPosUniformLoc, 1, &lightPos[0]);
-		glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
-		glUniform3fv(lightColorUniformLoc, 1, &lightColor[0]);
-		glm::vec3 objectColor(1.0f, 1.0f, 1.0f);
-		glUniform3fv(objectColorUniformLoc, 1, &objectColor[0]);
-
-		// Draw the triangle !
-		glBindTexture(GL_TEXTURE_2D, texture);
-		glDrawArrays(GL_TRIANGLES, 0, 12*3); // 12*3 indices starting at 0 -> 12 triangles
-
-		glBindVertexArray(0);
-		glUseProgram(0);
-		
-		// Swap buffers
-		glfwSwapBuffers(window);
-		glfwPollEvents();
-
-	} // Check if the ESC key was pressed or the window was closed
-	while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
-		   glfwWindowShouldClose(window) == 0 );
+    // render loop
+    // -----------
+    #if defined(__EMSCRIPTEN__)
+    emscripten_set_main_loop(renderLoop, 0, 1 /*simulate infinite loop */);
+    #else
+    while (!glfwWindowShouldClose(window))
+    {
+        renderLoop();
+        //sleep(1);
+    }
+    #endif
 
 	// Cleanup VBO and shader
 	glDeleteVertexArrays(1, &VAO);

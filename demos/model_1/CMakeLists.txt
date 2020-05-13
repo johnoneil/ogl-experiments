@@ -1,8 +1,8 @@
-add_executable (model_1 main.cpp)
+SET (PROJECT_NAME model_1)
 
-find_package(OpenGL REQUIRED)
-find_package(glfw3 REQUIRED)
+add_executable (${PROJECT_NAME} main.cpp)
 
-include_directories( ${OPENGL_INCLUDE_DIRS} )
+target_link_libraries(${PROJECT_NAME} framework assimp)
 
-target_link_libraries(model_1 OpenGL::GL glfw glm framework assimp)
+# custom ogl.cmake module include
+INCLUDE (ogl)

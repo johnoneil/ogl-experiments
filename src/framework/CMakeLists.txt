@@ -1,5 +1,9 @@
-add_library(framework STATIC shaders.cpp mesh.cpp model.cpp)
+SET (PROJECT_NAME framework)
 
-target_link_libraries(framework glm assimp)
+add_library(${PROJECT_NAME} STATIC shaders.cpp mesh.cpp model.cpp shader.cpp)
 
-target_include_directories(framework SYSTEM PUBLIC ${CMAKE_SOURCE_DIR}/include)
+target_link_libraries(${PROJECT_NAME} glm assimp)
+
+target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ${CMAKE_SOURCE_DIR}/include)
+
+INCLUDE (ogl)

@@ -1,8 +1,8 @@
-add_executable (triangle_1 main.cpp)
+SET (PROJECT_NAME triangle_1)
 
-find_package(OpenGL REQUIRED)
-find_package(glfw3 REQUIRED)
+add_executable (${PROJECT_NAME} main.cpp)
 
-include_directories( ${OPENGL_INCLUDE_DIRS} )
+target_link_libraries(${PROJECT_NAME} framework)
 
-target_link_libraries(triangle_1 OpenGL::GL glfw framework)
+# custom ogl.cmake module include
+INCLUDE (ogl)

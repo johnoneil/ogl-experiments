@@ -12,7 +12,12 @@ void processInput(GLFWwindow *window);
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
-const char *vertexShaderSource ="#version 330 core\n"
+#ifdef __EMSCRIPTEN__
+const char *vertexShaderSource = "#version 300 es\n"
+#else
+const char *vertexShaderSource = "#version 330 core\n"
+#endif
+    "precision mediump float;\n"
     "layout (location = 0) in vec3 aPos;\n"
     "layout (location = 1) in vec3 aColor;\n"
     "out vec3 ourColor;\n"
@@ -22,13 +27,41 @@ const char *vertexShaderSource ="#version 330 core\n"
     "   ourColor = aColor;\n"
     "}\0";
 
+#ifdef __EMSCRIPTEN__
+const char *fragmentShaderSource = "#version 300 es\n"
+#else
 const char *fragmentShaderSource = "#version 330 core\n"
+#endif
+    "precision mediump float;\n"
     "out vec4 FragColor;\n"
     "in vec3 ourColor;\n"
     "void main()\n"
     "{\n"
     "   FragColor = vec4(ourColor, 1.0f);\n"
     "}\n\0";
+
+GLFWwindow* window = nullptr;
+GLuint VBO = 0;
+GLuint VAO = 0;
+void renderLoop(void) {
+    // input
+    // -----
+    processInput(window);
+
+    // render
+    // ------
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // render the triangle
+    glBindVertexArray(VAO);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
+    // -------------------------------------------------------------------------------
+    glfwSwapBuffers(window);
+    glfwPollEvents();
+}
 
 int main()
 {
@@ -45,7 +78,7 @@ int main()
 
     // glfw window creation
     // --------------------
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+    window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -115,7 +148,6 @@ int main()
 
     };
 
-    unsigned int VBO, VAO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
@@ -140,26 +172,15 @@ int main()
 
     // render loop
     // -----------
+    #if defined(__EMSCRIPTEN__)
+    emscripten_set_main_loop(renderLoop, 0, 1 /*simulate infinite loop */);
+    #else
     while (!glfwWindowShouldClose(window))
     {
-        // input
-        // -----
-        processInput(window);
-
-        // render
-        // ------
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        // render the triangle
-        glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-
-        // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-        // -------------------------------------------------------------------------------
-        glfwSwapBuffers(window);
-        glfwPollEvents();
+        renderLoop();
+        //sleep(1);
     }
+    #endif
 
     // optional: de-allocate all resources once they've outlived their purpose:
     // ------------------------------------------------------------------------
