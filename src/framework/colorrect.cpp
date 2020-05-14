@@ -5,6 +5,14 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
+#if !defined(__EMSCRIPTEN__)
+static const std::string sVShaderPath("assets/colorrect.vs.glsl");
+static const std::string sFShaderPath("assets/colorrect.fs.glsl");
+#else
+static const std::string sVShaderPath("assets/webgl.colorrect.vs.glsl");
+static const std::string sFShaderPath("assets/webgl.colorrect.fs.glsl");
+#endif
+
 class ColorRectImpl
 {
 public:
@@ -52,7 +60,7 @@ public:
     }
 
     void Initialize() {
-        _shader = Shader("assets/colorrect.vs.glsl", "assets/colorrect.fs.glsl");
+        _shader = Shader(sVShaderPath, sFShaderPath);
         glGenVertexArrays(1, &VAO);
         glBindVertexArray(VAO);
 	    glGenBuffers(1, &VBO);
