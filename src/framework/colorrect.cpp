@@ -25,10 +25,10 @@ private:
     Shader _shader;
     // Trianglestrip vertices
     static constexpr float _vertices [] = { 
-        0.0f, 0.0f, 0.0f,
-        0.0f, 1.0f, 0.0f,
-        1.0f, 0.0f, 0.0f,
-        1.0f, 1.0f, 0.0f
+        0.0f, 1.0f,
+        0.0f, 0.0f,
+        1.0f, 1.0f,
+        1.0f, 0.0f
     };
     GLuint VAO = 0;
     GLuint VBO = 0;
@@ -70,10 +70,10 @@ public:
 	    glEnableVertexAttribArray(0);
 	    glVertexAttribPointer(
             0,
-            3,  // size
+            2,  // size
             GL_FLOAT,   // type
             GL_FALSE,   // normalized?
-            3*sizeof(float),    // stride
+            2*sizeof(float),    // stride
             (void*)0    // array buffer offset
         );
         glBindVertexArray(0);
@@ -85,12 +85,14 @@ public:
     }
 
     void Render() {
-        //glEnable(GL_BLEND);
-        //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glDisable(GL_DEPTH_TEST);
         _shader.use();
-        glm::mat4 projection = glm::mat4(1.0f);
-        projection = glm::scale(projection,glm::vec3(1, 1, 1));
+        glm::mat4 projection = glm::ortho( 0.0f, 1024.0f, 768.0f, 0.0f,-5.0f, 5.0f);
+        glm::mat4 model = glm::mat4(1.0);
+        model = glm::translate(model, glm::vec3(_pos.x, _pos.y, 0.0f));
+        model = glm::scale(model, glm::vec3(_sz.x, _sz.y, 1));
         _shader.setMat4("projection", projection);
+        _shader.setMat4("model", model);
         _shader.setVec4("c", _color.Vec4());
         glBindVertexArray(VAO);
 	    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);

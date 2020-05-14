@@ -14,13 +14,15 @@ static const unsigned int WINDOW_WIDTH = 1024;
 // Isolated render loop to aid porting
 GLFWwindow* window = nullptr;
 Font font;
-ColorRect rect;
+ColorRect rect1, rect2, rect3;
 void renderLoop(void) {
 
 	// Clear the screen
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	rect.Render();
+	rect1.Render();
+	rect2.Render();
+	rect3.Render();
 
 	font.RenderText("layout_1 opengl demo.", 10, 20, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 	font.RenderText("OGL Demo", 600.0f, 570.0f, 0.5f, glm::vec3(1.0f, 1.0f, 0.0f));
@@ -67,8 +69,12 @@ int main( void )
 		printf("Failed to initialize font!\n");
 	}
 
-	rect = ColorRect(glm::vec2(50, 50), glm::vec2(50, 50), Color::Red);
-	rect.Initialize();
+	rect1 = ColorRect(glm::vec2(50, 50), glm::vec2(200, 200), Color::Red);
+	rect1.Initialize();
+	rect2 = ColorRect(glm::vec2(50, 50), glm::vec2(100, 100), Color::Green);
+	rect2.Initialize();
+	rect3 = ColorRect(glm::vec2(75, 75), glm::vec2(50, 50), Color::Blue);
+	rect3.Initialize();
 
     // render loop
     // -----------
