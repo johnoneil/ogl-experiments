@@ -15,6 +15,9 @@ using namespace glm;
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
+static const unsigned int WINDOW_HEIGHT = 768;
+static const unsigned int WINDOW_WIDTH = 1024;
+
 
 #ifdef __EMSCRIPTEN__
 const char *vertexShaderSource = "#version 300 es\n"
@@ -131,9 +134,8 @@ void renderLoop(void) {
 	glBindVertexArray(0);
 	glUseProgram(0);
 
-	#if 1
-	font.RenderText("text_1 opengl demo.", 10, 20, 1.0, glm::vec3(1.0f, 1.0f, 1.0f));
-	#endif
+	font.RenderText("text_1 opengl demo.", 10, 20, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+	font.RenderText("OGL Demo", 600.0f, 570.0f, 0.5f, glm::vec3(1.0f, 1.0f, 0.0f));
 	
 	// Swap buffers
 	glfwSwapBuffers(window);
@@ -157,7 +159,7 @@ int main( void )
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// Open a window and create its OpenGL context
-	window = glfwCreateWindow( 1024, 768, "Colored Cube", NULL, NULL);
+	window = glfwCreateWindow( WINDOW_WIDTH, WINDOW_HEIGHT, "Colored Cube", NULL, NULL);
 	if( window == NULL ){
 		fprintf( stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n" );
 		getchar();
