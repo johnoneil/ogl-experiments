@@ -8,7 +8,8 @@ SET( SRCS
     model.cpp
     shader.cpp
     text.cpp
-    color.cpp)
+    color.cpp
+    colorrect.cpp)
 
 add_library(${PROJECT_NAME} STATIC ${SRCS} )
 

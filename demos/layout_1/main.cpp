@@ -6,6 +6,7 @@
 #include <GLFW/glfw3.h>
 
 #include <framework/text.h>
+#include <framework/colorrect.h>
 
 static const unsigned int WINDOW_HEIGHT = 768;
 static const unsigned int WINDOW_WIDTH = 1024;
@@ -13,10 +14,13 @@ static const unsigned int WINDOW_WIDTH = 1024;
 // Isolated render loop to aid porting
 GLFWwindow* window = nullptr;
 Font font;
+ColorRect rect;
 void renderLoop(void) {
 
 	// Clear the screen
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	rect.Render();
 
 	font.RenderText("layout_1 opengl demo.", 10, 20, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 	font.RenderText("OGL Demo", 600.0f, 570.0f, 0.5f, glm::vec3(1.0f, 1.0f, 0.0f));
@@ -62,6 +66,9 @@ int main( void )
 	if(!font.Load("assets/arial.ttf")) {
 		printf("Failed to initialize font!\n");
 	}
+
+	rect = ColorRect(glm::vec2(50, 50), glm::vec2(50, 50), Color::Red);
+	rect.Initialize();
 
     // render loop
     // -----------
