@@ -29,6 +29,9 @@ ADD_SUBDIRECTORY (thirdparty)
 # TODO: remove auto-generated html in favor of custom template
 IF (EMSCRIPTEN)
     SET (BUILD_HTML True)
+    SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s USE_ZLIB=1")
+    SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s USE_LIBPNG=1")
+    SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s USE_BZIP2=1")
 ENDIF()
 
 #demos
