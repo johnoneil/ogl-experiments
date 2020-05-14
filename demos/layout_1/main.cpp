@@ -7,6 +7,7 @@
 
 #include <framework/text.h>
 #include <framework/colorrect.h>
+#include <framework/stage.h>
 
 static const unsigned int WINDOW_HEIGHT = 768;
 static const unsigned int WINDOW_WIDTH = 1024;
@@ -18,7 +19,9 @@ ColorRect rect1, rect2, rect3;
 void renderLoop(void) {
 
 	// Clear the screen
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	Stage::getStage().Render();
 
 	rect1.Render();
 	rect2.Render();
@@ -61,9 +64,13 @@ int main( void )
 	// Ensure we can capture the escape key being pressed below
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 
-	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS); 
+	//glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+	//glEnable(GL_DEPTH_TEST);
+	//glDepthFunc(GL_LESS);
+
+	Stage::getStage().setSize(glm::vec2(WINDOW_WIDTH, WINDOW_HEIGHT));
+	Stage::getStage().setColor(Color::White);
+	Stage::getStage().Initialize();
 
 	if(!font.Load("assets/arial.ttf")) {
 		printf("Failed to initialize font!\n");
