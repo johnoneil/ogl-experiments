@@ -7,23 +7,27 @@ class i2D : std::enable_shared_from_this<i2D>
 public:
     virtual ~i2D() {};
 public:
-    void addChild(std::shared_ptr<i2D>& child) {
-        if(child->getParent()) {
-            child->getParent()->removeChild(child);
+    void addChild(std::shared_ptr<i2D> child) {
+        if(auto spt = _parent.lock()) {
+            spt->removeChild(child);
         }
         _children.push_back(child);
-        child->setParent(std::shared_ptr<i2D>(this));
+        #if 0
+        child->setParent(shared_from_this());
+        #endif
     };
     void removeChild(std::shared_ptr<i2D>& child) {
 
     }
-    void setParent(std::shared_ptr<i2D>&& parent) { _parent = parent;}
-    std::shared_ptr<i2D> getParent() const { return _parent; }
+    void setParent(std::shared_ptr<i2D> parent) { _parent = parent;}
+    std::weak_ptr<i2D> getParent() const { return _parent; }
 public:
     bool Initialize() {
         // initialize self then children
         bool success = InitializeImpl();
+        #if 0
         if(!success) return success;
+        #endif
         for(auto c : _children ) {
             success &= c->Initialize();
         }
@@ -32,7 +36,9 @@ public:
     bool Render() {
         // Render self, then render children
         bool success = RenderImpl();
+        #if 0
         if(!success) return success;
+        #endif
         for(auto c : _children ) {
             success &= c->Render();
         }
@@ -43,5 +49,5 @@ private:
     virtual bool RenderImpl() = 0;
 protected:
     std::vector<std::shared_ptr<i2D>> _children;
-    std::shared_ptr<i2D> _parent;
+    std::weak_ptr<i2D> _parent;
 };

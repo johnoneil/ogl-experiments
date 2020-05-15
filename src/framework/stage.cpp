@@ -1,8 +1,6 @@
 #include <framework/stage.h>
 #include <framework/gl.h>
 
-Stage Stage::_instance;
-
 bool Stage::InitializeImpl() {
     // nothing to init
     return true;
@@ -15,4 +13,11 @@ bool Stage::RenderImpl() {
     //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glClear(GL_COLOR_BUFFER_BIT);
     return true;
+}
+
+Stage& GetStage() {
+    static std::shared_ptr<Stage> _stage;
+    if(!_stage)
+        _stage = std::make_shared<Stage>();
+    return *_stage;
 }

@@ -15,17 +15,17 @@ static const unsigned int WINDOW_WIDTH = 1024;
 // Isolated render loop to aid porting
 GLFWwindow* window = nullptr;
 Font font;
-ColorRect rect1, rect2, rect3;
+std::shared_ptr<ColorRect> rect1, rect2, rect3;
 void renderLoop(void) {
 
 	// Clear the screen
 	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	Stage::getStage().Render();
+	GetStage().Render();
 
-	rect1.Render();
-	rect2.Render();
-	rect3.Render();
+	//rect1.Render();
+	//rect2.Render();
+	//rect3.Render();
 
 	font.RenderText("layout_1 opengl demo.", 10, 20, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 	font.RenderText("OGL Demo", 600.0f, 570.0f, 0.5f, glm::vec3(1.0f, 1.0f, 0.0f));
@@ -68,20 +68,22 @@ int main( void )
 	//glEnable(GL_DEPTH_TEST);
 	//glDepthFunc(GL_LESS);
 
-	Stage::getStage().setSize(glm::vec2(WINDOW_WIDTH, WINDOW_HEIGHT));
-	Stage::getStage().setColor(Color::White);
-	Stage::getStage().Initialize();
+	GetStage().setSize(glm::vec2(WINDOW_WIDTH, WINDOW_HEIGHT));
+	GetStage().setColor(Color::White);
+	GetStage().Initialize();
 
 	if(!font.Load("assets/arial.ttf")) {
 		printf("Failed to initialize font!\n");
 	}
 
-	rect1 = ColorRect(glm::vec2(50, 50), glm::vec2(200, 200), Color::Red);
-	rect1.Initialize();
-	rect2 = ColorRect(glm::vec2(50, 50), glm::vec2(100, 100), Color::Green);
-	rect2.Initialize();
-	rect3 = ColorRect(glm::vec2(75, 75), glm::vec2(50, 50), Color::Blue);
-	rect3.Initialize();
+	rect1 = std::make_shared<ColorRect>(glm::vec2(50, 50), glm::vec2(200, 200), Color::Red);
+	GetStage().addChild(rect1);
+	rect2 = std::make_shared<ColorRect>(glm::vec2(50, 50), glm::vec2(100, 100), Color::Green);
+	rect1->addChild(rect2);
+	rect3 = std::make_shared<ColorRect>(glm::vec2(75, 75), glm::vec2(50, 50), Color::Blue);
+	rect1->addChild(rect3);
+
+	GetStage().Initialize();
 
     // render loop
     // -----------

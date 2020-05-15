@@ -4,9 +4,28 @@
 #include <glm/glm.hpp>
 #include <memory>
 
-class ColorRectImpl;
+#include <framework/shader.h>
+#include <framework/gl.h>
+#include <framework/i2d.h>
 
-class ColorRect {
+#include <glm/gtc/matrix_transform.hpp>
+
+
+class ColorRect : public i2D {
+private:
+    glm::vec2 _pos = {0.0f, 0.0f};
+    glm::vec2 _sz = {0.0f, 0.0f};
+    Color _color;
+    Shader _shader;
+    // Trianglestrip vertices
+    static constexpr float _vertices [] = { 
+        0.0f, 1.0f,
+        0.0f, 0.0f,
+        1.0f, 1.0f,
+        1.0f, 0.0f
+    };
+    GLuint _VAO = 0;
+    GLuint _VBO = 0;
 public:
     ColorRect();
     ColorRect& operator=(const ColorRect& rhs);
@@ -17,9 +36,9 @@ public:
     ColorRect(const glm::vec2& pos, const glm::vec2& sz, const Color& color);
 
 public:
-    void Initialize();
-    void DeInitialize();
-    void Render();
+    bool InitializeImpl() override;
+    //void DeInitialize();
+    bool RenderImpl() override;
 
 public:
     glm::vec2 GetPos() const;
@@ -30,5 +49,5 @@ public:
     void SetColor(const Color& color);
 
 private:
-    std::shared_ptr<ColorRectImpl> _impl;
+
 };
