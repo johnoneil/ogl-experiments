@@ -14,7 +14,9 @@ static const unsigned int WINDOW_WIDTH = 1024;
 
 // Isolated render loop to aid porting
 GLFWwindow* window = nullptr;
-Font font;
+std::shared_ptr<Font> font;
+std::shared_ptr<Text> text1;
+std::shared_ptr<Text> text2;
 std::shared_ptr<ColorRect> rect1, rect2, rect3;
 void renderLoop(void) {
 
@@ -23,12 +25,8 @@ void renderLoop(void) {
 
 	GetStage().Render();
 
-	//rect1.Render();
-	//rect2.Render();
-	//rect3.Render();
-
-	font.RenderText("layout_1 opengl demo.", 10, 20, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-	font.RenderText("OGL Demo", 600.0f, 570.0f, 0.5f, glm::vec3(1.0f, 1.0f, 0.0f));
+	//font.RenderText("layout_1 opengl demo.", 10, 20, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+	//font.RenderText("OGL Demo", 600.0f, 570.0f, 0.5f, glm::vec3(1.0f, 1.0f, 0.0f));
 	
 	// Swap buffers
 	glfwSwapBuffers(window);
@@ -69,10 +67,11 @@ int main( void )
 	//glDepthFunc(GL_LESS);
 
 	GetStage().setSize(glm::vec2(WINDOW_WIDTH, WINDOW_HEIGHT));
-	GetStage().setColor(Color::White);
+	GetStage().setColor(Color::Gray);
 	GetStage().Initialize();
 
-	if(!font.Load("assets/arial.ttf")) {
+	font = std::make_shared<Font>();
+	if(!font->Load("assets/arial.ttf")) {
 		printf("Failed to initialize font!\n");
 	}
 
@@ -82,6 +81,12 @@ int main( void )
 	rect1->addChild(rect2);
 	rect3 = std::make_shared<ColorRect>(glm::vec2(50, 0), glm::vec2(50, 50), Color::Blue);
 	rect1->addChild(rect3);
+
+	//text1 = std::make_shared<Text>(const std::string& str, const glm::vec2& pos, const float scale, const Color& color, std::shared_ptr<Font> font)
+	text1 = std::make_shared<Text>("layout_1 opengl demo.", glm::vec2(0,0), 1.0f, Color::White, font);
+	text2 = std::make_shared<Text>("OpenGL Demo.", glm::vec2(0,0), 2.0f, Color::Yellow, font);
+	GetStage().addChild(text1);
+	rect1->addChild(text2);
 
 	GetStage().Initialize();
 

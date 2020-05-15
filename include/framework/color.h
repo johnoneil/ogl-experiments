@@ -34,9 +34,38 @@ private:
     glm::vec4 _color = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 public:
-    static Color Red;
-    static Color Green;
-    static Color Blue;
-    static Color White;
     static Color Black;
+    static Color Navy;
+    static Color Blue;
+    static Color Green;
+    static Color Teal;
+    static Color Lime;
+    static Color Aqua;
+    static Color Maroon;
+    static Color Purple;
+    static Color Olive;
+    static Color Gray;
+    static Color Silver;
+    static Color Red;
+    static Color Fuchsia;
+    static Color Yellow;
+    static Color White;
+    
+    /*
+    black 	rgb(0,0,0)	
+    navy 	rgb(0,0,128)	
+    blue 	rgb(0,0,255)	
+    green 	rgb(0,128,0)	
+    teal 	rgb(0,128,128)	
+    lime 	rgb(0,255,0)	
+    aqua 	rgb(0,255,255)	
+    maroon 	rgb(128,0,0)	
+    purple 	rgb(128,0,128)	
+    olive 	rgb(128,128,0)	
+    gray 	rgb(128,128,128)	
+    silver 	rgb(192,192,192)	
+    red 	rgb(255,0,0)	
+    fuchsia 	rgb(255,0,255)	
+    yellow 	rgb(255,255,0)	
+    white 	rgb(255,255,255) */
 };

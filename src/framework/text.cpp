@@ -211,3 +211,69 @@ void Font::RenderText(const std::string& text,
     const glm::vec3& color) {
         return _impl->RenderText(text, x, y, scale, color);
 }
+
+
+Text::Text() {}
+Text& Text::operator=(const Text& rhs) {
+    if(&rhs != this) {
+        _str = rhs._str;
+        _pos = rhs._pos;
+        _color = rhs._color;
+        _scale = rhs._scale;
+        _font = rhs._font;
+    }
+    return *this;
+}
+
+Text::Text(const std::string& str, const glm::vec2& pos,
+    const float scale, const Color& color, std::shared_ptr<Font> font) 
+    :_str(str)
+    ,_pos(pos)
+    ,_scale(scale)
+    ,_color(color)
+    ,_font(font){}
+
+bool Text::InitializeImpl() {
+    return true;
+}
+
+bool Text::RenderImpl() {
+    _font->RenderText(_str, _pos.x, _pos.y, _scale, _color.Vec3());
+    return true;
+}
+
+glm::mat4 Text::ModelTransformImpl() const {
+    return glm::mat4(1.0);
+}
+
+glm::vec2 Text::GetPos() const {
+    return _pos;
+}
+
+float Text::GetScale() const {
+    return _scale;
+}
+
+Color Text::GetColor() const {
+    return _color;
+}
+
+std::shared_ptr<Font> Text::GetFont() const {
+    return _font;
+}
+
+void Text::SetPos(const glm::vec2& pos) {
+    _pos = pos;
+}
+
+void Text::SetScale(const float scale) {
+    _scale = scale;
+}
+
+void Text::SetColor(const Color& color) {
+    _color = color;
+}
+
+void Text::SetFont(std::shared_ptr<Font> font) {
+    _font = font;
+}
