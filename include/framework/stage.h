@@ -17,8 +17,9 @@ public:
     Color getColor() const { return _bgColor; }
     void setColor(const Color& color) { _bgColor = color; }
 private:
-    virtual bool InitializeImpl();
-    virtual bool RenderImpl();
+    bool InitializeImpl() override;
+    bool RenderImpl() override;
+    glm::mat4 ModelTransformImpl() const override;
 private:
     Color _bgColor;
     glm::vec2 _sz;

@@ -15,9 +15,14 @@ bool Stage::RenderImpl() {
     return true;
 }
 
+glm::mat4 Stage::ModelTransformImpl() const {
+    return glm::mat4(1.0);
+}
+
 Stage& GetStage() {
     static std::shared_ptr<Stage> _stage;
-    if(!_stage)
+    if(!_stage) {
         _stage = std::make_shared<Stage>();
+    }
     return *_stage;
 }

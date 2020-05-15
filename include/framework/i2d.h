@@ -2,24 +2,25 @@
 #include <memory>
 #include <vector>
 
-class i2D : std::enable_shared_from_this<i2D> 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+class i2D : public std::enable_shared_from_this<i2D> 
 {
 public:
     virtual ~i2D() {};
 public:
     void addChild(std::shared_ptr<i2D> child) {
+        // TODO: make sure the child is not anywhere in the tree already
         if(auto spt = _parent.lock()) {
             spt->removeChild(child);
         }
         _children.push_back(child);
-        #if 0
         child->setParent(shared_from_this());
-        #endif
     };
     void removeChild(std::shared_ptr<i2D>& child) {
-
     }
-    void setParent(std::shared_ptr<i2D> parent) { _parent = parent;}
+    void setParent(std::weak_ptr<i2D> parent) { _parent = parent;}
     std::weak_ptr<i2D> getParent() const { return _parent; }
 public:
     bool Initialize() {
@@ -44,9 +45,18 @@ public:
         }
         return success;
     }
+    glm::mat4 GetModelTransform() const {
+        glm::mat4 m = ModelTransformImpl();
+        glm::mat4 p = glm::mat4(1.0);
+        if(auto parent = _parent.lock()) {
+            p = parent->GetModelTransform();
+        }
+        return p * m;
+    }
 private:
     virtual bool InitializeImpl() = 0;
     virtual bool RenderImpl() = 0;
+    virtual glm::mat4 ModelTransformImpl() const = 0;
 protected:
     std::vector<std::shared_ptr<i2D>> _children;
     std::weak_ptr<i2D> _parent;

@@ -39,6 +39,7 @@ public:
     bool InitializeImpl() override;
     //void DeInitialize();
     bool RenderImpl() override;
+    glm::mat4 ModelTransformImpl() const override;
 
 public:
     glm::vec2 GetPos() const;

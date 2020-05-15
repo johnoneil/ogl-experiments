@@ -67,12 +67,16 @@ void ColorRect::DeInitialize() {
 #endif
 
 bool ColorRect::RenderImpl() {
+
+    // Translate according to parent's position
+    glm::mat4 model = GetModelTransform();
+    model = glm::scale(model, glm::vec3(_sz.x, _sz.y, 1));
+
     glDisable(GL_DEPTH_TEST);
     _shader.use();
     glm::mat4 projection = glm::ortho( 0.0f, 1024.0f, 768.0f, 0.0f,-5.0f, 5.0f);
-    glm::mat4 model = glm::mat4(1.0);
-    model = glm::translate(model, glm::vec3(_pos.x, _pos.y, 0.0f));
-    model = glm::scale(model, glm::vec3(_sz.x, _sz.y, 1));
+    //model = glm::translate(model, glm::vec3(_pos.x, _pos.y, 0.0f));
+    //model = glm::scale(model, glm::vec3(_sz.x, _sz.y, 1));
     _shader.setMat4("projection", projection);
     _shader.setMat4("model", model);
     _shader.setVec4("c", _color.Vec4());
@@ -80,6 +84,13 @@ bool ColorRect::RenderImpl() {
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glBindVertexArray(0);
     return true;
+}
+
+glm::mat4 ColorRect::ModelTransformImpl() const {
+    glm::mat4 m = glm::mat4(1.0);
+    m = glm::translate(m, glm::vec3(_pos.x, _pos.y, 0.0f));
+    //m = glm::scale(m, glm::vec3(_sz.x, _sz.y, 1));
+    return m;
 }
 
 glm::vec2 ColorRect::GetPos() const {

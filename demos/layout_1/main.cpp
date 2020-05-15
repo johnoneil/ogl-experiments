@@ -78,9 +78,9 @@ int main( void )
 
 	rect1 = std::make_shared<ColorRect>(glm::vec2(50, 50), glm::vec2(200, 200), Color::Red);
 	GetStage().addChild(rect1);
-	rect2 = std::make_shared<ColorRect>(glm::vec2(50, 50), glm::vec2(100, 100), Color::Green);
+	rect2 = std::make_shared<ColorRect>(glm::vec2(0, 0), glm::vec2(100, 100), Color::Green);
 	rect1->addChild(rect2);
-	rect3 = std::make_shared<ColorRect>(glm::vec2(75, 75), glm::vec2(50, 50), Color::Blue);
+	rect3 = std::make_shared<ColorRect>(glm::vec2(50, 0), glm::vec2(50, 50), Color::Blue);
 	rect1->addChild(rect3);
 
 	GetStage().Initialize();
