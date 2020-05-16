@@ -3,20 +3,34 @@
 #include "framework/shader.h"
 #include "framework/i2d.h"
 #include "framework/color.h"
+#include "framework/gl.h"
+#include <glm/glm.hpp>
+#include <map>
+
 #include <string>
 #include <memory>
 
 class FontImpl;
 
+struct Character {
+    unsigned int TextureID; // ID handle of the glyph texture
+    glm::ivec2   Size;      // Size of glyph
+    glm::ivec2   Bearing;   // Offset from baseline to left/top of glyph
+    unsigned int Advance;   // Horizontal offset to advance to next glyph
+};
 class Font
 {
 private:
-    std::shared_ptr<FontImpl> _impl;
+    //GLuint _texture = 0;
+    Shader _shader;
+    GLuint VAO = 0;
+    GLuint VBO = 0;
+    std::map<GLchar, Character> Characters;
 
 public:
-    Font();
-    Font& operator=(const Font& rhs);
-    ~Font();
+    Font() = default;
+    Font& operator=(const Font& rhs) = default;
+    ~Font() = default;
 
 public:
     bool Load(const std::string& font);
