@@ -1,4 +1,5 @@
 #include <framework/text.h>
+#include <framework/stage.h>
 
 #if 1
 #include <ft2build.h>
@@ -141,12 +142,8 @@ public:
 
         // activate corresponding render state	
         _shader.use();
-        //glUniform3f(glGetUniformLocation(_shader.ID, "textColor"), color.x, color.y, color.z);
         _shader.setVec3("textColor", color);
-        // TODO: access screen dimensions properly
-        glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(800), 0.0f, static_cast<float>(600));
-        //glUniformMatrix4fv(glGetUniformLocation(shader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-        _shader.setMat4("projection", projection);
+        _shader.setMat4("projection", GetStage().GetProjectionMatrix());
         glActiveTexture(GL_TEXTURE0);
         glBindVertexArray(VAO);
 

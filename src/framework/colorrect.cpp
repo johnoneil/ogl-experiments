@@ -2,6 +2,7 @@
 
 #include <framework/shader.h>
 #include <framework/gl.h>
+#include <framework/stage.h>
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -74,10 +75,7 @@ bool ColorRect::RenderImpl() {
 
     glDisable(GL_DEPTH_TEST);
     _shader.use();
-    glm::mat4 projection = glm::ortho( 0.0f, 1024.0f, 768.0f, 0.0f,-5.0f, 5.0f);
-    //model = glm::translate(model, glm::vec3(_pos.x, _pos.y, 0.0f));
-    //model = glm::scale(model, glm::vec3(_sz.x, _sz.y, 1));
-    _shader.setMat4("projection", projection);
+    _shader.setMat4("projection", GetStage().GetProjectionMatrix());
     _shader.setMat4("model", model);
     _shader.setVec4("c", _color.Vec4());
     glBindVertexArray(_VAO);
