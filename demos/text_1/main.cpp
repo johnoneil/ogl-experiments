@@ -134,8 +134,10 @@ void renderLoop(void) {
 	glBindVertexArray(0);
 	glUseProgram(0);
 
+	#if 0
 	font.RenderText("text_1 opengl demo.", 10, 20, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 	font.RenderText("OGL Demo", 600.0f, 570.0f, 0.5f, glm::vec3(1.0f, 1.0f, 0.0f));
+	#endif
 	
 	// Swap buffers
 	glfwSwapBuffers(window);

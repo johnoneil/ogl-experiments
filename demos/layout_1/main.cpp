@@ -74,9 +74,9 @@ int main( void )
 
 	//text1 = std::make_shared<Text>(const std::string& str, const glm::vec2& pos, const float scale, const Color& color, std::shared_ptr<Font> font)
 	text1 = std::make_shared<Text>("A.g,p-C123%@", glm::vec2(0,0), 1.0f, Color::White, font);
-	//text2 = std::make_shared<Text>("OpenGL Demo.", glm::vec2(0,0), 2.0f, Color::Yellow, font);
+	text2 = std::make_shared<Text>("OpenGL Demo.", glm::vec2(0,0), 1.0f, Color::Yellow, font);
 	GetStage().addChild(text1);
-	//rect1->addChild(text2);
+	rect1->addChild(text2);
 
 	GetStage().Initialize();
 

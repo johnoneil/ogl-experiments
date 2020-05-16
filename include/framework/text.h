@@ -50,7 +50,7 @@ public:
 public:
     bool Load(const std::string& font, const unsigned int size = 24);
     void RenderText(const std::string& text,
-                    const float x, const float y, const float scale,
+                    const glm::mat4& modelMatrix,
                     const glm::vec3& color);
 
     unsigned int GetSize() const { return _size; }

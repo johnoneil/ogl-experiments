@@ -145,11 +145,11 @@ bool Font::Load(const std::string& font, const unsigned int size /* = 24*/) {
 }
 
 void Font::RenderText(const std::string& text,
-    const float x, const float y, const float scale,
+    const glm::mat4& modelMatrix,
     const glm::vec3& color) {
     
-    auto _x = x;
-    auto _y = y;
+    auto _x = 0;
+    auto _y = 0;
 
     #if 1
     glEnable(GL_BLEND);
@@ -164,34 +164,15 @@ void Font::RenderText(const std::string& text,
 
     // iterate through all characters
     std::string::const_iterator c;
-    glm::mat4 model(1.0);
     for (c = text.begin(); c != text.end(); c++) 
     {
         Character ch = Characters[*c];
 
-        #if 0
-        float xpos = _x + ch.Bearing.x * scale;
-        float ypos = _y - (ch.Size.y - ch.Bearing.y) * scale;
-        #else
         float xpos = _x + ch.Bearing.x;
         float ypos = _y + (_size - ch.Bearing.y);
-        #endif
-
-        model = glm::mat4(1.0);
-        model = glm::translate(model, glm::vec3(xpos, ypos, 1.0f));
-        model = glm::scale(model, glm::vec3(ch.Size.x * scale, ch.Size.y * scale, 1.0f));
-
-        #if 0
-        float vertices[6][4] = {
-            { xpos,     ypos + h,   0.0f, 0.0f },            
-            { xpos,     ypos,       0.0f, 1.0f },
-            { xpos + w, ypos,       1.0f, 1.0f },
-
-            { xpos,     ypos + h,   0.0f, 0.0f },
-            { xpos + w, ypos,       1.0f, 1.0f },
-            { xpos + w, ypos + h,   1.0f, 0.0f }           
-        };s
-        #endif
+        glm::mat4 model = modelMatrix;
+        model = glm::translate(model, glm::vec3(xpos, ypos, 0.0f));
+        model = glm::scale(model, glm::vec3(ch.Size.x, ch.Size.y, 1.0f));
 
         _shader.setVec3("textColor", color);
         _shader.setMat4("projection", GetStage().GetProjectionMatrix());
@@ -201,7 +182,7 @@ void Font::RenderText(const std::string& text,
         glBindTexture(GL_TEXTURE_2D, ch.TextureID);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
         // now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-        _x += (ch.Advance >> 6) * scale; // bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
+        _x += (ch.Advance >> 6); // bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
     }
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -232,7 +213,11 @@ bool Text::InitializeImpl() {
 }
 
 bool Text::RenderImpl() {
-    _font->RenderText(_str, _pos.x, _pos.y, _scale, _color.Vec3());
+    glm::mat4 model = GetModelTransform();
+    // TODO: text scaling here, not in the font
+    //model = glm::scale(model, glm::vec3(_sz.x, _sz.y, 1));
+    model = glm::translate(model, glm::vec3(_pos.x, _pos.y, 0.0f));
+    _font->RenderText(_str, model, _color.Vec3());
     return true;
 }
 
