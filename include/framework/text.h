@@ -17,6 +17,20 @@ struct Character {
     glm::ivec2   Size;      // Size of glyph
     glm::ivec2   Bearing;   // Offset from baseline to left/top of glyph
     unsigned int Advance;   // Horizontal offset to advance to next glyph
+    constexpr static float vertices[] = {
+        // vertex   // texcoord
+        0.0f, 1.0f, 0.0f, 1.0f,
+        0.0f, 0.0f, 0.0f, 0.0f,
+        1.0f, 1.0f, 1.0f, 1.0f,
+        1.0f, 0.0f, 1.0f, 0.0f
+    };
+    GLuint _VBO = 0;
+    GLuint _VAO = 0;
+    Character() = default;
+    Character(const Character& other);
+    Character& operator=(const Character& rhs);
+    ~Character() = default;
+    Character(const unsigned int texture, const glm::ivec2& size, const glm::ivec2& bearing, const unsigned int advance);
 };
 class Font
 {
@@ -26,6 +40,7 @@ private:
     GLuint VAO = 0;
     GLuint VBO = 0;
     std::map<GLchar, Character> Characters;
+    unsigned int _size = 24;
 
 public:
     Font() = default;
@@ -33,10 +48,12 @@ public:
     ~Font() = default;
 
 public:
-    bool Load(const std::string& font);
+    bool Load(const std::string& font, const unsigned int size = 24);
     void RenderText(const std::string& text,
                     const float x, const float y, const float scale,
                     const glm::vec3& color);
+
+    unsigned int GetSize() const { return _size; }
 
 };
 

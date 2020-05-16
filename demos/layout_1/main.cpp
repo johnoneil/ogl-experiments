@@ -20,13 +20,7 @@ std::shared_ptr<Text> text2;
 std::shared_ptr<ColorRect> rect1, rect2, rect3;
 void renderLoop(void) {
 
-	// Clear the screen
-	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 	GetStage().Render();
-
-	//font.RenderText("layout_1 opengl demo.", 10, 20, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-	//font.RenderText("OGL Demo", 600.0f, 570.0f, 0.5f, glm::vec3(1.0f, 1.0f, 0.0f));
 	
 	// Swap buffers
 	glfwSwapBuffers(window);
@@ -62,10 +56,6 @@ int main( void )
 	// Ensure we can capture the escape key being pressed below
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 
-	//glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-	//glEnable(GL_DEPTH_TEST);
-	//glDepthFunc(GL_LESS);
-
 	GetStage().setSize(glm::vec2(WINDOW_WIDTH, WINDOW_HEIGHT));
 	GetStage().setColor(Color::Gray);
 	GetStage().Initialize();
@@ -83,10 +73,10 @@ int main( void )
 	rect1->addChild(rect3);
 
 	//text1 = std::make_shared<Text>(const std::string& str, const glm::vec2& pos, const float scale, const Color& color, std::shared_ptr<Font> font)
-	text1 = std::make_shared<Text>("layout_1 opengl demo.", glm::vec2(0,0), 1.0f, Color::White, font);
-	text2 = std::make_shared<Text>("OpenGL Demo.", glm::vec2(0,0), 2.0f, Color::Yellow, font);
+	text1 = std::make_shared<Text>("A.g,p-C123%@", glm::vec2(0,0), 1.0f, Color::White, font);
+	//text2 = std::make_shared<Text>("OpenGL Demo.", glm::vec2(0,0), 2.0f, Color::Yellow, font);
 	GetStage().addChild(text1);
-	rect1->addChild(text2);
+	//rect1->addChild(text2);
 
 	GetStage().Initialize();
 
