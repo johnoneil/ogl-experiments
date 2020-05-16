@@ -13,3 +13,6 @@
 [submodule "thirdparty/yoga"]
 	path = thirdparty/yoga
 	url = https://github.com/facebook/yoga.git
+[submodule "thirdparty/tweeny"]
+	path = thirdparty/tweeny
+	url = https://github.com/mobius3/tweeny.git
