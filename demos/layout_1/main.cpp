@@ -8,6 +8,7 @@
 #include <framework/text.h>
 #include <framework/colorrect.h>
 #include <framework/stage.h>
+#include <framework/tween.h>
 
 static const unsigned int WINDOW_HEIGHT = 768;
 static const unsigned int WINDOW_WIDTH = 1024;
@@ -18,7 +19,12 @@ std::shared_ptr<Font> font;
 std::shared_ptr<Text> text1;
 std::shared_ptr<Text> text2;
 std::shared_ptr<ColorRect> rect1, rect2, rect3;
+std::shared_ptr<iTween> tween;
+float tweenfloat = 0.0f;
 void renderLoop(void) {
+
+	if(tween && !tween->isComplete())
+		tween->Update(0.1f);
 
 	GetStage().Render();
 	
@@ -79,6 +85,20 @@ int main( void )
 	rect1->addChild(text2);
 
 	GetStage().Initialize();
+
+	tween = Tween::Create(10.0f, TweenSystem::Easing::LINEAR,
+        nullptr, // onStart
+        [&](float dt, Tween& tween)->bool{ // onUpdate
+			tweenfloat += dt;
+			if(tweenfloat >= 100.0f) return true;
+			printf("Tween update dt: %f value: %f\n", dt, tweenfloat);
+			return false;
+		},
+        [&](float dt, Tween& tween)->bool { // onComplete
+			printf("Tween complete\n");
+			return tween.isComplete();
+		},
+        nullptr); // onCancel
 
     // render loop
     // -----------
