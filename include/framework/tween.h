@@ -14,6 +14,7 @@ public:
 public:
     virtual bool Update(const float dt) = 0;
     virtual bool isComplete() const = 0;
+    virtual float getAlpha() const = 0;
 };
 
 class TweenSystem : public iSubsystem
@@ -57,7 +58,7 @@ private:
 };
 
 
-class Tween : public iTween, public std::enable_shared_from_this<Tween>
+class Tween : public iTween
 {
 public:
     Tween() {
@@ -104,6 +105,11 @@ public:
     }
     bool isComplete() const override {
         return _t >= _duration;
+    }
+    float getAlpha() const override {
+        if(_duration != 0.0f)
+            return _t / _duration;
+        return 0.0f;
     }
 private:
     std::function<bool(float, Tween& tween)> _onStart;
