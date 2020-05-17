@@ -24,6 +24,7 @@ public:
     virtual float getAlpha() const = 0;
 public:
     virtual std::shared_ptr<iTween> Then(std::shared_ptr<iTween>) = 0;
+    virtual std::shared_ptr<iTween> Then(std::function<void(void)>) = 0;
 };
 
 class Tween;
@@ -144,10 +145,10 @@ public:
     }
 public:
     static std::shared_ptr<iTween> Create(const float duration, const TweenSystem::Easing easing,
-        std::function<bool(float, Tween& tween)>onStart,
-        std::function<bool(float, Tween& tween)>onUpdate,
-        std::function<bool(float, Tween& tween)>onComplete,
-        std::function<bool(float, Tween& tween)>onCancel) {
+        std::function<bool(float, iTween& tween)>onStart,
+        std::function<bool(float, iTween& tween)>onUpdate,
+        std::function<bool(float, iTween& tween)>onComplete,
+        std::function<bool(float, iTween& tween)>onCancel) {
             auto tween = std::make_shared<Tween>();
             tween->_onStart = onStart;
             tween->_onUpdate = onUpdate;
@@ -233,11 +234,25 @@ public:
         }
         return shared_from_this();
     }
+    // Call a given function after the last tween completes
+    std::shared_ptr<iTween> Then(std::function<void(void)> f) override {
+        if(_next) {
+            _next->Then(f);
+        } else {
+            auto _oldComplete = _onComplete;
+            _onComplete = [=](float dt, iTween& tween)->bool {
+                if(_oldComplete)
+                    _oldComplete;
+                f();
+            };
+        }
+        return shared_from_this();
+    }
 private:
-    std::function<bool(float, Tween& tween)> _onStart;
-    std::function<bool(float, Tween& tween)> _onUpdate;
-    std::function<bool(float, Tween& tween)> _onComplete;
-    std::function<bool(float, Tween& tween)> _onCancel;
+    std::function<bool(float, iTween& tween)> _onStart;
+    std::function<bool(float, iTween& tween)> _onUpdate;
+    std::function<bool(float, iTween& tween)> _onComplete;
+    std::function<bool(float, iTween& tween)> _onCancel;
     float _t = 0;
     float _duration = 0;
     std::function<float(float)> _easing;
@@ -251,7 +266,7 @@ std::shared_ptr<iTween> TweenPos(std::shared_ptr<T> obj, const glm::vec2 finalPo
 	glm::vec2 initialPos = obj->GetPos();
 	auto tween = Tween::Create(duration, easing,
         nullptr, // onStart
-        [=](float dt, Tween& tween)->bool{ // onUpdate
+        [=](float dt, iTween& tween)->bool{ // onUpdate
             auto obj = weakObj.lock();
             if(obj) {
 			    float a = tween.getAlpha();
@@ -268,7 +283,7 @@ std::shared_ptr<iTween> TweenPos(std::shared_ptr<T> obj, const glm::vec2 finalPo
             }
 			return false;
 		},
-        [=](float dt, Tween& tween)->bool { // onComplete
+        [=](float dt, iTween& tween)->bool { // onComplete
 			//printf("Tween complete\n");
 			return tween.isComplete();
 		},
@@ -285,7 +300,7 @@ std::shared_ptr<iTween> TweenColor(std::shared_ptr<T> obj, const Color& finalCol
 	Color initialColor = obj->GetColor();
 	auto tween = Tween::Create(duration, easing,
         nullptr, // onStart
-        [=](float dt, Tween& tween)->bool{ // onUpdate
+        [=](float dt, iTween& tween)->bool{ // onUpdate
             auto obj = weakObj.lock();
             if(obj) {
 			    float a = tween.getAlpha();
@@ -302,7 +317,7 @@ std::shared_ptr<iTween> TweenColor(std::shared_ptr<T> obj, const Color& finalCol
             }
 			return false;
 		},
-        [=](float dt, Tween& tween)->bool { // onComplete
+        [=](float dt, iTween& tween)->bool { // onComplete
 	        return tween.isComplete();
 		},
         nullptr); // onCancel
