@@ -52,6 +52,7 @@ public:
     void RenderText(const std::string& text,
                     const glm::mat4& modelMatrix,
                     const Color& color);
+    glm::vec2 GetRect(const std::string& str) const;
 
     unsigned int GetSize() const { return _size; }
 
@@ -88,6 +89,7 @@ public:
     void SetScale(const float scale);
     void SetColor(const Color& color);
     void SetFont(std::shared_ptr<Font> font);
+    glm::vec2 GetRect() const;
 
 private:
 

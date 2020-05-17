@@ -18,6 +18,7 @@ using namespace glm;
 
 static const unsigned int WINDOW_HEIGHT = 768;
 static const unsigned int WINDOW_WIDTH = 1024;
+static const unsigned int TEXT_SIZE = 48;
 
 
 #ifdef __EMSCRIPTEN__
@@ -168,9 +169,9 @@ int main( void )
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// Open a window and create its OpenGL context
-	window = glfwCreateWindow( WINDOW_WIDTH, WINDOW_HEIGHT, "Colored Cube", NULL, NULL);
+	window = glfwCreateWindow( WINDOW_WIDTH, WINDOW_HEIGHT, "Text_1 Demo", NULL, NULL);
 	if( window == NULL ){
-		fprintf( stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n" );
+		fprintf( stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 4.1 compatible. Try the 2.1 version of the tutorials.\n" );
 		getchar();
 		glfwTerminate();
 		return -1;
@@ -189,10 +190,12 @@ int main( void )
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	#endif
 
+	#if 0
 	// Enable depth test
 	glEnable(GL_DEPTH_TEST);
 	// Accept fragment if it closer to the camera than the former one
-	glDepthFunc(GL_LESS); 
+	glDepthFunc(GL_LESS);
+	#endif
 
 	#if 0
 	GLuint VertexArrayID;
@@ -335,12 +338,13 @@ int main( void )
 	#endif
 
 	auto font = std::make_shared<Font>();
-	if(!font->Load("assets/arial.ttf")) {
+	if(!font->Load("assets/arial.ttf", TEXT_SIZE)) {
 		printf("Failed to initialize font!\n");
 	}
 
-	auto text1 = std::make_shared<Text>("A.g,p-C123%@", glm::vec2(100.f, 100.0f), 1.0f, Color::White, font);
-	auto text2 = std::make_shared<Text>("OpenGL Demo.", glm::vec2(200.0f,200.0f), 1.0f, Color::Yellow, font);
+	auto text1 = std::make_shared<Text>("OpenGL Text_1 demo.", glm::vec2(0.f, 0.0f), 1.0f, Color::White, font);
+	auto text2Size = font->GetRect("OpenGL Demo.");
+	auto text2 = std::make_shared<Text>("OpenGL Demo.", glm::vec2(0.0f,static_cast<float>(WINDOW_HEIGHT-text2Size.y)), 1.0f, Color::Yellow, font);
 	GetStage().addChild(text1);
 	GetStage().addChild(text2);
 

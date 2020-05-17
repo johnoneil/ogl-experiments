@@ -188,6 +188,36 @@ void Font::RenderText(const std::string& text,
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
+glm::vec2 Font::GetRect(const std::string& str) const {
+    glm::vec2 rect(0.0f,0.0f);
+    float _x = 0;
+    for (std::string::const_iterator c = str.begin(); c != str.end(); ++c) {
+        
+        #if 0
+        Character ch = Characters[*c];
+        #else
+        auto search = Characters.find(*c);
+        Character ch = search->second;
+        #endif
+
+        float w = _x + ch.Bearing.x + ch.Size.x;
+        float top = _size - ch.Bearing.y;
+        float bottom = top + ch.Size.y ;
+        float h = bottom;
+
+        rect.x = w;
+        if(rect.y < h)
+            rect.y = h;
+
+        //float xpos = _x + ch.Bearing.x;
+        //float ypos = _y + (_size - ch.Bearing.y);
+
+        // now advance cursors for next glyph (note that advance is number of 1/64 pixels)
+        _x += (ch.Advance >> 6); // bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
+    }
+    return rect;
+}
+
 Text::Text() {}
 Text& Text::operator=(const Text& rhs) {
     if(&rhs != this) {
@@ -202,11 +232,11 @@ Text& Text::operator=(const Text& rhs) {
 
 Text::Text(const std::string& str, const glm::vec2& pos,
     const float scale, const Color& color, std::shared_ptr<Font> font) 
-    :_str(str)
-    ,_pos(pos)
-    ,_scale(scale)
+    :_pos(pos)
     ,_color(color)
-    ,_font(font){}
+    ,_font(font)
+    ,_str(str)
+    ,_scale(scale){}
 
 bool Text::InitializeImpl() {
     return true;
@@ -223,6 +253,12 @@ bool Text::RenderImpl() {
 
 glm::mat4 Text::ModelTransformImpl() const {
     return glm::mat4(1.0);
+}
+
+glm::vec2 Text::GetRect() const {
+    if(_font)
+        return _font->GetRect(_str);
+    return glm::vec2(0.f, 0.0f);
 }
 
 glm::vec2 Text::GetPos() const {
