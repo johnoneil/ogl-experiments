@@ -108,3 +108,18 @@ TweenSystem& TweenSystem::Get() {
     return LinearInterpolation;
  }
 
+std::shared_ptr<iTween> DummyTween(const float duration, std::function<void(void)> onComplete /* = nullptr*/) {
+    auto tween = Tween::Create(duration, TweenSystem::Easing::LINEAR,
+    nullptr, // onStart
+    [=](float dt, iTween& tween)->bool{ // onUpdate
+        return true; // always done on first update
+    },
+    [onComplete](float t, iTween& tween)->bool { // onComplete
+        onComplete();
+        return false;
+    },
+    nullptr); // onCancel
+
+    return tween;
+}
+

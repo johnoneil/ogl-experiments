@@ -1,6 +1,7 @@
 #pragma once
 
 #include "framework/isubsystem.h"
+#include <stdio.h>
 
 #include <memory>
 #include <functional>
@@ -24,7 +25,7 @@ public:
     virtual float getAlpha() const = 0;
 public:
     virtual std::shared_ptr<iTween> Then(std::shared_ptr<iTween>) = 0;
-    virtual std::shared_ptr<iTween> Then(std::function<void(void)>) = 0;
+    //virtual std::shared_ptr<iTween> Then(std::function<void(void)>) = 0;
 };
 
 class Tween;
@@ -194,8 +195,9 @@ public:
         bool complete = false;
         if(_onUpdate)
             complete |= _onUpdate(dt, *this);
-        if(complete && _onComplete) {
-            _onComplete(dt, *this);
+        if(complete) {
+            if(_onComplete)
+                _onComplete(dt, *this);
             if(_next)
                 _next->Start();
         }
@@ -234,20 +236,26 @@ public:
         }
         return shared_from_this();
     }
+    #if 0
+    // This impl fails on emscripten. Not sure why
     // Call a given function after the last tween completes
     std::shared_ptr<iTween> Then(std::function<void(void)> f) override {
+        #if 1
         if(_next) {
             _next->Then(f);
         } else {
-            auto _oldComplete = _onComplete;
-            _onComplete = [=](float dt, iTween& tween)->bool {
-                if(_oldComplete)
-                    _oldComplete;
-                f();
+            //auto _oldComplete = _onComplete;
+            _onComplete = [f](float dt, iTween& tween)->bool {
+                printf("oncomplete method invoked from Then()\n");
+                //if(_oldComplete)
+                //    _oldComplete(dt, tween);
+                //f();
             };
         }
+        #endif
         return shared_from_this();
     }
+    #endif
 private:
     std::function<bool(float, iTween& tween)> _onStart;
     std::function<bool(float, iTween& tween)> _onUpdate;
@@ -283,10 +291,7 @@ std::shared_ptr<iTween> TweenPos(std::shared_ptr<T> obj, const glm::vec2 finalPo
             }
 			return false;
 		},
-        [=](float dt, iTween& tween)->bool { // onComplete
-			//printf("Tween complete\n");
-			return tween.isComplete();
-		},
+        nullptr, // onComplete
         nullptr); // onCancel
     
         return tween;
@@ -317,10 +322,10 @@ std::shared_ptr<iTween> TweenColor(std::shared_ptr<T> obj, const Color& finalCol
             }
 			return false;
 		},
-        [=](float dt, iTween& tween)->bool { // onComplete
-	        return tween.isComplete();
-		},
+        nullptr, // onComplete
         nullptr); // onCancel
     
         return tween;
     }
+
+    std::shared_ptr<iTween> DummyTween(const float duration, std::function<void(void)> onComplete = nullptr);
