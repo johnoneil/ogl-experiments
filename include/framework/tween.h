@@ -23,7 +23,7 @@ public:
     virtual bool isCanceled() const = 0;
     virtual float getAlpha() const = 0;
 public:
-    //virtual std::shared_ptr<iTween> Then();
+    virtual std::shared_ptr<iTween> Then(std::shared_ptr<iTween>) = 0;
 };
 
 class Tween;
@@ -87,8 +87,39 @@ private:
     bool _initialized = false;
 };
 
+#if 0
+class TweenSeq
+{
+public:
+    TweenSeq();
+    TweenSeq(const TweenSeq& other);
+    TweenSeq& operator=TweenSeq(const TweenSeq& other);
+    ~TweenSeq();
+public:
+    TweenSeq& Then(const TweenSeq& other) {
+        if(&other != this) {
+            // queue the element to the end
+            if(_next)
+                return _next->Then(other);
+            else {
+                _next = &other;
+                return other;
+            }
+        }
 
-class Tween : public iTween
+        // and return the end
+        return other;
+    }
+    TweenSeq& Then(std::shared_ptr<iTween> tween) {
+
+    }
+private:
+    std::unique_ptr<TweenSeq> _next;
+    std::shared_ptr<iTween> _tween;
+};
+#endif
+
+class Tween : public iTween, public std::enable_shared_from_this<Tween>
 {
 private:
     enum State {
@@ -162,8 +193,11 @@ public:
         bool complete = false;
         if(_onUpdate)
             complete |= _onUpdate(dt, *this);
-        if(complete && _onComplete)
+        if(complete && _onComplete) {
             _onComplete(dt, *this);
+            if(_next)
+                _next->Start();
+        }
         return complete;
     }
     bool isPending() const override {
@@ -190,17 +224,15 @@ public:
         if(_state = State::RUNNING)
             _state = State::CANCELED;
     }
-    #if 0
-    std::shared_ptr<iTween> Then(std::shared_ptr<iTween> tween) {
-        auto oldComplete = _onComplete;
-        _onComplete = [=](float dt, Tween& tween) {
-            if(oldComplete)
-                oldComplete(dt, tween);
-            tween->Start();
+
+    std::shared_ptr<iTween> Then(std::shared_ptr<iTween> tween) override {
+        if(_next) {
+            _next->Then(tween);
+        } else {
+            _next = tween;
         }
-        return tween;
+        return shared_from_this();
     }
-    #endif
 private:
     std::function<bool(float, Tween& tween)> _onStart;
     std::function<bool(float, Tween& tween)> _onUpdate;
@@ -209,6 +241,7 @@ private:
     float _t = 0;
     float _duration = 0;
     std::function<float(float)> _easing;
+    std::shared_ptr<iTween> _next;
 };
 
 template<typename T>
