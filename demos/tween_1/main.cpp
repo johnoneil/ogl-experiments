@@ -15,9 +15,14 @@ static const unsigned int WINDOW_WIDTH = 1024;
 
 // Isolated render loop to aid porting
 GLFWwindow* window = nullptr;
+double lastTimeElapsed = 0.0;
 void renderLoop(void) {
 
-	TweenSystem::Get().Update(0.1f);
+	double timeElapsed = glfwGetTime();
+	double dt = timeElapsed - lastTimeElapsed;
+	lastTimeElapsed = timeElapsed;
+
+	TweenSystem::Get().Update(dt);
 
 	GetStage2D().Render();
 	
@@ -82,16 +87,16 @@ int main( void )
 
 	GetStage2D().Initialize();
 
-	TweenPos(text2, glm::vec2(100.0f, 0.0f), 10.0f, TweenSystem::Easing::ELASTIC_IN)->Then(
-		TweenPos(rect1, glm::vec2(300.0f, 300.0f), 10.0f, TweenSystem::Easing::BACK_INOUT))->Then(
-		TweenPos(rect3, glm::vec2(100.0f, -120.0f), 10.0f, TweenSystem::Easing::BACK_INOUT))->Then(
-		TweenPos(rect2, glm::vec2(200.0f, 0.0f), 10.0f, TweenSystem::Easing::BOUNCE_OUT))->Then(
+	TweenPos(text2, glm::vec2(100.0f, 0.0f), 2.0f, TweenSystem::Easing::ELASTIC_IN)->Then(
+		TweenPos(rect1, glm::vec2(300.0f, 300.0f), 2.0f, TweenSystem::Easing::BACK_INOUT))->Then(
+		TweenPos(rect3, glm::vec2(100.0f, -120.0f), 2.0f, TweenSystem::Easing::BACK_INOUT))->Then(
+		TweenPos(rect2, glm::vec2(200.0f, 0.0f), 2.0f, TweenSystem::Easing::BOUNCE_OUT))->Then(
 			[](){printf("Tween completed...\n"); })->Then(
-		TweenColor(rect1, Color::Olive, 15.0f, TweenSystem::Easing::SIN_IN))->Then(
+		TweenColor(rect1, Color::Olive, 2.0f, TweenSystem::Easing::SIN_IN))->Then(
 			[](){printf("Another Tween completed...\n"); })->Then(
-		TweenColor(text2, Color(0.0f, 0.0f, 1.0f, 1.0f), 15.0f, TweenSystem::Easing::SIN_IN))->Then(
+		TweenColor(text2, Color(0.0f, 0.0f, 1.0f, 1.0f), 2.0f, TweenSystem::Easing::SIN_IN))->Then(
 			[](){printf("Yet another tween completed...\n");})->Then(
-		TweenColor(text1, Color(1.0f, 1.0f, 1.0f, 0.0f), 15.0f, TweenSystem::Easing::SIN_IN))->Start();
+		TweenColor(text1, Color(1.0f, 1.0f, 1.0f, 0.0f), 2.0f, TweenSystem::Easing::SIN_IN))->Start();
 
     // render loop
     // -----------
