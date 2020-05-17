@@ -81,7 +81,7 @@ int main( void )
 
 	//text1 = std::make_shared<Text>(const std::string& str, const glm::vec2& pos, const float scale, const Color& color, std::shared_ptr<Font> font)
 	auto text1 = std::make_shared<Text>("A.g,p-C123%@", glm::vec2(0,0), 1.0f, Color::White, font);
-	auto text2 = std::make_shared<Text>("OpenGL Demo.", glm::vec2(0,0), 1.0f, Color::Yellow, font);
+	auto text2 = std::make_shared<Text>("OpenGL Demo.", glm::vec2(0,0), 1.0f, Color(1.0f, 1.0f, 0.0f, 0.0f), font);
 	GetStage().addChild(text1);
 	rect1->addChild(text2);
 
@@ -91,6 +91,9 @@ int main( void )
 	TweenPos(rect1, glm::vec2(300.0f, 300.0f), 10.0f, TweenSystem::Easing::BACK_INOUT);
 	TweenPos(rect3, glm::vec2(100.0f, -120.0f), 10.0f, TweenSystem::Easing::BACK_INOUT);
 	TweenPos(rect2, glm::vec2(200.0f, 0.0f), 10.0f, TweenSystem::Easing::BOUNCE_OUT);
+	TweenColor(rect1, Color::Olive, 15.0f, TweenSystem::Easing::SIN_IN);
+	TweenColor(text2, Color(0.0f, 0.0f, 1.0f, 1.0f), 15.0f, TweenSystem::Easing::SIN_IN);
+	TweenColor(text1, Color(1.0f, 1.0f, 1.0f, 0.0f), 15.0f, TweenSystem::Easing::SIN_IN);
 
     // render loop
     // -----------

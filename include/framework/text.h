@@ -51,7 +51,7 @@ public:
     bool Load(const std::string& font, const unsigned int size = 24);
     void RenderText(const std::string& text,
                     const glm::mat4& modelMatrix,
-                    const glm::vec3& color);
+                    const Color& color);
 
     unsigned int GetSize() const { return _size; }
 

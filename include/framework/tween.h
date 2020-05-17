@@ -7,6 +7,7 @@
 #include <vector>
 
 #include <glm/glm.hpp>
+#include <framework/color.h>
 
 class iTween
 {
@@ -173,6 +174,39 @@ std::shared_ptr<iTween> TweenPos(std::shared_ptr<T> obj, const glm::vec2 finalPo
 		},
         [=](float dt, Tween& tween)->bool { // onComplete
 			//printf("Tween complete\n");
+			return tween.isComplete();
+		},
+        nullptr); // onCancel
+    
+        return tween;
+    }
+
+
+template<typename T>
+std::shared_ptr<iTween> TweenColor(std::shared_ptr<T> obj, const Color& finalColor, const float duration,
+    const TweenSystem::Easing easing) {
+    std::weak_ptr<T> weakObj = obj;
+	Color initialColor = obj->GetColor();
+	auto tween = Tween::Create(duration, easing,
+        nullptr, // onStart
+        [=](float dt, Tween& tween)->bool{ // onUpdate
+            auto obj = weakObj.lock();
+            if(obj) {
+			    float a = tween.getAlpha();
+			    if(a >= 1.0f) {
+				    obj->SetColor(finalColor);
+				    return true;
+			    }else{
+                    float b = 1.0f - a;
+                    obj->SetColor((a*finalColor.Vec4()) + (b*initialColor.Vec4()));
+                    return false;
+                }
+            }else{
+                return true; // object no longer around so this tween MUST be done.
+            }
+			return false;
+		},
+        [=](float dt, Tween& tween)->bool { // onComplete
 			return tween.isComplete();
 		},
         nullptr); // onCancel

@@ -146,7 +146,7 @@ bool Font::Load(const std::string& font, const unsigned int size /* = 24*/) {
 
 void Font::RenderText(const std::string& text,
     const glm::mat4& modelMatrix,
-    const glm::vec3& color) {
+    const Color& color) {
     
     auto _x = 0;
     auto _y = 0;
@@ -158,7 +158,7 @@ void Font::RenderText(const std::string& text,
 
     // activate corresponding render state
     _shader.use();
-    _shader.setVec3("textColor", color);
+    _shader.setVec4("textColor", color.Vec4());
     _shader.setMat4("projection", GetStage().GetProjectionMatrix());
     glActiveTexture(GL_TEXTURE0);
 
@@ -174,7 +174,7 @@ void Font::RenderText(const std::string& text,
         model = glm::translate(model, glm::vec3(xpos, ypos, 0.0f));
         model = glm::scale(model, glm::vec3(ch.Size.x, ch.Size.y, 1.0f));
 
-        _shader.setVec3("textColor", color);
+        _shader.setVec4("textColor", color.Vec4());
         _shader.setMat4("projection", GetStage().GetProjectionMatrix());
         _shader.setMat4("model", model);
 
@@ -217,7 +217,7 @@ bool Text::RenderImpl() {
     // TODO: text scaling here, not in the font
     //model = glm::scale(model, glm::vec3(_sz.x, _sz.y, 1));
     model = glm::translate(model, glm::vec3(_pos.x, _pos.y, 0.0f));
-    _font->RenderText(_str, model, _color.Vec3());
+    _font->RenderText(_str, model, _color.Vec4());
     return true;
 }
 
