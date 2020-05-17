@@ -19,15 +19,18 @@ std::shared_ptr<Font> font;
 std::shared_ptr<Text> text1;
 std::shared_ptr<Text> text2;
 std::shared_ptr<ColorRect> rect1, rect2, rect3;
-std::shared_ptr<iTween> tween, tween2;
+std::shared_ptr<iTween> tween, tween2, tween3, tween4;
 float tweenfloat = 0.0f;
-glm::vec3 tweenVec3;
 void renderLoop(void) {
 
 	if(tween && !tween->isComplete())
 		tween->Update(0.1f);
 	if(tween2 && !tween2->isComplete())
 		tween2->Update(0.1f);
+	if(tween3 && !tween3->isComplete())
+		tween3->Update(0.1f);
+	if(tween4 && !tween4->isComplete())
+		tween4->Update(0.1f);
 
 	GetStage().Render();
 	
@@ -103,28 +106,9 @@ int main( void )
 		},
         nullptr); // onCancel
 
-	glm::vec3 finalPos(100.0f, 100.0f, 0.0f);
-	glm::vec3 initialPos = tweenVec3;
-	tween2 = Tween::Create(10.0f, TweenSystem::Easing::LINEAR,
-        nullptr, // onStart
-        [&](float dt, Tween& tween)->bool{ // onUpdate
-			//tweenfloat += dt;
-			float a = tween.getAlpha();
-			float b = 1.0f - a;
-			tweenVec3 = (a*finalPos) + (b*initialPos);
-			//if(tweenfloat >= 100.0f) return true;
-			if(a >= 1.0f) {
-				tweenVec3 = finalPos;
-				return true;
-			}
-			printf("Tween update d: %f V:%f,%f,%f", dt, tweenVec3.x, tweenVec3.y, tweenVec3.z);
-			return false;
-		},
-        [&](float dt, Tween& tween)->bool { // onComplete
-			printf("Tween complete\n");
-			return tween.isComplete();
-		},
-        nullptr); // onCancel
+	tween2 = TweenPos(rect1, glm::vec2(300.0f, 300.0f), 10.0f, TweenSystem::Easing::LINEAR);
+	tween3 = TweenPos(rect3, glm::vec2(100.0f, -120.0f), 5.0f, TweenSystem::Easing::LINEAR);
+	tween4 = TweenPos(rect2, glm::vec2(200.0f, 0.0f), 7.0f, TweenSystem::Easing::LINEAR);
 
     // render loop
     // -----------

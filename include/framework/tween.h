@@ -6,6 +6,7 @@
 #include <functional>
 #include <vector>
 //#include "tweeny.h"
+#include <glm/glm.hpp>
 
 class iTween
 {
@@ -119,3 +120,36 @@ private:
     float _t = 0;
     float _duration = 0;
 };
+
+template<typename T>
+std::shared_ptr<iTween> TweenPos(std::shared_ptr<T> obj, const glm::vec2 finalPos, const float duration,
+    const TweenSystem::Easing easing) {
+    std::weak_ptr<T> weakObj = obj;
+	glm::vec2 initialPos = obj->GetPos();
+	auto tween = Tween::Create(duration, easing,
+        nullptr, // onStart
+        [=](float dt, Tween& tween)->bool{ // onUpdate
+            auto obj = weakObj.lock();
+            if(obj) {
+			    float a = tween.getAlpha();
+			    if(a >= 1.0f) {
+				    obj->SetPos(finalPos);
+				    return true;
+			    }else{
+                    float b = 1.0f - a;
+                    obj->SetPos((a*finalPos) + (b*initialPos));
+                    return false;
+                }
+            }else{
+                return true; // object no longer around so this tween MUST be done.
+            }
+			return false;
+		},
+        [=](float dt, Tween& tween)->bool { // onComplete
+			printf("Tween complete\n");
+			return tween.isComplete();
+		},
+        nullptr); // onCancel
+    
+        return tween;
+    }
