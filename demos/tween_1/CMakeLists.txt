@@ -1,4 +1,4 @@
-SET (PROJECT_NAME layout_1)
+SET (PROJECT_NAME tween_1)
 
 add_executable (${PROJECT_NAME} main.cpp)
 

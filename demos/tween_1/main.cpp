@@ -15,11 +15,6 @@ static const unsigned int WINDOW_WIDTH = 1024;
 
 // Isolated render loop to aid porting
 GLFWwindow* window = nullptr;
-//std::shared_ptr<Font> font;
-//std::shared_ptr<Text> text1;
-//std::shared_ptr<Text> text2;
-//std::shared_ptr<ColorRect> rect1, rect2, rect3;
-float tweenfloat = 0.0f;
 void renderLoop(void) {
 
 	TweenSystem::Get().Update(0.1f);

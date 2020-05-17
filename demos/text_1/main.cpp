@@ -11,6 +11,7 @@ using namespace glm;
 
 #include <framework/shaders.h>
 #include <framework/text.h>
+#include <framework/stage.h>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -96,9 +97,14 @@ Font font;
 void renderLoop(void) {
 	angle_deg += 0.33f;
 
+	#if 0
 	// Clear the screen
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	#else
+	GetStage().Render();
+	#endif
 
+	#if 0
 	// Use our shader
 	glBindVertexArray(VAO);
 	glUseProgram(programID);
@@ -138,6 +144,7 @@ void renderLoop(void) {
 	font.RenderText("text_1 opengl demo.", 10, 20, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 	font.RenderText("OGL Demo", 600.0f, 570.0f, 0.5f, glm::vec3(1.0f, 1.0f, 0.0f));
 	#endif
+	#endif
 	
 	// Swap buffers
 	glfwSwapBuffers(window);
@@ -173,14 +180,21 @@ int main( void )
 	// Ensure we can capture the escape key being pressed below
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 
+	#if 1
+	GetStage().setSize(glm::vec2(WINDOW_WIDTH, WINDOW_HEIGHT));
+	GetStage().setColor(Color::Gray);
+	GetStage().Initialize();
+	#else
 	// Dark blue background
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+	#endif
 
 	// Enable depth test
 	glEnable(GL_DEPTH_TEST);
 	// Accept fragment if it closer to the camera than the former one
 	glDepthFunc(GL_LESS); 
 
+	#if 0
 	GLuint VertexArrayID;
 	glGenVertexArrays(1, &VertexArrayID);
 	glBindVertexArray(VertexArrayID);
@@ -318,12 +332,17 @@ int main( void )
     glGenerateMipmap(GL_TEXTURE_2D);
 
     stbi_image_free(image);
+	#endif
 
-	#if 1
-	if(!font.Load("assets/arial.ttf")) {
+	auto font = std::make_shared<Font>();
+	if(!font->Load("assets/arial.ttf")) {
 		printf("Failed to initialize font!\n");
 	}
-	#endif
+
+	auto text1 = std::make_shared<Text>("A.g,p-C123%@", glm::vec2(100.f, 100.0f), 1.0f, Color::White, font);
+	auto text2 = std::make_shared<Text>("OpenGL Demo.", glm::vec2(200.0f,200.0f), 1.0f, Color::Yellow, font);
+	GetStage().addChild(text1);
+	GetStage().addChild(text2);
 
     // render loop
     // -----------
@@ -337,10 +356,12 @@ int main( void )
     }
     #endif
 
+	#if 0
 	// Cleanup VBO and shader
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &vertexbuffer);
 	glDeleteProgram(programID);
+	#endif
 
 	// Close OpenGL window and terminate GLFW
 	glfwTerminate();
