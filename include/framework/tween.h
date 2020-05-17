@@ -14,10 +14,16 @@ class iTween
 public:
     virtual ~iTween() {};
 public:
+    virtual void Start() = 0;
     virtual bool Update(const float dt) = 0;
     virtual bool Cancel() = 0;
+    virtual bool isPending() const = 0;
+    virtual bool isRunning() const = 0;
     virtual bool isComplete() const = 0;
+    virtual bool isCanceled() const = 0;
     virtual float getAlpha() const = 0;
+public:
+    //virtual std::shared_ptr<iTween> Then();
 };
 
 class Tween;
@@ -84,6 +90,14 @@ private:
 
 class Tween : public iTween
 {
+private:
+    enum State {
+        PENDING,
+        RUNNING,
+        COMPLETE,
+        CANCELED
+    };
+    State _state = PENDING;
 public:
     Tween() {
 
@@ -117,27 +131,76 @@ public:
         
             return tween;
         }
+    /*
+        Start a tween.
+        If tween is in Pending state, moves tween to Running.
+        If tween is in Running does nothing.
+        If tween is in Complete state, does nothing.
+     */
+    void Start() override {
+        if(_state == State::PENDING) {
+            _state = State::RUNNING;
+        }
+    }
     bool Update(const float dt) override {
+        if(_state == State::PENDING)
+            return false;
+        if(_state == State::CANCELED) {
+            if(_onCancel)
+                _onCancel(_t, *this);
+            return true;
+        }
+        #if 0
+        if(_state == State::COMPLETE) {
+            if(_onComplete)
+                _onComplete(_t, *this);
+            return true;
+        }
+        #endif
+        // State RUNNING
         _t += dt;
         bool complete = false;
         if(_onUpdate)
             complete |= _onUpdate(dt, *this);
-        complete |= isComplete();
         if(complete && _onComplete)
             _onComplete(dt, *this);
         return complete;
     }
+    bool isPending() const override {
+        return _state == State::PENDING;
+    }
+    bool isRunning() const override {
+        return _state == State::RUNNING;
+    }
     bool isComplete() const override {
-        return _t >= _duration;
+        return _state == State::COMPLETE;
+    }
+    bool isCanceled() const override {
+        return _state == State::CANCELED;
     }
     float getAlpha() const override {
         if(_easing && _duration != 0.0f)
             return _easing(_t / _duration);
         return 0.0f;
     }
+    /*
+        Cancel a RUNNING tween.
+     */
     bool Cancel() override {
-        return true;
+        if(_state = State::RUNNING)
+            _state = State::CANCELED;
     }
+    #if 0
+    std::shared_ptr<iTween> Then(std::shared_ptr<iTween> tween) {
+        auto oldComplete = _onComplete;
+        _onComplete = [=](float dt, Tween& tween) {
+            if(oldComplete)
+                oldComplete(dt, tween);
+            tween->Start();
+        }
+        return tween;
+    }
+    #endif
 private:
     std::function<bool(float, Tween& tween)> _onStart;
     std::function<bool(float, Tween& tween)> _onUpdate;
@@ -207,7 +270,7 @@ std::shared_ptr<iTween> TweenColor(std::shared_ptr<T> obj, const Color& finalCol
 			return false;
 		},
         [=](float dt, Tween& tween)->bool { // onComplete
-			return tween.isComplete();
+	        return tween.isComplete();
 		},
         nullptr); // onCancel
     

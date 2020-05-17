@@ -83,7 +83,7 @@ int main( void )
 	GetStage2D().Initialize();
 
 	TweenPos(text2, glm::vec2(100.0f, 0.0f), 9.0f, TweenSystem::Easing::ELASTIC_IN);
-	TweenPos(rect1, glm::vec2(300.0f, 300.0f), 10.0f, TweenSystem::Easing::BACK_INOUT);
+	TweenPos(rect1, glm::vec2(300.0f, 300.0f), 10.0f, TweenSystem::Easing::BACK_INOUT)->Start();
 	TweenPos(rect3, glm::vec2(100.0f, -120.0f), 10.0f, TweenSystem::Easing::BACK_INOUT);
 	TweenPos(rect2, glm::vec2(200.0f, 0.0f), 10.0f, TweenSystem::Easing::BOUNCE_OUT);
 	TweenColor(rect1, Color::Olive, 15.0f, TweenSystem::Easing::SIN_IN);
