@@ -22,8 +22,38 @@ class TweenSystem : public iSubsystem
 {
 public:
     enum Easing {
-        None = 0,
-        LINEAR = 1
+        NONE = 0,
+        LINEAR = 1,
+        QUADRATIC_IN,
+        QUADRATIC_OUT,
+        QUADRATIC_INOUT,
+        CUBIC_IN,
+        CUBIC_OUT,
+        CUBIC_INOUT,
+        QUARTIC_IN,
+        QUARTIC_OUT,
+        QUARTIC_INOUT,
+        QUINTIC_IN,
+        QUINTIC_OUT,
+        QUINTIC_INOUT,
+        SIN_IN,
+        SIN_OUT,
+        SIN_INOUT,
+        CIRCULAR_IN,
+        CIRCULAR_OUT,
+        CIRCULAR_INOUT,
+        EXPONENTIAL_IN,
+        EXPONENTIAL_OUT,
+        EXPONENTIAL_INOUT,
+        ELASTIC_IN,
+        ELASTIC_OUT,
+        ELASTIC_INOUT,
+        BACK_IN,
+        BACK_OUT,
+        BACK_INOUT,
+        BOUNCE_IN,
+        BOUNCE_OUT,
+        BOUNCE_INOUT
     };
 public:
     TweenSystem();
@@ -35,6 +65,8 @@ public:
     bool Shutdown() override;
     void Update(const float dt) override;
     void Render() override;
+
+    static std::function<float(float)> GetEasingFunction(const Easing easing);
 
 public:
     TweenSystem& Get();
@@ -88,6 +120,7 @@ public:
 
             tween->_t = 0;
             tween->_duration = duration;
+            tween->_easing = TweenSystem::GetEasingFunction(easing);
 
             //tween->_initial = start;
             //tween->_final = end;
@@ -108,8 +141,8 @@ public:
         return _t >= _duration;
     }
     float getAlpha() const override {
-        if(_duration != 0.0f)
-            return _t / _duration;
+        if(_easing && _duration != 0.0f)
+            return _easing(_t / _duration);
         return 0.0f;
     }
 private:
@@ -119,6 +152,7 @@ private:
     std::function<bool(float, Tween& tween)> _onCancel;
     float _t = 0;
     float _duration = 0;
+    std::function<float(float)> _easing;
 };
 
 template<typename T>
@@ -146,7 +180,7 @@ std::shared_ptr<iTween> TweenPos(std::shared_ptr<T> obj, const glm::vec2 finalPo
 			return false;
 		},
         [=](float dt, Tween& tween)->bool { // onComplete
-			printf("Tween complete\n");
+			//printf("Tween complete\n");
 			return tween.isComplete();
 		},
         nullptr); // onCancel

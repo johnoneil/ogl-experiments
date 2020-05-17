@@ -15,7 +15,7 @@ SET( SRCS
 
 add_library(${PROJECT_NAME} STATIC ${SRCS} )
 
-target_link_libraries(${PROJECT_NAME} glm assimp freetype tweeny)
+target_link_libraries(${PROJECT_NAME} glm assimp freetype easing)
 
 target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ${CMAKE_SOURCE_DIR}/include)
 

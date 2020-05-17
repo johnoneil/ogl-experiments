@@ -92,6 +92,7 @@ int main( void )
 
 	GetStage().Initialize();
 
+	#if 0
 	tween = Tween::Create(10.0f, TweenSystem::Easing::LINEAR,
         nullptr, // onStart
         [&](float dt, Tween& tween)->bool{ // onUpdate
@@ -105,10 +106,11 @@ int main( void )
 			return tween.isComplete();
 		},
         nullptr); // onCancel
+	#endif
 
-	tween2 = TweenPos(rect1, glm::vec2(300.0f, 300.0f), 10.0f, TweenSystem::Easing::LINEAR);
-	tween3 = TweenPos(rect3, glm::vec2(100.0f, -120.0f), 5.0f, TweenSystem::Easing::LINEAR);
-	tween4 = TweenPos(rect2, glm::vec2(200.0f, 0.0f), 7.0f, TweenSystem::Easing::LINEAR);
+	tween2 = TweenPos(rect1, glm::vec2(300.0f, 300.0f), 10.0f, TweenSystem::Easing::BACK_INOUT);
+	tween3 = TweenPos(rect3, glm::vec2(100.0f, -120.0f), 10.0f, TweenSystem::Easing::BACK_INOUT);
+	tween4 = TweenPos(rect2, glm::vec2(200.0f, 0.0f), 10.0f, TweenSystem::Easing::BOUNCE_OUT);
 
     // render loop
     // -----------
