@@ -159,7 +159,7 @@ void Font::RenderText(const std::string& text,
     // activate corresponding render state
     _shader.use();
     _shader.setVec4("textColor", color.Vec4());
-    _shader.setMat4("projection", GetStage().GetProjectionMatrix());
+    _shader.setMat4("projection", GetStage2D().GetProjectionMatrix());
     glActiveTexture(GL_TEXTURE0);
 
     // iterate through all characters
@@ -175,7 +175,7 @@ void Font::RenderText(const std::string& text,
         model = glm::scale(model, glm::vec3(ch.Size.x, ch.Size.y, 1.0f));
 
         _shader.setVec4("textColor", color.Vec4());
-        _shader.setMat4("projection", GetStage().GetProjectionMatrix());
+        _shader.setMat4("projection", GetStage2D().GetProjectionMatrix());
         _shader.setMat4("model", model);
 
         glBindVertexArray(ch._VAO);

@@ -75,7 +75,7 @@ bool ColorRect::RenderImpl() {
 
     glDisable(GL_DEPTH_TEST);
     _shader.use();
-    _shader.setMat4("projection", GetStage().GetProjectionMatrix());
+    _shader.setMat4("projection", GetStage2D().GetProjectionMatrix());
     _shader.setMat4("model", model);
     _shader.setVec4("c", _color.Vec4());
     glBindVertexArray(_VAO);

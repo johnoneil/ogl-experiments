@@ -19,7 +19,7 @@ void renderLoop(void) {
 
 	TweenSystem::Get().Update(0.1f);
 
-	GetStage().Render();
+	GetStage2D().Render();
 	
 	// Swap buffers
 	glfwSwapBuffers(window);
@@ -55,9 +55,9 @@ int main( void )
 	// Ensure we can capture the escape key being pressed below
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 
-	GetStage().setSize(glm::vec2(WINDOW_WIDTH, WINDOW_HEIGHT));
-	GetStage().setColor(Color::Gray);
-	GetStage().Initialize();
+	GetStage2D().setSize(glm::vec2(WINDOW_WIDTH, WINDOW_HEIGHT));
+	GetStage2D().setColor(Color::Gray);
+	GetStage2D().Initialize();
 
 	// Initialize subsystems
 	TweenSystem::Get().Startup();
@@ -68,7 +68,7 @@ int main( void )
 	}
 
 	auto rect1 = std::make_shared<ColorRect>(glm::vec2(50, 50), glm::vec2(200, 200), Color::Red);
-	GetStage().addChild(rect1);
+	GetStage2D().addChild(rect1);
 	auto rect2 = std::make_shared<ColorRect>(glm::vec2(0, 0), glm::vec2(100, 100), Color::Green);
 	rect1->addChild(rect2);
 	auto rect3 = std::make_shared<ColorRect>(glm::vec2(50, 0), glm::vec2(50, 50), Color::Blue);
@@ -77,10 +77,10 @@ int main( void )
 	//text1 = std::make_shared<Text>(const std::string& str, const glm::vec2& pos, const float scale, const Color& color, std::shared_ptr<Font> font)
 	auto text1 = std::make_shared<Text>("A.g,p-C123%@", glm::vec2(0,0), 1.0f, Color::White, font);
 	auto text2 = std::make_shared<Text>("OpenGL Demo.", glm::vec2(0,0), 1.0f, Color(1.0f, 1.0f, 0.0f, 0.0f), font);
-	GetStage().addChild(text1);
+	GetStage2D().addChild(text1);
 	rect1->addChild(text2);
 
-	GetStage().Initialize();
+	GetStage2D().Initialize();
 
 	TweenPos(text2, glm::vec2(100.0f, 0.0f), 9.0f, TweenSystem::Easing::ELASTIC_IN);
 	TweenPos(rect1, glm::vec2(300.0f, 300.0f), 10.0f, TweenSystem::Easing::BACK_INOUT);

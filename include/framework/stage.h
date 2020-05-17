@@ -5,14 +5,14 @@
 
 #include <framework/color.h>
 
-class Stage : public i2D
+class Stage2D : public i2D
 {
 public:
-    Stage() = default;
-    ~Stage() = default;
-    Stage& operator=(const Stage& rhs) = delete;
-    Stage(const glm::vec2 sz);
-    Stage(const float width, const float height);
+    Stage2D() = default;
+    ~Stage2D() = default;
+    Stage2D& operator=(const Stage2D& rhs) = delete;
+    Stage2D(const glm::vec2 sz);
+    Stage2D(const float width, const float height);
 public:
     void setSize(const glm::vec2& size) {
         _sz = size;
@@ -33,4 +33,4 @@ private:
     glm::mat4 _projection;
 };
 
-Stage& GetStage();
+Stage2D& GetStage2D();

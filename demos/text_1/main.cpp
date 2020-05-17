@@ -102,7 +102,7 @@ void renderLoop(void) {
 	// Clear the screen
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	#else
-	GetStage().Render();
+	GetStage2D().Render();
 	#endif
 
 	#if 0
@@ -182,9 +182,9 @@ int main( void )
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 
 	#if 1
-	GetStage().setSize(glm::vec2(WINDOW_WIDTH, WINDOW_HEIGHT));
-	GetStage().setColor(Color::Gray);
-	GetStage().Initialize();
+	GetStage2D().setSize(glm::vec2(WINDOW_WIDTH, WINDOW_HEIGHT));
+	GetStage2D().setColor(Color::Gray);
+	GetStage2D().Initialize();
 	#else
 	// Dark blue background
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -345,8 +345,8 @@ int main( void )
 	auto text1 = std::make_shared<Text>("OpenGL Text_1 demo.", glm::vec2(0.f, 0.0f), 1.0f, Color::White, font);
 	auto text2Size = font->GetRect("OpenGL Demo.");
 	auto text2 = std::make_shared<Text>("OpenGL Demo.", glm::vec2(0.0f,static_cast<float>(WINDOW_HEIGHT-text2Size.y)), 1.0f, Color::Yellow, font);
-	GetStage().addChild(text1);
-	GetStage().addChild(text2);
+	GetStage2D().addChild(text1);
+	GetStage2D().addChild(text2);
 
     // render loop
     // -----------
