@@ -5,7 +5,7 @@
 #include <memory>
 #include <functional>
 #include <vector>
-//#include "tweeny.h"
+
 #include <glm/glm.hpp>
 
 class iTween
@@ -14,12 +14,17 @@ public:
     virtual ~iTween() {};
 public:
     virtual bool Update(const float dt) = 0;
+    virtual bool Cancel() = 0;
     virtual bool isComplete() const = 0;
     virtual float getAlpha() const = 0;
 };
 
+class Tween;
+
 class TweenSystem : public iSubsystem
 {
+public:
+    friend class Tween;
 public:
     enum Easing {
         NONE = 0,
@@ -55,7 +60,7 @@ public:
         BOUNCE_OUT,
         BOUNCE_INOUT
     };
-public:
+private:
     TweenSystem();
     TweenSystem(const TweenSystem& other) = delete;
     TweenSystem& operator=(const TweenSystem& other) = delete;
@@ -69,25 +74,10 @@ public:
     static std::function<float(float)> GetEasingFunction(const Easing easing);
 
 public:
-    TweenSystem& Get();
-    std::shared_ptr<iTween> Create();
-    /*
-    tween.via(0, easing);
-    tween.seek(0);
-    for (int i = 0; i <= 100; i++) tween.step(0.01f);
-
-    auto t = tweeny::from(0).to(100).during(100).onStep(print);
-    bool print(tweeny::tween<int> &, int p) {
-        printf("%+.3d |", p); // 3 digits with sign
-        for (int i = 0; i <= 100; i++) printf("%c", i == p ? '.' : ' '); // prints the line
-        printf("%c\n", p == 100 ? ';' : '|');
-        return false;
-    }
-
-    */
-
+    static TweenSystem& Get();
 private:
     std::vector<std::shared_ptr<iTween>> _tweens;
+    bool _initialized = false;
 };
 
 
@@ -122,8 +112,7 @@ public:
             tween->_duration = duration;
             tween->_easing = TweenSystem::GetEasingFunction(easing);
 
-            //tween->_initial = start;
-            //tween->_final = end;
+            TweenSystem::Get()._tweens.push_back(tween);
         
             return tween;
         }
@@ -144,6 +133,9 @@ public:
         if(_easing && _duration != 0.0f)
             return _easing(_t / _duration);
         return 0.0f;
+    }
+    bool Cancel() override {
+        return true;
     }
 private:
     std::function<bool(float, Tween& tween)> _onStart;

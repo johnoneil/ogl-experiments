@@ -63,23 +63,42 @@ TweenSystem& TweenSystem::operator=(const TweenSystem& other) {
 #endif
 
 TweenSystem::~TweenSystem() {
-
+    Shutdown();
 }
 
 bool TweenSystem::Startup() {
-    return true;
+    assert(!_initialized);
+    _initialized = true;
+    return _initialized;
 }
 
 bool TweenSystem::Shutdown() {
-    return true;
+    _initialized = false;
+    for(auto t : _tweens) {
+        t->Cancel();
+    }
+    _tweens.clear();
+    return !_initialized;
 }
 
 void TweenSystem::Update(const float dt) {
-
+    if(!_initialized) return;
+    for(auto t = _tweens.begin(); t != _tweens.end();) {
+        if((*t)->Update(dt)) {
+            t = _tweens.erase(t);
+        } else {
+            ++t;
+        }
+    }
 }
 
 void TweenSystem::Render() {
+    return;
+}
 
+TweenSystem& TweenSystem::Get() {
+    static TweenSystem system;
+    return system;
 }
 
  std::function<float(float)> TweenSystem::GetEasingFunction(const Easing easing) {

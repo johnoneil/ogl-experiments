@@ -15,22 +15,14 @@ static const unsigned int WINDOW_WIDTH = 1024;
 
 // Isolated render loop to aid porting
 GLFWwindow* window = nullptr;
-std::shared_ptr<Font> font;
-std::shared_ptr<Text> text1;
-std::shared_ptr<Text> text2;
-std::shared_ptr<ColorRect> rect1, rect2, rect3;
-std::shared_ptr<iTween> tween, tween2, tween3, tween4;
+//std::shared_ptr<Font> font;
+//std::shared_ptr<Text> text1;
+//std::shared_ptr<Text> text2;
+//std::shared_ptr<ColorRect> rect1, rect2, rect3;
 float tweenfloat = 0.0f;
 void renderLoop(void) {
 
-	if(tween && !tween->isComplete())
-		tween->Update(0.1f);
-	if(tween2 && !tween2->isComplete())
-		tween2->Update(0.1f);
-	if(tween3 && !tween3->isComplete())
-		tween3->Update(0.1f);
-	if(tween4 && !tween4->isComplete())
-		tween4->Update(0.1f);
+	TweenSystem::Get().Update(0.1f);
 
 	GetStage().Render();
 	
@@ -72,45 +64,33 @@ int main( void )
 	GetStage().setColor(Color::Gray);
 	GetStage().Initialize();
 
-	font = std::make_shared<Font>();
+	// Initialize subsystems
+	TweenSystem::Get().Startup();
+
+	auto font = std::make_shared<Font>();
 	if(!font->Load("assets/arial.ttf")) {
 		printf("Failed to initialize font!\n");
 	}
 
-	rect1 = std::make_shared<ColorRect>(glm::vec2(50, 50), glm::vec2(200, 200), Color::Red);
+	auto rect1 = std::make_shared<ColorRect>(glm::vec2(50, 50), glm::vec2(200, 200), Color::Red);
 	GetStage().addChild(rect1);
-	rect2 = std::make_shared<ColorRect>(glm::vec2(0, 0), glm::vec2(100, 100), Color::Green);
+	auto rect2 = std::make_shared<ColorRect>(glm::vec2(0, 0), glm::vec2(100, 100), Color::Green);
 	rect1->addChild(rect2);
-	rect3 = std::make_shared<ColorRect>(glm::vec2(50, 0), glm::vec2(50, 50), Color::Blue);
+	auto rect3 = std::make_shared<ColorRect>(glm::vec2(50, 0), glm::vec2(50, 50), Color::Blue);
 	rect1->addChild(rect3);
 
 	//text1 = std::make_shared<Text>(const std::string& str, const glm::vec2& pos, const float scale, const Color& color, std::shared_ptr<Font> font)
-	text1 = std::make_shared<Text>("A.g,p-C123%@", glm::vec2(0,0), 1.0f, Color::White, font);
-	text2 = std::make_shared<Text>("OpenGL Demo.", glm::vec2(0,0), 1.0f, Color::Yellow, font);
+	auto text1 = std::make_shared<Text>("A.g,p-C123%@", glm::vec2(0,0), 1.0f, Color::White, font);
+	auto text2 = std::make_shared<Text>("OpenGL Demo.", glm::vec2(0,0), 1.0f, Color::Yellow, font);
 	GetStage().addChild(text1);
 	rect1->addChild(text2);
 
 	GetStage().Initialize();
 
-	#if 0
-	tween = Tween::Create(10.0f, TweenSystem::Easing::LINEAR,
-        nullptr, // onStart
-        [&](float dt, Tween& tween)->bool{ // onUpdate
-			tweenfloat += dt;
-			if(tweenfloat >= 100.0f) return true;
-			printf("Tween update dt: %f value: %f\n", dt, tweenfloat);
-			return false;
-		},
-        [&](float dt, Tween& tween)->bool { // onComplete
-			printf("Tween complete\n");
-			return tween.isComplete();
-		},
-        nullptr); // onCancel
-	#endif
-
-	tween2 = TweenPos(rect1, glm::vec2(300.0f, 300.0f), 10.0f, TweenSystem::Easing::BACK_INOUT);
-	tween3 = TweenPos(rect3, glm::vec2(100.0f, -120.0f), 10.0f, TweenSystem::Easing::BACK_INOUT);
-	tween4 = TweenPos(rect2, glm::vec2(200.0f, 0.0f), 10.0f, TweenSystem::Easing::BOUNCE_OUT);
+	TweenPos(text2, glm::vec2(100.0f, 0.0f), 9.0f, TweenSystem::Easing::ELASTIC_IN);
+	TweenPos(rect1, glm::vec2(300.0f, 300.0f), 10.0f, TweenSystem::Easing::BACK_INOUT);
+	TweenPos(rect3, glm::vec2(100.0f, -120.0f), 10.0f, TweenSystem::Easing::BACK_INOUT);
+	TweenPos(rect2, glm::vec2(200.0f, 0.0f), 10.0f, TweenSystem::Easing::BOUNCE_OUT);
 
     // render loop
     // -----------
@@ -123,6 +103,9 @@ int main( void )
         //sleep(1);
     }
     #endif
+
+	// Shut down subsystems
+	TweenSystem::Get().Shutdown();
 
 	// Close OpenGL window and terminate GLFW
 	glfwTerminate();
