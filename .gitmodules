@@ -10,3 +10,6 @@
 [submodule "thirdparty/freetype2"]
 	path = thirdparty/freetype2
 	url = https://github.com/aseprite/freetype2.git
+[submodule "thirdparty/yoga"]
+	path = thirdparty/yoga
+	url = https://github.com/facebook/yoga.git
