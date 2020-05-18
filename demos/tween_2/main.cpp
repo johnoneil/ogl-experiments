@@ -65,7 +65,7 @@ int main( void )
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 
 	GetStage2D().setSize(glm::vec2(WINDOW_WIDTH, WINDOW_HEIGHT));
-	GetStage2D().setColor(Color::Gray);
+	GetStage2D().setColor(Color(0.2f, 0.3f, 0.3f, 1.0f));
 	GetStage2D().Initialize();
 
 	// Initialize subsystems
@@ -91,8 +91,10 @@ int main( void )
 	rect1->addChild(text2);
 	#endif
 
-	auto image1 = std::make_shared<Image>("assets/brick.jpg", glm::vec2(100.0f, 100.0f), glm::vec2(100.0f, 100.0f));
-	GetStage2D().addChild(image1);
+	GetStage2D().addChild(std::make_shared<Image>("assets/brick.jpg", glm::vec2(100.0f, 100.0f), glm::vec2(0.0f, 0.0f)));
+	//GetStage2D().addChild(image1);
+	GetStage2D().addChild(std::make_shared<Image>("assets/grid.png", glm::vec2(100.0f, 100.0f), glm::vec2(100.0f, 100.0f)));
+	GetStage2D().addChild(std::make_shared<Image>("assets/testpattern.jpg", glm::vec2(200.0f, 200.0f), glm::vec2(200.0f, 200.0f)));
 
 	GetStage2D().Initialize();
 

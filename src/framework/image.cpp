@@ -79,7 +79,9 @@ bool Image::InitializeImpl() {
     glBindVertexArray(0);
 
     auto w = 0, h = 0, c = 0;
+    #if 0
     stbi_set_flip_vertically_on_load(true);
+    #endif
     auto image = stbi_load(_imagePath.c_str(),
                                     &w,
                                     &h,
