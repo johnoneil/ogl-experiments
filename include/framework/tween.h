@@ -297,6 +297,37 @@ std::shared_ptr<iTween> TweenPos(std::shared_ptr<T> obj, const glm::vec2 finalPo
         return tween;
     }
 
+template<typename T>
+std::shared_ptr<iTween> TweenScale(std::shared_ptr<T> obj, const glm::vec2 finalScale, const float duration,
+    const TweenSystem::Easing easing) {
+    std::weak_ptr<T> weakObj = obj;
+    // TODO: this is wrong. We need to get the initial value when the tween starts, not when it is initialized.
+	glm::vec2 initialScale = obj->GetScale();
+	auto tween = Tween::Create(duration, easing,
+        nullptr, // onStart
+        [=](float dt, iTween& tween)->bool{ // onUpdate
+            auto obj = weakObj.lock();
+            if(obj) {
+			    float a = tween.getAlpha();
+			    if(a >= 1.0f) {
+				    obj->SetScale(finalScale);
+				    return true;
+			    }else{
+                    float b = 1.0f - a;
+                    obj->SetScale((a*finalScale) + (b*initialScale));
+                    return false;
+                }
+            }else{
+                return true; // object no longer around so this tween MUST be done.
+            }
+			return false;
+		},
+        nullptr, // onComplete
+        nullptr); // onCancel
+    
+        return tween;
+    }
+
 
 template<typename T>
 std::shared_ptr<iTween> TweenColor(std::shared_ptr<T> obj, const Color& finalColor, const float duration,

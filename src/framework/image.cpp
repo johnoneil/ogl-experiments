@@ -49,6 +49,12 @@ Image::Image(const std::string& path, const glm::vec2& sz, const glm::vec2& pos)
         _sz = sz;
         _pos = pos;
 }
+Image::Image(const std::string& path, const glm::vec2& pos)
+    :_imagePath(path) {
+        // take initial size (since not specified) from image dimensions in pixels.
+        _sz = glm::vec2(0.0f, 0.0f);
+        _pos = pos;
+}
 
 bool Image::InitializeImpl() {
     _shader = Shader(sVShaderPath, sFShaderPath);
@@ -89,6 +95,8 @@ bool Image::InitializeImpl() {
     if(image) {
         _initialWidth = w;
         _initialHeight = h;
+        if(_sz == glm::vec2(0.0f, 0.0f))
+            _sz = glm::vec2(_initialWidth, _initialHeight);
 
         glGenTextures(1, &_texture);
         glBindTexture(GL_TEXTURE_2D, _texture);
@@ -116,8 +124,7 @@ bool Image::RenderImpl() {
 
     // Translate according to parent's position
     glm::mat4 model = GetModelTransform();
-    model = glm::scale(model, glm::vec3(_sz.x, _sz.y, 1));
-
+    
     glDisable(GL_DEPTH_TEST);
     _shader.use();
     _shader.setMat4("projection", GetStage2D().GetProjectionMatrix());
@@ -132,10 +139,14 @@ bool Image::RenderImpl() {
 }
 
 glm::mat4 Image::ModelTransformImpl() const {
-    #if 0
+    #if 1
+    // 1) Translate the object to the position, e.g, vec3(position, 0.0f).
+    // 2) And then rotate the object.
+    // 3) Translate the point back to the origin, e.g, vec3(-originx * scale, -originy * scale, 0.0f).
+    // 4) Finally, scale the object.
     glm::mat4 m = glm::mat4(1.0);
-    m = glm::translate(m, glm::vec3(_pos.x, _pos.y, 0.0f));
-    //m = glm::scale(m, glm::vec3(_sz.x, _sz.y, 1));
+    m = glm::translate(m, glm::vec3(_pos.x - (_center.x * _sz.x * _scale.x), _pos.y - (_center.y * _sz.y * _scale.y), 0.0f));
+    m = glm::scale(m, glm::vec3(_sz.x * _scale.x, _sz.y * _scale.x, 1));
     return m;
     #else
     glm::mat4 p = glm::mat4(1.0);
@@ -145,7 +156,9 @@ glm::mat4 Image::ModelTransformImpl() const {
     glm::mat4 m = glm::mat4(1.0);
     m = glm::translate(m, glm::vec3(_pos.x, _pos.y, 0.0f));
     //m = glm::scale(m, glm::vec3(_sz.x, _sz.y, 1));
-    return p * m;
+    m = p * m;
+    m = glm::scale(m, glm::vec3(_sz.x * _scale.x, _sz.y * _scale.y, 1));
+    return m;
     #endif
 }
 

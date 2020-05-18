@@ -37,6 +37,7 @@ public:
 public:
     Image(const std::string& path);
     Image(const std::string& path, const glm::vec2& sz, const glm::vec2& pos);
+    Image(const std::string& path, const glm::vec2& pos);
 private:
     bool InitializeImpl() override;
     bool RenderImpl() override;
