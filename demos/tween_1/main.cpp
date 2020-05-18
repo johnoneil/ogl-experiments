@@ -87,7 +87,8 @@ int main( void )
 
 	GetStage2D().Initialize();
 
-	TweenPos(text2, glm::vec2(100.0f, 0.0f), 2.0f, TweenSystem::Easing::ELASTIC_IN)->Then(
+	TweenPos(text1, glm::vec2(200.0f, 50.0f), 2.0f, TweenSystem::Easing::ELASTIC_IN)->Then(
+		Pause(3.0f))->Then(
 		TweenPos(rect1, glm::vec2(300.0f, 300.0f), 2.0f, TweenSystem::Easing::BACK_INOUT))->Then(
 		TweenPos(rect3, glm::vec2(100.0f, -120.0f), 2.0f, TweenSystem::Easing::BACK_INOUT))->Then(
 		TweenPos(rect2, glm::vec2(200.0f, 0.0f), 2.0f, TweenSystem::Easing::BOUNCE_OUT))->Then(

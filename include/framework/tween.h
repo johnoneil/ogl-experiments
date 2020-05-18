@@ -218,7 +218,7 @@ public:
     float getAlpha() const override {
         if(_easing && _duration != 0.0f)
             return _easing(_t / _duration);
-        return 0.0f;
+        return 1.0f;
     }
     /*
         Cancel a RUNNING tween.
@@ -329,3 +329,4 @@ std::shared_ptr<iTween> TweenColor(std::shared_ptr<T> obj, const Color& finalCol
     }
 
     std::shared_ptr<iTween> DummyTween(const float duration, std::function<void(void)> onComplete = nullptr);
+    std::shared_ptr<iTween> Pause(const float duration);

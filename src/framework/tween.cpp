@@ -112,14 +112,16 @@ std::shared_ptr<iTween> DummyTween(const float duration, std::function<void(void
     auto tween = Tween::Create(duration, TweenSystem::Easing::LINEAR,
     nullptr, // onStart
     [=](float dt, iTween& tween)->bool{ // onUpdate
-        return true; // always done on first update
+        return tween.getAlpha() >= 1.0f;
     },
     [onComplete](float t, iTween& tween)->bool { // onComplete
-        onComplete();
+        if(onComplete)
+            onComplete();
         return false;
     },
     nullptr); // onCancel
 
     return tween;
 }
+std::shared_ptr<iTween> Pause(const float duration) { return DummyTween(duration);}
 
