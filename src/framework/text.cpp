@@ -254,7 +254,18 @@ bool Text::RenderImpl() {
 }
 
 glm::mat4 Text::ModelTransformImpl() const {
+    #if 0
     return glm::mat4(1.0);
+    #else
+    glm::mat4 p = glm::mat4(1.0);
+    if(auto parent = _parent.lock()) {
+        p = parent->GetModelTransform();
+    }
+    glm::mat4 m = glm::mat4(1.0);
+    m = glm::translate(m, glm::vec3(_pos.x, _pos.y, 0.0f));
+    //m = glm::scale(m, glm::vec3(_sz.x, _sz.y, 1));
+    return p * m;
+    #endif
 }
 
 glm::vec2 Text::GetRect() const {

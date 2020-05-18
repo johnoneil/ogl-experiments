@@ -37,10 +37,5 @@ bool CanvasElement::Render() {
     return success;
 }
 glm::mat4 CanvasElement::GetModelTransform() const {
-    glm::mat4 m = ModelTransformImpl();
-    glm::mat4 p = glm::mat4(1.0);
-    if(auto parent = _parent.lock()) {
-        p = parent->GetModelTransform();
-    }
-    return p * m;
+    return ModelTransformImpl();
 }
