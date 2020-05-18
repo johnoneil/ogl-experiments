@@ -18,6 +18,7 @@ public:
     GLuint ID = 0;
 
     Shader() = default;
+    Shader(const Shader& other) = default;
     Shader& operator=(const Shader& rhs) = default;
     ~Shader();
 

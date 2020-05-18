@@ -1,12 +1,13 @@
-#include <framework/text.h>
-#include <framework/stage.h>
+#include "framework/text.h"
+
+#include "framework/stage.h"
 
 #if 1
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #endif
 
-#include <glm/gtc/matrix_transform.hpp> // glm::orth
+#include <glm/gtc/matrix_transform.hpp>
 
 constexpr float Character::vertices[];
 
@@ -218,6 +219,7 @@ glm::vec2 Font::GetRect(const std::string& str) const {
     return rect;
 }
 
+#if 0
 Text::Text() {}
 Text& Text::operator=(const Text& rhs) {
     if(&rhs != this) {
@@ -229,14 +231,14 @@ Text& Text::operator=(const Text& rhs) {
     }
     return *this;
 }
+#endif
 
-Text::Text(const std::string& str, const glm::vec2& pos,
-    const float scale, const Color& color, std::shared_ptr<Font> font) 
-    :_pos(pos)
-    ,_color(color)
-    ,_font(font)
-    ,_str(str)
-    ,_scale(scale){}
+Text::Text(const std::string& str, const glm::vec2& pos, const Color& color, std::shared_ptr<Font> font) 
+    :_font(font)
+    ,_str(str) {
+        _pos = pos;
+        _color = color;
+    }
 
 bool Text::InitializeImpl() {
     return true;
@@ -261,32 +263,8 @@ glm::vec2 Text::GetRect() const {
     return glm::vec2(0.f, 0.0f);
 }
 
-glm::vec2 Text::GetPos() const {
-    return _pos;
-}
-
-float Text::GetScale() const {
-    return _scale;
-}
-
-Color Text::GetColor() const {
-    return _color;
-}
-
 std::shared_ptr<Font> Text::GetFont() const {
     return _font;
-}
-
-void Text::SetPos(const glm::vec2& pos) {
-    _pos = pos;
-}
-
-void Text::SetScale(const float scale) {
-    _scale = scale;
-}
-
-void Text::SetColor(const Color& color) {
-    _color = color;
 }
 
 void Text::SetFont(std::shared_ptr<Font> font) {

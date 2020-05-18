@@ -64,8 +64,8 @@ int main( void )
 	// Ensure we can capture the escape key being pressed below
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 
-	GetStage2D().setSize(glm::vec2(WINDOW_WIDTH, WINDOW_HEIGHT));
-	GetStage2D().setColor(Color(0.2f, 0.3f, 0.3f, 1.0f));
+	GetStage2D().SetSize(glm::vec2(WINDOW_WIDTH, WINDOW_HEIGHT));
+	GetStage2D().SetColor(Color(0.2f, 0.3f, 0.3f, 1.0f));
 	GetStage2D().Initialize();
 
 	// Initialize subsystems

@@ -60,8 +60,8 @@ int main( void )
 	// Ensure we can capture the escape key being pressed below
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 
-	GetStage2D().setSize(glm::vec2(WINDOW_WIDTH, WINDOW_HEIGHT));
-	GetStage2D().setColor(Color::Gray);
+	GetStage2D().SetSize(glm::vec2(WINDOW_WIDTH, WINDOW_HEIGHT));
+	GetStage2D().SetColor(Color::Gray);
 	GetStage2D().Initialize();
 
 	// Initialize subsystems
@@ -80,8 +80,8 @@ int main( void )
 	rect1->addChild(rect3);
 
 	//text1 = std::make_shared<Text>(const std::string& str, const glm::vec2& pos, const float scale, const Color& color, std::shared_ptr<Font> font)
-	auto text1 = std::make_shared<Text>("A.g,p-C123%@", glm::vec2(0,0), 1.0f, Color::White, font);
-	auto text2 = std::make_shared<Text>("OpenGL Demo.", glm::vec2(0,0), 1.0f, Color(1.0f, 1.0f, 0.0f, 0.0f), font);
+	auto text1 = std::make_shared<Text>("A.g,p-C123%@", glm::vec2(0,0), Color::White, font);
+	auto text2 = std::make_shared<Text>("OpenGL Demo.", glm::vec2(0,0), Color(1.0f, 1.0f, 0.0f, 0.0f), font);
 	GetStage2D().addChild(text1);
 	rect1->addChild(text2);
 
@@ -97,7 +97,8 @@ int main( void )
 		DummyTween(0.0f, [](){printf("Another Tween completed...\n"); }))->Then(
 		TweenColor(text2, Color(0.0f, 0.0f, 1.0f, 1.0f), 2.0f, TweenSystem::Easing::SIN_IN))->Then(
 		DummyTween(0.0f, [](){printf("Yet another tween completed...\n");}))->Then(
-		TweenColor(text1, Color(1.0f, 1.0f, 1.0f, 0.0f), 2.0f, TweenSystem::Easing::SIN_IN))->Start();
+		TweenColor(text1, Color(1.0f, 1.0f, 1.0f, 0.0f), 2.0f, TweenSystem::Easing::SIN_IN))->Then(
+		DummyTween(0.0f, [](){printf("All tweens done.\n");} ))->Start();
 
     // render loop
     // -----------

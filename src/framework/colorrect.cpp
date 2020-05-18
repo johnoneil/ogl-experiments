@@ -30,15 +30,14 @@ ColorRect& ColorRect::operator=(const ColorRect& rhs) {
     return *this;
 }
 
-ColorRect::ColorRect(const Color& color)
-    :_color(color){
-
+ColorRect::ColorRect(const Color& color) {
+    _color = color;
 }
 
-ColorRect::ColorRect(const glm::vec2& pos, const glm::vec2& sz, const Color& color)
-    :_pos(pos)
-    ,_sz(sz)
-    ,_color(color) {
+ColorRect::ColorRect(const glm::vec2& pos, const glm::vec2& sz, const Color& color) {
+        _pos = pos;
+        _sz = sz;
+        _color = color;
 }
 
 bool ColorRect::InitializeImpl() {
@@ -90,28 +89,3 @@ glm::mat4 ColorRect::ModelTransformImpl() const {
     //m = glm::scale(m, glm::vec3(_sz.x, _sz.y, 1));
     return m;
 }
-
-glm::vec2 ColorRect::GetPos() const {
-    return _pos;
-}
-
-glm::vec2 ColorRect::GetSize() const {
-    return _sz;
-}
-
-Color ColorRect::GetColor() const {
-    return _color;
-}
-
-void ColorRect::SetPos(const glm::vec2& pos) {
-    _pos = pos;;
-}
-
-void ColorRect::SetSize(const glm::vec2& size) {
-    _sz = size;
-}
-
-void ColorRect::SetColor(const Color& color) {
-    _color = color;
-}
-

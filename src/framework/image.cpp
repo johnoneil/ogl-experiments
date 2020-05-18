@@ -45,10 +45,9 @@ Image::Image(const std::string& path)
     :_imagePath(path){
 }
 Image::Image(const std::string& path, const glm::vec2& sz, const glm::vec2& pos)
-    :_imagePath(path)
-    ,_sz(sz)
-    ,_pos(pos) {
-
+    :_imagePath(path) {
+        _sz = sz;
+        _pos = pos;
 }
 
 bool Image::InitializeImpl() {
@@ -139,27 +138,4 @@ glm::mat4 Image::ModelTransformImpl() const {
     return m;
 }
 
-glm::vec2 Image::GetPos() const {
-    return _pos;
-}
-
-glm::vec2 Image::GetSize() const {
-    return _sz;
-}
-
-Color Image::GetColor() const {
-    return _color;
-}
-
-void Image::SetPos(const glm::vec2& pos) {
-    _pos = pos;;
-}
-
-void Image::SetSize(const glm::vec2& size) {
-    _sz = size;
-}
-
-void Image::SetColor(const Color& color) {
-    _color = color;
-}
 

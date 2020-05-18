@@ -3,6 +3,7 @@ SET (PROJECT_NAME framework)
 #find_package(Freetype REQUIRED)
 
 SET( SRCS
+    canvaselement.cpp
     shaders.cpp
     mesh.cpp
     model.cpp
