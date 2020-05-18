@@ -62,7 +62,6 @@ class Text : public CanvasElement {
 private:
     std::shared_ptr<Font> _font;
     std::string _str;
-    float _scale = 1.0f;
 public:
     Text() = default;
     Text(const Text& other) = default;

@@ -33,10 +33,10 @@ protected:
     std::vector<std::shared_ptr<CanvasElement>> _children;
     std::weak_ptr<CanvasElement> _parent;
 protected:
-    glm::vec2 _pos;
-    glm::vec2 _sz;
-    glm::vec2 _center;
-    glm::vec2 _scale;
+    glm::vec2 _pos = glm::vec2(0.0f, 0.0f);
+    glm::vec2 _sz = glm::vec2(1.0f, 1.0f);
+    glm::vec2 _center = glm::vec2(0.0f, 0.0f);
+    glm::vec2 _scale = glm::vec2(1.0f, 1.0f);
     Color _color = Color::White;
     #if 0
     glm::vec2 _rotation;
