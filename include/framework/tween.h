@@ -152,13 +152,13 @@ private:
     bool _initialized = false;
 };
 
-template< typename OBJ_TYPE>
+template< typename OBJ_TYPE, typename MEMBER_TYPE>
 class PosTween : public iTween
 {
 public:
     PosTween(std::shared_ptr<OBJ_TYPE> obj,
-        const glm::vec2& finalPos, const float duration, const TweenSystem::Easing easing) {
-        _final = finalPos;
+        const MEMBER_TYPE& f, const float duration, const TweenSystem::Easing easing) {
+        _final = f;
         _obj = obj;
         _duration = duration;
         _easing = TweenSystem::GetEasingFunction(easing);
@@ -190,14 +190,14 @@ public:
 
 private:
     std::weak_ptr<OBJ_TYPE> _obj;
-    glm::vec2 _initial;
-    glm::vec2 _final;
+    MEMBER_TYPE _initial;
+    MEMBER_TYPE _final;
 };
 
-template<typename OBJ_TYPE>
+template<typename OBJ_TYPE, typename MEMBER_TYPE >
 std::shared_ptr<iTween> TweenPos(std::shared_ptr<OBJ_TYPE> obj,
-        const glm::vec2& finalPos, const float duration, const TweenSystem::Easing easing) {
-            auto tween = std::make_shared<PosTween<OBJ_TYPE>>(obj, finalPos, duration, easing);
+        const MEMBER_TYPE& finalPos, const float duration, const TweenSystem::Easing easing) {
+            auto tween = std::make_shared<PosTween<OBJ_TYPE, MEMBER_TYPE>>(obj, finalPos, duration, easing);
             TweenSystem::Get().AddTween(tween);
             return tween;
         }
