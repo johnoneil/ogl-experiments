@@ -164,13 +164,6 @@ public:
         _easing = TweenSystem::GetEasingFunction(easing);
     }
 public:
-    static std::shared_ptr<iTween> Create(std::shared_ptr<OBJ_TYPE> obj,
-        const glm::vec2& finalPos, const float duration, const TweenSystem::Easing easing) {
-            auto tween = std::make_shared<PosTween<OBJ_TYPE>>(obj, finalPos, duration, easing);
-            TweenSystem::Get().AddTween(tween);
-            return tween;
-        }
-public:
     void StartImpl() override {
         auto obj = _obj.lock();
         if(obj) {
@@ -204,6 +197,8 @@ private:
 template<typename OBJ_TYPE>
 std::shared_ptr<iTween> TweenPos(std::shared_ptr<OBJ_TYPE> obj,
         const glm::vec2& finalPos, const float duration, const TweenSystem::Easing easing) {
-            return PosTween<OBJ_TYPE>::Create(obj, finalPos, duration, easing);
+            auto tween = std::make_shared<PosTween<OBJ_TYPE>>(obj, finalPos, duration, easing);
+            TweenSystem::Get().AddTween(tween);
+            return tween;
         }
 
