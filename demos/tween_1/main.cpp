@@ -101,8 +101,9 @@ int main( void )
 		TweenColor(text1, Color(1.0f, 1.0f, 1.0f, 0.0f), 2.0f, TweenSystem::Easing::SIN_IN))->Then(
 		DummyTween(0.0f, [](){printf("All tweens done.\n");} ))->Start();
 	#endif
-		auto tween1 = PosTween<Text>::Create(text1, glm::vec2(200.0f, 50.0f), 2.0f, TweenSystem::Easing::ELASTIC_IN);
-		tween1->Start();
+	TweenPos(text1, glm::vec2(200.0f, 50.0f), 4.0f, TweenSystem::Easing::LINEAR)->Then(
+		TweenPos(text1, glm::vec2(100.0f, 50.0f), 4.0f, TweenSystem::Easing::LINEAR))->Then(
+		TweenPos(text1, glm::vec2(200.0f, 400.0f), 4.0f, TweenSystem::Easing::LINEAR))->Start();
 
 
     // render loop
