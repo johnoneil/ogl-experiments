@@ -246,20 +246,23 @@ bool Text::InitializeImpl() {
 
 glm::mat4 Text::RenderImpl(const glm::mat4& parentTransform) {
     
-    // Translate according to parent's position
     glm::mat4 model = parentTransform;
-    model = glm::translate(model, glm::vec3(_pos.x - (_center.x * _sz.x * _scale.x), _pos.y - (_center.y * _sz.y * _scale.y), 0.0f));
+    model = glm::translate(model, glm::vec3(_pos.x, _pos.y,0.0f));
+    model = glm::translate(model, glm::vec3(_center.x * _sz.x, _center.y * _sz.y, 0.0f));
     glm::mat4 noSize = glm::scale(model, glm::vec3(_scale.x, _scale.y, 1));
-    #if 1
-    noSize = glm::rotate(noSize, _rotation, glm::vec3(0.0f, 0.0f, 1.0f));   
-    #endif
     model = glm::scale(noSize, glm::vec3(_sz.x, _sz.y, 1));
+    model = glm::rotate(model, _rotation, glm::vec3(0.0f, 0.0f, 1.0f));
+    model = glm::translate(model, glm::vec3(-1.0f * _center.x, -1.0f * _center.y, 0.0f));
+    
+    noSize = glm::rotate(noSize, _rotation, glm::vec3(0.0f, 0.0f, 1.0f));
+    noSize = glm::translate(noSize, glm::vec3(-1.0f * _center.x * _sz.x, -1.0f * _center.y * _sz.y, 0.0f));
+
 
     // TODO: text scaling here, not in the font
     //model = glm::scale(model, glm::vec3(_sz.x, _sz.y, 1));
     model = glm::translate(model, glm::vec3(_pos.x, _pos.y, 0.0f));
     _font->RenderText(_str, model, _color.Vec4());
-    return model;
+    return noSize;
 }
 
 #if 0
