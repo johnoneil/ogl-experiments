@@ -72,7 +72,7 @@ int main( void )
 		printf("Failed to initialize font!\n");
 	}
 
-	auto rect1 = std::make_shared<ColorRect>(glm::vec2(50, 50), glm::vec2(200, 200), Color::Red);
+	auto rect1 = std::make_shared<ColorRect>(glm::vec2(100, 100), glm::vec2(200, 200), Color::Red);
 	GetStage2D().addChild(rect1);
 	auto rect2 = std::make_shared<ColorRect>(glm::vec2(0, 0), glm::vec2(100, 100), Color::Green);
 	rect1->addChild(rect2);
@@ -95,9 +95,13 @@ int main( void )
 		Pause(3.0f))->Then(
 		TweenColor(rect1, Color::Olive, 2.0f, TweenSystem::Easing::SIN_IN))->Then(
 		Pause(3.0f))->Then(
-		TweenColor(text2, Color(0.0f, 0.0f, 1.0f, 1.0f), 2.0f, TweenSystem::Easing::SIN_IN))->Then(
+		TweenColor(text2, Color::Orange, 2.0f, TweenSystem::Easing::SIN_IN))->Then(
 		Pause(3.0f))->Then(
-		TweenColor(text1, Color(1.0f, 1.0f, 1.0f, 0.0f), 2.0f, TweenSystem::Easing::SIN_IN))->Then(
+		TweenColor(text1, Color(1.0f, 1.0f, 1.0f, 0.5f), 2.0f, TweenSystem::Easing::SIN_IN))->Then(
+		TweenPos(rect3, glm::vec2(0.0f, 0.0f), 2.0f, TweenSystem::Easing::BACK_INOUT))->Then(
+		TweenSize(rect3,glm::vec2(50.0f, 50.0f), 2.0f, TweenSystem::Easing::QUADRATIC_INOUT))->Then(
+		TweenPos(rect2, glm::vec2(50.0f, 50.0f), 2.0f, TweenSystem::Easing::BOUNCE_OUT))->Then(
+		TweenScale(rect1, glm::vec2(2.0f, 2.0f), 2.0f, TweenSystem::Easing::SIN_OUT))->Then(
 		Pause(3.0f))->Start();
 	#endif
 

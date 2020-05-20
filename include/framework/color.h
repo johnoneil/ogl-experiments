@@ -55,6 +55,7 @@ public:
     static Color Fuchsia;
     static Color Yellow;
     static Color White;
+    static Color Orange;
     
     /*
     black 	rgb(0,0,0)	
