@@ -73,14 +73,14 @@ int main( void )
 		printf("Failed to initialize font!\n");
 	}
 
-	auto rect1 = std::make_shared<ColorRect>(glm::vec2(100, 100), glm::vec2(200, 200), Color::Red);
+	auto rect1 = std::make_shared<ColorRect>(glm::vec2(400, 400), glm::vec2(200, 200), Color::Red);
 	GetStage2D().addChild(rect1);
-	float rot = glm::quarter_pi<float>();
-	rect1->SetRotation(rot);
-	auto rect2 = std::make_shared<ColorRect>(glm::vec2(0, 0), glm::vec2(100, 100), Color::Green);
-	rect1->addChild(rect2);
-	auto rect3 = std::make_shared<ColorRect>(glm::vec2(50, 0), glm::vec2(50, 50), Color::Blue);
-	rect1->addChild(rect3);
+	//rect1->SetRotation(glm::quarter_pi<float>());
+	rect1->SetCenter(glm::vec2(0.5f, 0.5f));
+	//auto rect2 = std::make_shared<ColorRect>(glm::vec2(0, 0), glm::vec2(100, 100), Color::Green);
+	//rect1->addChild(rect2);
+	//auto rect3 = std::make_shared<ColorRect>(glm::vec2(50, 0), glm::vec2(50, 50), Color::Blue);
+	//rect1->addChild(rect3);
 
 	auto text1 = std::make_shared<Text>("A.g,p-C123%@", glm::vec2(0,0), Color::White, font);
 	auto text2 = std::make_shared<Text>("OpenGL Demo.", glm::vec2(0,0), Color(1.0f, 1.0f, 0.0f, 1.0f), font);
@@ -90,21 +90,24 @@ int main( void )
 	GetStage2D().Initialize();
 
 	#if 1
-	TweenPos(text1, glm::vec2(200.0f, 50.0f), 2.0f, TweenSystem::Easing::ELASTIC_IN)->Then(
-		Pause(3.0f))->Then(
-		TweenPos(rect1, glm::vec2(300.0f, 300.0f), 2.0f, TweenSystem::Easing::BACK_INOUT))->Then(
-		TweenPos(rect3, glm::vec2(100.0f, -120.0f), 2.0f, TweenSystem::Easing::BACK_INOUT))->Then(
-		TweenPos(rect2, glm::vec2(200.0f, 0.0f), 2.0f, TweenSystem::Easing::BOUNCE_OUT))->Then(
-		Pause(3.0f))->Then(
-		TweenColor(rect1, Color::Olive, 2.0f, TweenSystem::Easing::SIN_IN))->Then(
-		Pause(3.0f))->Then(
-		TweenColor(text2, Color::Orange, 2.0f, TweenSystem::Easing::SIN_IN))->Then(
-		Pause(3.0f))->Then(
-		TweenColor(text1, Color(1.0f, 1.0f, 1.0f, 0.5f), 2.0f, TweenSystem::Easing::SIN_IN))->Then(
-		TweenPos(rect3, glm::vec2(0.0f, 0.0f), 2.0f, TweenSystem::Easing::BACK_INOUT))->Then(
-		TweenSize(rect3,glm::vec2(50.0f, 50.0f), 2.0f, TweenSystem::Easing::QUADRATIC_INOUT))->Then(
-		TweenPos(rect2, glm::vec2(50.0f, 50.0f), 2.0f, TweenSystem::Easing::BOUNCE_OUT))->Then(
-		TweenScale(rect1, glm::vec2(2.0f, 2.0f), 2.0f, TweenSystem::Easing::SIN_OUT))->Then(
+	Pause(3.0f)->Then(
+	//TweenPos(rect1, glm::vec2(400.0f, 400.0f), 2.0f, TweenSystem::Easing::ELASTIC_IN))->Then(
+		TweenRotation(rect1, glm::half_pi<float>(), 2.0f, TweenSystem::Easing::LINEAR))->Then(
+		//Pause(3.0f))->Then(
+		//TweenPos(rect1, glm::vec2(300.0f, 300.0f), 2.0f, TweenSystem::Easing::BACK_INOUT))->Then(
+		//TweenPos(rect3, glm::vec2(100.0f, -120.0f), 2.0f, TweenSystem::Easing::BACK_INOUT))->Then(
+		//TweenPos(rect2, glm::vec2(200.0f, 0.0f), 2.0f, TweenSystem::Easing::BOUNCE_OUT))->Then(
+		//Pause(3.0f))->Then(
+		//TweenColor(rect1, Color::Olive, 2.0f, TweenSystem::Easing::SIN_IN))->Then(
+		//Pause(3.0f))->Then(
+		//TweenColor(text2, Color::Orange, 2.0f, TweenSystem::Easing::SIN_IN))->Then(
+		//Pause(3.0f))->Then(
+		//TweenColor(text1, Color(1.0f, 1.0f, 1.0f, 0.5f), 2.0f, TweenSystem::Easing::SIN_IN))->Then(
+		//TweenPos(rect3, glm::vec2(0.0f, 0.0f), 2.0f, TweenSystem::Easing::BACK_INOUT))->Then(
+		//TweenSize(rect3,glm::vec2(50.0f, 50.0f), 2.0f, TweenSystem::Easing::QUADRATIC_INOUT))->Then(
+		//TweenPos(rect2, glm::vec2(50.0f, 50.0f), 2.0f, TweenSystem::Easing::BOUNCE_OUT))->Then(
+		TweenScale(rect1, glm::vec2(2.0f, 2.0f), 2.0f, TweenSystem::Easing::LINEAR))->Then(
+		TweenRotation(rect1, glm::quarter_pi<float>(), 2.0f, TweenSystem::Easing::SIN_INOUT))->Then(
 		Pause(3.0f))->Start();
 	#endif
 

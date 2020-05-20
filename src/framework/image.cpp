@@ -126,6 +126,9 @@ glm::mat4 Image::RenderImpl(const glm::mat4& parentTransform) {
     glm::mat4 model = parentTransform;
     model = glm::translate(model, glm::vec3(_pos.x - (_center.x * _sz.x * _scale.x), _pos.y - (_center.y * _sz.y * _scale.y), 0.0f));
     glm::mat4 noSize = glm::scale(model, glm::vec3(_scale.x, _scale.y, 1));
+    #if 1
+    noSize = glm::rotate(noSize, _rotation, glm::vec3(0.0f, 0.0f, 1.0f));   
+    #endif
     model = glm::scale(noSize, glm::vec3(_sz.x, _sz.y, 1));
     
     glDisable(GL_DEPTH_TEST);
