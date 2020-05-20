@@ -89,17 +89,17 @@ int main( void )
 
 	#if 1
 	TweenPos(text1, glm::vec2(200.0f, 50.0f), 2.0f, TweenSystem::Easing::ELASTIC_IN)->Then(
-		//Pause(3.0f))->Then(
+		Pause(3.0f))->Then(
 		TweenPos(rect1, glm::vec2(300.0f, 300.0f), 2.0f, TweenSystem::Easing::BACK_INOUT))->Then(
 		TweenPos(rect3, glm::vec2(100.0f, -120.0f), 2.0f, TweenSystem::Easing::BACK_INOUT))->Then(
 		TweenPos(rect2, glm::vec2(200.0f, 0.0f), 2.0f, TweenSystem::Easing::BOUNCE_OUT))->Then(
-		//DummyTween(0.0f, [](){printf("Tween completed...\n"); }))->Then(
+		Pause(3.0f))->Then(
 		TweenColor(rect1, Color::Olive, 2.0f, TweenSystem::Easing::SIN_IN))->Then(
-		//DummyTween(0.0f, [](){printf("Another Tween completed...\n"); }))->Then(
+		Pause(3.0f))->Then(
 		TweenColor(text2, Color(0.0f, 0.0f, 1.0f, 1.0f), 2.0f, TweenSystem::Easing::SIN_IN))->Then(
-		//DummyTween(0.0f, [](){printf("Yet another tween completed...\n");}))->Then(
-		TweenColor(text1, Color(1.0f, 1.0f, 1.0f, 0.0f), 2.0f, TweenSystem::Easing::SIN_IN))->Start(); //->Then(
-		//DummyTween(0.0f, [](){printf("All tweens done.\n");} ))->Start();
+		Pause(3.0f))->Then(
+		TweenColor(text1, Color(1.0f, 1.0f, 1.0f, 0.0f), 2.0f, TweenSystem::Easing::SIN_IN))->Then(
+		Pause(3.0f))->Start();
 	#else
 	TweenColor(text1, Color(0.0f, 0.0f, 1.0f, 1.0f), 4.0f, TweenSystem::Easing::SIN_IN)->Start();
 	#endif

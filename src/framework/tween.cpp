@@ -119,6 +119,16 @@ TweenSystem& TweenSystem::Get() {
     return LinearInterpolation;
  }
 
+ std::shared_ptr<iTween> DummyTween(const float duration) {
+    auto tween = std::make_shared<TweenDummy>(duration);
+    TweenSystem::Get().AddTween(tween);
+    return tween;
+}
+
+std::shared_ptr<iTween> Pause(const float duration) {
+    return DummyTween(duration);
+}
+
 #if 0
 std::shared_ptr<iTween> DummyTween(const float duration, std::function<void(void)> onComplete /* = nullptr*/) {
     auto tween = Tween::Create(duration, TweenSystem::Easing::LINEAR,

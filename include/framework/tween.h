@@ -152,6 +152,31 @@ private:
     bool _initialized = false;
 };
 
+class TweenDummy : public iTween
+{
+public:
+    TweenDummy() = default;
+    TweenDummy(const TweenDummy& other) = default;
+    TweenDummy& operator=(const TweenDummy& other) = default;
+    ~TweenDummy() = default;
+public:
+    TweenDummy(const float duration) {
+        _duration = duration;
+        _easing = TweenSystem::GetEasingFunction(TweenSystem::Easing::LINEAR);
+    }
+public:
+    void StartImpl() override {
+        // NOP
+    }
+    bool UpdateImpl(const float dt) override {
+        //printf("-->dt:%f a:%f\n", dt, getAlpha());
+        return getAlpha() >= 1.0f;
+    }
+};
+
+std::shared_ptr<iTween> DummyTween(const float duration);
+std::shared_ptr<iTween> Pause(const float duration);
+
 template< typename OBJ_TYPE, typename MEMBER_TYPE>
 class PosTween : public iTween
 {

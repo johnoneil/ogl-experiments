@@ -102,11 +102,11 @@ int main( void )
 	GetStage2D().Initialize();
 
 	#if 1
-	//Pause(1.0f)->Then(
-		TweenScale(img3, glm::vec2(2.0f, 2.0f), 4.0f, TweenSystem::Easing::BOUNCE_OUT)->Then(
-		//Pause(1.0f))->Then(
+	Pause(1.0f)->Then(
+		TweenScale(img3, glm::vec2(2.0f, 2.0f), 4.0f, TweenSystem::Easing::BOUNCE_OUT))->Then(
+		Pause(1.0f))->Then(
 		TweenScale(img3, glm::vec2(0.5f, 3.0f), 4.0f, TweenSystem::Easing::EXPONENTIAL_INOUT))->Then(
-		//Pause(1.0f))->Then(
+		Pause(1.0f))->Then(
 		TweenScale(img3, glm::vec2(4.0f, 1.0f), 4.0f, TweenSystem::Easing::BOUNCE_OUT))->Start();
 	#endif
 
