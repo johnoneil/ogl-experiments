@@ -102,7 +102,7 @@ void renderLoop(void) {
 	// Clear the screen
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	#else
-	GetStage2D().Render();
+	GetStage2D().Render(glm::mat4(1.0f));
 	#endif
 
 	#if 0

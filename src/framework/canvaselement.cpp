@@ -25,17 +25,28 @@ bool CanvasElement::Initialize() {
     }
     return success;
 }
-bool CanvasElement::Render() {
+glm::mat4 CanvasElement::Render(const glm::mat4& parentTransform) {
     // Render self, then render children
-    bool success = RenderImpl();
+    auto model = RenderImpl(parentTransform);
     #if 0
     if(!success) return success;
     #endif
     for(auto c : _children ) {
-        success &= c->Render();
+        c->Render(model);
     }
-    return success;
+    return model;
 }
+#if 0
 glm::mat4 CanvasElement::GetModelTransform() const {
+    #if 1
+    glm::mat4 m = ModelTransformImpl();
+    glm::mat4 p = glm::mat4(1.0);
+    if(auto parent = _parent.lock()) {
+        p = parent->GetModelTransform();
+    }
+    return p * m;
+    #else
     return ModelTransformImpl();
+    #endif
 }
+#endif

@@ -120,10 +120,13 @@ void Image::DeInitialize() {
 }
 #endif
 
-bool Image::RenderImpl() {
+glm::mat4 Image::RenderImpl(const glm::mat4& parentTransform) {
 
     // Translate according to parent's position
-    glm::mat4 model = GetModelTransform();
+    glm::mat4 model = parentTransform;
+    model = glm::translate(model, glm::vec3(_pos.x - (_center.x * _sz.x * _scale.x), _pos.y - (_center.y * _sz.y * _scale.y), 0.0f));
+    glm::mat4 noSize = glm::scale(model, glm::vec3(_scale.x, _scale.y, 1));
+    model = glm::scale(noSize, glm::vec3(_sz.x, _sz.y, 1));
     
     glDisable(GL_DEPTH_TEST);
     _shader.use();
@@ -135,11 +138,11 @@ bool Image::RenderImpl() {
     glBindTexture(GL_TEXTURE_2D, _texture);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glBindVertexArray(0);
-    return true;
+    return model;
 }
 
+#if 0
 glm::mat4 Image::ModelTransformImpl() const {
-    #if 1
     // 1) Translate the object to the position, e.g, vec3(position, 0.0f).
     // 2) And then rotate the object.
     // 3) Translate the point back to the origin, e.g, vec3(-originx * scale, -originy * scale, 0.0f).
@@ -148,18 +151,7 @@ glm::mat4 Image::ModelTransformImpl() const {
     m = glm::translate(m, glm::vec3(_pos.x - (_center.x * _sz.x * _scale.x), _pos.y - (_center.y * _sz.y * _scale.y), 0.0f));
     m = glm::scale(m, glm::vec3(_sz.x * _scale.x, _sz.y * _scale.y, 1));
     return m;
-    #else
-    glm::mat4 p = glm::mat4(1.0);
-    if(auto parent = _parent.lock()) {
-        p = parent->GetModelTransform();
-    }
-    glm::mat4 m = glm::mat4(1.0);
-    m = glm::translate(m, glm::vec3(_pos.x, _pos.y, 0.0f));
-    //m = glm::scale(m, glm::vec3(_sz.x, _sz.y, 1));
-    m = p * m;
-    m = glm::scale(m, glm::vec3(_sz.x * _scale.x, _sz.y * _scale.y, 1));
-    return m;
-    #endif
 }
+#endif
 
 

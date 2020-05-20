@@ -16,18 +16,20 @@ bool Stage2D::InitializeImpl() {
     return true;
 }
 
-bool Stage2D::RenderImpl() {
+glm::mat4 Stage2D::RenderImpl(const glm::mat4& parentTransform) {
     // clear to bg color
     glClearColor(_color.R(), _color.G(), _color.B(), 1.0f);
     // TODO: probably clear stencil buffer to prevent overwrites
     //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glClear(GL_COLOR_BUFFER_BIT);
-    return true;
+    return glm::mat4(1.0);
 }
 
+#if 0
 glm::mat4 Stage2D::ModelTransformImpl() const {
     return glm::mat4(1.0);
 }
+#endif
 
 Stage2D& GetStage2D() {
     static std::shared_ptr<Stage2D> _stage;

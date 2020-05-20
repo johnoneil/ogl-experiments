@@ -79,7 +79,6 @@ int main( void )
 	auto rect3 = std::make_shared<ColorRect>(glm::vec2(50, 0), glm::vec2(50, 50), Color::Blue);
 	rect1->addChild(rect3);
 
-	//text1 = std::make_shared<Text>(const std::string& str, const glm::vec2& pos, const float scale, const Color& color, std::shared_ptr<Font> font)
 	auto text1 = std::make_shared<Text>("A.g,p-C123%@", glm::vec2(0,0), Color::White, font);
 	auto text2 = std::make_shared<Text>("OpenGL Demo.", glm::vec2(0,0), Color(1.0f, 1.0f, 0.0f, 1.0f), font);
 	GetStage2D().addChild(text1);
@@ -100,8 +99,6 @@ int main( void )
 		Pause(3.0f))->Then(
 		TweenColor(text1, Color(1.0f, 1.0f, 1.0f, 0.0f), 2.0f, TweenSystem::Easing::SIN_IN))->Then(
 		Pause(3.0f))->Start();
-	#else
-	TweenColor(text1, Color(0.0f, 0.0f, 1.0f, 1.0f), 4.0f, TweenSystem::Easing::SIN_IN)->Start();
 	#endif
 
 

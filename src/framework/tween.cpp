@@ -128,23 +128,3 @@ TweenSystem& TweenSystem::Get() {
 std::shared_ptr<iTween> Pause(const float duration) {
     return DummyTween(duration);
 }
-
-#if 0
-std::shared_ptr<iTween> DummyTween(const float duration, std::function<void(void)> onComplete /* = nullptr*/) {
-    auto tween = Tween::Create(duration, TweenSystem::Easing::LINEAR,
-    nullptr, // onStart
-    [=](float dt, iTween& tween)->bool{ // onUpdate
-        return tween.getAlpha() >= 1.0f;
-    },
-    [onComplete](float t, iTween& tween)->bool { // onComplete
-        if(onComplete)
-            onComplete();
-        return false;
-    },
-    nullptr); // onCancel
-
-    return tween;
-}
-std::shared_ptr<iTween> Pause(const float duration) { return DummyTween(duration);}
-#endif
-

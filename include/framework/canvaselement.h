@@ -22,13 +22,11 @@ public:
     std::weak_ptr<CanvasElement> getParent() const { return _parent; }
 public:
     bool Initialize();
-    bool Render();
-    glm::mat4 GetModelTransform() const;
+    glm::mat4 Render(const glm::mat4& parentTransform = glm::mat4(1.0f));
 private:
     // NVI pattern
     virtual bool InitializeImpl() = 0;
-    virtual bool RenderImpl() = 0;
-    virtual glm::mat4 ModelTransformImpl() const = 0;
+    virtual glm::mat4 RenderImpl(const glm::mat4& parentTransform) = 0;
 protected:
     std::vector<std::shared_ptr<CanvasElement>> _children;
     std::weak_ptr<CanvasElement> _parent;

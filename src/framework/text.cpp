@@ -244,15 +244,22 @@ bool Text::InitializeImpl() {
     return true;
 }
 
-bool Text::RenderImpl() {
-    glm::mat4 model = GetModelTransform();
+glm::mat4 Text::RenderImpl(const glm::mat4& parentTransform) {
+    
+    // Translate according to parent's position
+    glm::mat4 model = parentTransform;
+    model = glm::translate(model, glm::vec3(_pos.x - (_center.x * _sz.x * _scale.x), _pos.y - (_center.y * _sz.y * _scale.y), 0.0f));
+    glm::mat4 noSize = glm::scale(model, glm::vec3(_scale.x, _scale.y, 1));
+    model = glm::scale(noSize, glm::vec3(_sz.x, _sz.y, 1));
+
     // TODO: text scaling here, not in the font
     //model = glm::scale(model, glm::vec3(_sz.x, _sz.y, 1));
     model = glm::translate(model, glm::vec3(_pos.x, _pos.y, 0.0f));
     _font->RenderText(_str, model, _color.Vec4());
-    return true;
+    return model;
 }
 
+#if 0
 glm::mat4 Text::ModelTransformImpl() const {
     #if 0
     return glm::mat4(1.0);
@@ -267,6 +274,7 @@ glm::mat4 Text::ModelTransformImpl() const {
     return p * m;
     #endif
 }
+#endif
 
 glm::vec2 Text::GetRect() const {
     if(_font)

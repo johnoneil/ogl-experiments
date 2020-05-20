@@ -40,6 +40,5 @@ public:
     Image(const std::string& path, const glm::vec2& pos);
 private:
     bool InitializeImpl() override;
-    bool RenderImpl() override;
-    glm::mat4 ModelTransformImpl() const override;
+    glm::mat4 RenderImpl(const glm::mat4& parentTransform) override;
 };

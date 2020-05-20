@@ -76,23 +76,7 @@ int main( void )
 		printf("Failed to initialize font!\n");
 	}
 
-	#if 0
-	auto rect1 = std::make_shared<ColorRect>(glm::vec2(50, 50), glm::vec2(200, 200), Color::Red);
-	GetStage2D().addChild(rect1);
-	auto rect2 = std::make_shared<ColorRect>(glm::vec2(0, 0), glm::vec2(100, 100), Color::Green);
-	rect1->addChild(rect2);
-	auto rect3 = std::make_shared<ColorRect>(glm::vec2(50, 0), glm::vec2(50, 50), Color::Blue);
-	rect1->addChild(rect3);
-
-	//text1 = std::make_shared<Text>(const std::string& str, const glm::vec2& pos, const float scale, const Color& color, std::shared_ptr<Font> font)
-	auto text1 = std::make_shared<Text>("A.g,p-C123%@", glm::vec2(0,0), 1.0f, Color::White, font);
-	auto text2 = std::make_shared<Text>("OpenGL Demo.", glm::vec2(0,0), 1.0f, Color(1.0f, 1.0f, 0.0f, 0.0f), font);
-	GetStage2D().addChild(text1);
-	rect1->addChild(text2);
-	#endif
-
 	GetStage2D().addChild(std::make_shared<Image>("assets/brick.jpg", glm::vec2(0.0f, 0.0f), glm::vec2(100.0f, 100.0f)));
-	//GetStage2D().addChild(image1);
 	GetStage2D().addChild(std::make_shared<Image>("assets/grid.png", glm::vec2(100.0f, 100.0f), glm::vec2(100.0f, 100.0f)));
 	auto img3 = std::make_shared<Image>("assets/testpattern.jpg", glm::vec2(WINDOW_WIDTH/2, WINDOW_WIDTH/2), glm::vec2(100.0f, 100.0f));
 	img3->SetCenter(glm::vec2(0.5f, 0.5f));

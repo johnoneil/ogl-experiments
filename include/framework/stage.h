@@ -15,8 +15,7 @@ public:
     Stage2D(const float width, const float height);
 private:
     bool InitializeImpl() override;
-    bool RenderImpl() override;
-    glm::mat4 ModelTransformImpl() const override;
+    glm::mat4 RenderImpl(const glm::mat4& parentTransform) override;
 private:
     glm::mat4 _projection;
 public:

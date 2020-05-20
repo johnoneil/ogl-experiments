@@ -33,6 +33,5 @@ public:
 public:
     bool InitializeImpl() override;
     //void DeInitialize();
-    bool RenderImpl() override;
-    glm::mat4 ModelTransformImpl() const override;
+    glm::mat4 RenderImpl(const glm::mat4& parentTransform) override;
 };
