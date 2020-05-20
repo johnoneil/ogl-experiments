@@ -68,37 +68,16 @@ void ColorRect::DeInitialize() {
 
 glm::mat4 ColorRect::RenderImpl(const glm::mat4& parentTransform) {
 
-    #if 1
-    #if 1
     glm::mat4 model = parentTransform;
     model = glm::translate(model, glm::vec3(_pos.x, _pos.y,0.0f));
     model = glm::translate(model, glm::vec3(_center.x * _sz.x, _center.y * _sz.y, 0.0f));
-    model = glm::scale(model, glm::vec3(_scale.x, _scale.y, 1));
-    model = glm::scale(model, glm::vec3(_sz.x, _sz.y, 1));
+    glm::mat4 noSize = glm::scale(model, glm::vec3(_scale.x, _scale.y, 1));
+    model = glm::scale(noSize, glm::vec3(_sz.x, _sz.y, 1));
     model = glm::rotate(model, _rotation, glm::vec3(0.0f, 0.0f, 1.0f));
     model = glm::translate(model, glm::vec3(-1.0f * _center.x, -1.0f * _center.y, 0.0f));
-    #endif
-
-
-    glDisable(GL_DEPTH_TEST);
-    _shader.use();
-    _shader.setMat4("projection", GetStage2D().GetProjectionMatrix());
-    _shader.setMat4("model", model);
-    _shader.setVec4("c", _color.Vec4());
-    glBindVertexArray(_VAO);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-    glBindVertexArray(0);
-    return model;
-    #else
-
-    // Translate according to parent's position
-    glm::mat4 model = parentTransform;
-    model = glm::translate(model, glm::vec3(_pos.x - (_center.x * _sz.x * _scale.x), _pos.y - (_center.y * _sz.y * _scale.y), 0.0f));
-    glm::mat4 noSize = glm::scale(model, glm::vec3(_scale.x, _scale.y, 1));
-    #if 1
-    noSize = glm::rotate(noSize, _rotation, glm::vec3(0.0f, 0.0f, 1.0f));   
-    #endif
-    model = glm::scale(noSize, glm::vec3(_sz.x, _sz.y, 1));
+    
+    noSize = glm::rotate(noSize, _rotation, glm::vec3(0.0f, 0.0f, 1.0f));
+    noSize = glm::translate(noSize, glm::vec3(-1.0f * _center.x * _sz.x, -1.0f * _center.y * _sz.y, 0.0f));
 
     glDisable(GL_DEPTH_TEST);
     _shader.use();
@@ -108,8 +87,7 @@ glm::mat4 ColorRect::RenderImpl(const glm::mat4& parentTransform) {
     glBindVertexArray(_VAO);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glBindVertexArray(0);
-    return model;
-    #endif
+    return noSize;
 }
 
 #if 0
