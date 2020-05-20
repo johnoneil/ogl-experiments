@@ -9,6 +9,7 @@
 #include <framework/colorrect.h>
 #include <framework/stage.h>
 #include <framework/tween.h>
+#include <glm/gtc/constants.hpp>
 
 static const unsigned int WINDOW_HEIGHT = 768;
 static const unsigned int WINDOW_WIDTH = 1024;
@@ -74,6 +75,8 @@ int main( void )
 
 	auto rect1 = std::make_shared<ColorRect>(glm::vec2(100, 100), glm::vec2(200, 200), Color::Red);
 	GetStage2D().addChild(rect1);
+	float rot = glm::quarter_pi<float>();
+	rect1->SetRotation(rot);
 	auto rect2 = std::make_shared<ColorRect>(glm::vec2(0, 0), glm::vec2(100, 100), Color::Green);
 	rect1->addChild(rect2);
 	auto rect3 = std::make_shared<ColorRect>(glm::vec2(50, 0), glm::vec2(50, 50), Color::Blue);
