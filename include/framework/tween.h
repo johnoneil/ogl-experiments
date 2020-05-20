@@ -202,3 +202,153 @@ std::shared_ptr<iTween> TweenPos(std::shared_ptr<OBJ_TYPE> obj,
             return tween;
         }
 
+template< typename OBJ_TYPE, typename MEMBER_TYPE>
+class ScaleTween : public iTween
+{
+public:
+    ScaleTween(std::shared_ptr<OBJ_TYPE> obj,
+        const MEMBER_TYPE& f, const float duration, const TweenSystem::Easing easing) {
+        _final = f;
+        _obj = obj;
+        _duration = duration;
+        _easing = TweenSystem::GetEasingFunction(easing);
+    }
+public:
+    void StartImpl() override {
+        auto obj = _obj.lock();
+        if(obj) {
+            _initial = obj->GetScale();
+        }
+    }
+    bool UpdateImpl(const float dt) override {
+        bool complete = false;
+        auto obj = _obj.lock();
+        if(obj) {
+            float a = getAlpha();
+            if(a >= 1.0f) {
+                obj->SetScale(_final);
+                complete = true;
+            }else{
+                float b = 1.0f - a;
+                obj->SetScale((a*_final) + (b*_initial));
+            }
+        }else{
+            complete = true;
+        }
+        return complete;
+    }
+
+private:
+    std::weak_ptr<OBJ_TYPE> _obj;
+    MEMBER_TYPE _initial;
+    MEMBER_TYPE _final;
+};
+
+template<typename OBJ_TYPE, typename MEMBER_TYPE >
+std::shared_ptr<iTween> TweenScale(std::shared_ptr<OBJ_TYPE> obj,
+        const MEMBER_TYPE& finalPos, const float duration, const TweenSystem::Easing easing) {
+            auto tween = std::make_shared<ScaleTween<OBJ_TYPE, MEMBER_TYPE>>(obj, finalPos, duration, easing);
+            TweenSystem::Get().AddTween(tween);
+            return tween;
+        }
+
+template< typename OBJ_TYPE, typename MEMBER_TYPE>
+class SizeTween : public iTween
+{
+public:
+    SizeTween(std::shared_ptr<OBJ_TYPE> obj,
+        const MEMBER_TYPE& f, const float duration, const TweenSystem::Easing easing) {
+        _final = f;
+        _obj = obj;
+        _duration = duration;
+        _easing = TweenSystem::GetEasingFunction(easing);
+    }
+public:
+    void StartImpl() override {
+        auto obj = _obj.lock();
+        if(obj) {
+            _initial = obj->GetSize();
+        }
+    }
+    bool UpdateImpl(const float dt) override {
+        bool complete = false;
+        auto obj = _obj.lock();
+        if(obj) {
+            float a = getAlpha();
+            if(a >= 1.0f) {
+                obj->SetSize(_final);
+                complete = true;
+            }else{
+                float b = 1.0f - a;
+                obj->SetSize((a*_final) + (b*_initial));
+            }
+        }else{
+            complete = true;
+        }
+        return complete;
+    }
+
+private:
+    std::weak_ptr<OBJ_TYPE> _obj;
+    MEMBER_TYPE _initial;
+    MEMBER_TYPE _final;
+};
+
+template<typename OBJ_TYPE, typename MEMBER_TYPE >
+std::shared_ptr<iTween> TweenSize(std::shared_ptr<OBJ_TYPE> obj,
+        const MEMBER_TYPE& finalPos, const float duration, const TweenSystem::Easing easing) {
+            auto tween = std::make_shared<SizeTween<OBJ_TYPE, MEMBER_TYPE>>(obj, finalPos, duration, easing);
+            TweenSystem::Get().AddTween(tween);
+            return tween;
+        }
+
+template< typename OBJ_TYPE, typename MEMBER_TYPE>
+class ColorTween : public iTween
+{
+public:
+    ColorTween(std::shared_ptr<OBJ_TYPE> obj,
+        const MEMBER_TYPE& f, const float duration, const TweenSystem::Easing easing) {
+        _final = f;
+        _obj = obj;
+        _duration = duration;
+        _easing = TweenSystem::GetEasingFunction(easing);
+    }
+public:
+    void StartImpl() override {
+        auto obj = _obj.lock();
+        if(obj) {
+            _initial = obj->GetColor();
+        }
+    }
+    bool UpdateImpl(const float dt) override {
+        bool complete = false;
+        auto obj = _obj.lock();
+        if(obj) {
+            float a = getAlpha();
+            if(a >= 1.0f) {
+                obj->SetColor(_final);
+                complete = true;
+            }else{
+                float b = 1.0f - a;
+                obj->SetColor((_final*a) + (_initial*b));
+            }
+        }else{
+            complete = true;
+        }
+        return complete;
+    }
+
+private:
+    std::weak_ptr<OBJ_TYPE> _obj;
+    MEMBER_TYPE _initial;
+    MEMBER_TYPE _final;
+};
+
+template<typename OBJ_TYPE, typename MEMBER_TYPE >
+std::shared_ptr<iTween> TweenColor(std::shared_ptr<OBJ_TYPE> obj,
+        const MEMBER_TYPE& finalPos, const float duration, const TweenSystem::Easing easing) {
+            auto tween = std::make_shared<ColorTween<OBJ_TYPE, MEMBER_TYPE>>(obj, finalPos, duration, easing);
+            TweenSystem::Get().AddTween(tween);
+            return tween;
+        }
+

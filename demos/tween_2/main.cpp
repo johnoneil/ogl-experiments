@@ -95,35 +95,19 @@ int main( void )
 	//GetStage2D().addChild(image1);
 	GetStage2D().addChild(std::make_shared<Image>("assets/grid.png", glm::vec2(100.0f, 100.0f), glm::vec2(100.0f, 100.0f)));
 	auto img3 = std::make_shared<Image>("assets/testpattern.jpg", glm::vec2(200.0f, 200.0f), glm::vec2(200.0f, 200.0f));
-	img3->SetCenter(glm::vec2(0.75f, 0.75f));
+	//img3->SetCenter(glm::vec2(0.75f, 0.75f));
 	img3->SetScale(glm::vec2(0.5f, 0.5f));
 	GetStage2D().addChild(img3);
 
 	GetStage2D().Initialize();
 
-	#if 0
-	Pause(1.0f)->Then(
-		TweenScale(img3, glm::vec2(2.0f, 3.0f), 2.0f, TweenSystem::Easing::LINEAR))->Then(
-		Pause(1.0f))->Then(
-		TweenScale(img3, glm::vec2(6.0f, 6.0f), 2.0f, TweenSystem::Easing::LINEAR))->Then(
-		Pause(1.0f))->Then(
-		TweenScale(img3, glm::vec2(1.0f, 1.0f), 2.0f, TweenSystem::Easing::LINEAR))->Start();
-	#endif
-
-
-
-	#if 0
-	TweenPos(text1, glm::vec2(200.0f, 50.0f), 2.0f, TweenSystem::Easing::ELASTIC_IN)->Then(
-		Pause(3.0f))->Then(
-		TweenPos(rect1, glm::vec2(300.0f, 300.0f), 2.0f, TweenSystem::Easing::BACK_INOUT))->Then(
-		TweenPos(rect3, glm::vec2(100.0f, -120.0f), 2.0f, TweenSystem::Easing::BACK_INOUT))->Then(
-		TweenPos(rect2, glm::vec2(200.0f, 0.0f), 2.0f, TweenSystem::Easing::BOUNCE_OUT))->Then(
-		DummyTween(0.0f, [](){printf("Tween completed...\n"); }))->Then(
-		TweenColor(rect1, Color::Olive, 2.0f, TweenSystem::Easing::SIN_IN))->Then(
-		DummyTween(0.0f, [](){printf("Another Tween completed...\n"); }))->Then(
-		TweenColor(text2, Color(0.0f, 0.0f, 1.0f, 1.0f), 2.0f, TweenSystem::Easing::SIN_IN))->Then(
-		DummyTween(0.0f, [](){printf("Yet another tween completed...\n");}))->Then(
-		TweenColor(text1, Color(1.0f, 1.0f, 1.0f, 0.0f), 2.0f, TweenSystem::Easing::SIN_IN))->Start();
+	#if 1
+	//Pause(1.0f)->Then(
+		TweenScale(img3, glm::vec2(2.0f, 2.0f), 4.0f, TweenSystem::Easing::LINEAR)->Then(
+		//Pause(1.0f))->Then(
+		TweenScale(img3, glm::vec2(0.5f, 3.0f), 4.0f, TweenSystem::Easing::LINEAR))->Then(
+		//Pause(1.0f))->Then(
+		TweenScale(img3, glm::vec2(4.0f, 1.0f), 4.0f, TweenSystem::Easing::LINEAR))->Start();
 	#endif
 
     // render loop
