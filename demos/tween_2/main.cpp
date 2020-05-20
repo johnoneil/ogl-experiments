@@ -76,22 +76,48 @@ int main( void )
 		printf("Failed to initialize font!\n");
 	}
 
-	GetStage2D().addChild(std::make_shared<Image>("assets/brick.jpg", glm::vec2(0.0f, 0.0f), glm::vec2(100.0f, 100.0f)));
-	GetStage2D().addChild(std::make_shared<Image>("assets/grid.png", glm::vec2(100.0f, 100.0f), glm::vec2(100.0f, 100.0f)));
-	auto img3 = std::make_shared<Image>("assets/testpattern.jpg", glm::vec2(WINDOW_WIDTH/2, WINDOW_WIDTH/2), glm::vec2(100.0f, 100.0f));
+	auto img1 = std::make_shared<Image>("assets/brick.jpg", glm::vec2(300.0f, 300.0f), glm::vec2(200.0f, 200.0f));
+	img1->SetCenter(glm::vec2(0.5f, 0.5f));
+	GetStage2D().addChild(img1);
+	auto img2 = std::make_shared<Image>("assets/grid.png", glm::vec2(0.0f, 0.0f), glm::vec2(100.0f, 100.0f));
+	img1->addChild(img2);
+	auto img3 = std::make_shared<Image>("assets/testpattern.jpg", glm::vec2(100.0f, 100.0f), glm::vec2(100.0f, 100.0f));
+	img1->addChild(img3);
 	img3->SetCenter(glm::vec2(0.5f, 0.5f));
-	//img3->SetScale(glm::vec2(0.5f, 0.5f));
-	GetStage2D().addChild(img3);
 
 	GetStage2D().Initialize();
 
-	#if 1
+	#if 0
 	Pause(1.0f)->Then(
 		TweenScale(img3, glm::vec2(2.0f, 2.0f), 4.0f, TweenSystem::Easing::BOUNCE_OUT))->Then(
 		Pause(1.0f))->Then(
 		TweenScale(img3, glm::vec2(0.5f, 3.0f), 4.0f, TweenSystem::Easing::EXPONENTIAL_INOUT))->Then(
 		Pause(1.0f))->Then(
 		TweenScale(img3, glm::vec2(4.0f, 1.0f), 4.0f, TweenSystem::Easing::BOUNCE_OUT))->Start();
+	#endif
+	#if 1
+	Pause(3.0f)->Then(
+	//TweenPos(rect1, glm::vec2(400.0f, 400.0f), 2.0f, TweenSystem::Easing::ELASTIC_IN))->Then(
+		TweenRotation(img1, glm::half_pi<float>(), 2.0f, TweenSystem::Easing::LINEAR))->Then(
+		//Pause(3.0f))->Then(
+		//TweenPos(img1, glm::vec2(300.0f, 300.0f), 2.0f, TweenSystem::Easing::BACK_INOUT))->Then(
+		TweenPos(img2, glm::vec2(100.0f, -120.0f), 2.0f, TweenSystem::Easing::BACK_INOUT))->Then(
+		TweenRotation(img2, glm::half_pi<float>(), 2.0f, TweenSystem::Easing::BACK_INOUT))->Then(
+		TweenPos(img3, glm::vec2(200.0f, 0.0f), 2.0f, TweenSystem::Easing::BOUNCE_OUT))->Then(
+		TweenRotation(img3, glm::half_pi<float>(), 2.0f, TweenSystem::Easing::BACK_INOUT))->Then(
+
+		//Pause(3.0f))->Then(
+		//TweenColor(rect1, Color::Olive, 2.0f, TweenSystem::Easing::SIN_IN))->Then(
+		//Pause(3.0f))->Then(
+		//TweenColor(text2, Color::Orange, 2.0f, TweenSystem::Easing::SIN_IN))->Then(
+		//Pause(3.0f))->Then(
+		//TweenColor(text1, Color(1.0f, 1.0f, 1.0f, 0.5f), 2.0f, TweenSystem::Easing::SIN_IN))->Then(
+		//TweenPos(rect3, glm::vec2(0.0f, 0.0f), 2.0f, TweenSystem::Easing::BACK_INOUT))->Then(
+		//TweenSize(rect3,glm::vec2(50.0f, 50.0f), 2.0f, TweenSystem::Easing::QUADRATIC_INOUT))->Then(
+		//TweenPos(rect2, glm::vec2(50.0f, 50.0f), 2.0f, TweenSystem::Easing::BOUNCE_OUT))->Then(
+		TweenScale(img1, glm::vec2(2.0f, 2.0f), 2.0f, TweenSystem::Easing::LINEAR))->Then(
+		TweenRotation(img1, glm::quarter_pi<float>(), 2.0f, TweenSystem::Easing::SIN_INOUT))->Then(
+		Pause(3.0f))->Start();
 	#endif
 
     // render loop
