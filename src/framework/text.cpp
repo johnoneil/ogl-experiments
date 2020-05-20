@@ -1,12 +1,13 @@
-#include <framework/text.h>
-#include <framework/stage.h>
+#include "framework/text.h"
+
+#include "framework/stage.h"
 
 #if 1
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #endif
 
-#include <glm/gtc/matrix_transform.hpp> // glm::orth
+#include <glm/gtc/matrix_transform.hpp>
 
 constexpr float Character::vertices[];
 
@@ -218,6 +219,7 @@ glm::vec2 Font::GetRect(const std::string& str) const {
     return rect;
 }
 
+#if 0
 Text::Text() {}
 Text& Text::operator=(const Text& rhs) {
     if(&rhs != this) {
@@ -229,31 +231,56 @@ Text& Text::operator=(const Text& rhs) {
     }
     return *this;
 }
+#endif
 
-Text::Text(const std::string& str, const glm::vec2& pos,
-    const float scale, const Color& color, std::shared_ptr<Font> font) 
-    :_pos(pos)
-    ,_color(color)
-    ,_font(font)
-    ,_str(str)
-    ,_scale(scale){}
+Text::Text(const std::string& str, const glm::vec2& pos, const Color& color, std::shared_ptr<Font> font) 
+    :_font(font)
+    ,_str(str) {
+        _pos = pos;
+        _color = color;
+    }
 
 bool Text::InitializeImpl() {
     return true;
 }
 
-bool Text::RenderImpl() {
-    glm::mat4 model = GetModelTransform();
+glm::mat4 Text::RenderImpl(const glm::mat4& parentTransform) {
+    
+    glm::mat4 model = parentTransform;
+    model = glm::translate(model, glm::vec3(_pos.x, _pos.y,0.0f));
+    model = glm::translate(model, glm::vec3(_center.x * _sz.x, _center.y * _sz.y, 0.0f));
+    glm::mat4 noSize = glm::scale(model, glm::vec3(_scale.x, _scale.y, 1));
+    model = glm::scale(noSize, glm::vec3(_sz.x, _sz.y, 1));
+    model = glm::rotate(model, _rotation, glm::vec3(0.0f, 0.0f, 1.0f));
+    model = glm::translate(model, glm::vec3(-1.0f * _center.x, -1.0f * _center.y, 0.0f));
+    
+    noSize = glm::rotate(noSize, _rotation, glm::vec3(0.0f, 0.0f, 1.0f));
+    noSize = glm::translate(noSize, glm::vec3(-1.0f * _center.x * _sz.x, -1.0f * _center.y * _sz.y, 0.0f));
+
+
     // TODO: text scaling here, not in the font
     //model = glm::scale(model, glm::vec3(_sz.x, _sz.y, 1));
     model = glm::translate(model, glm::vec3(_pos.x, _pos.y, 0.0f));
     _font->RenderText(_str, model, _color.Vec4());
-    return true;
+    return noSize;
 }
 
+#if 0
 glm::mat4 Text::ModelTransformImpl() const {
+    #if 0
     return glm::mat4(1.0);
+    #else
+    glm::mat4 p = glm::mat4(1.0);
+    if(auto parent = _parent.lock()) {
+        p = parent->GetModelTransform();
+    }
+    glm::mat4 m = glm::mat4(1.0);
+    m = glm::translate(m, glm::vec3(_pos.x, _pos.y, 0.0f));
+    //m = glm::scale(m, glm::vec3(_sz.x, _sz.y, 1));
+    return p * m;
+    #endif
 }
+#endif
 
 glm::vec2 Text::GetRect() const {
     if(_font)
@@ -261,32 +288,8 @@ glm::vec2 Text::GetRect() const {
     return glm::vec2(0.f, 0.0f);
 }
 
-glm::vec2 Text::GetPos() const {
-    return _pos;
-}
-
-float Text::GetScale() const {
-    return _scale;
-}
-
-Color Text::GetColor() const {
-    return _color;
-}
-
 std::shared_ptr<Font> Text::GetFont() const {
     return _font;
-}
-
-void Text::SetPos(const glm::vec2& pos) {
-    _pos = pos;
-}
-
-void Text::SetScale(const float scale) {
-    _scale = scale;
-}
-
-void Text::SetColor(const Color& color) {
-    _color = color;
 }
 
 void Text::SetFont(std::shared_ptr<Font> font) {

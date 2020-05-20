@@ -96,6 +96,17 @@ void TweenSystem::Render() {
     return;
 }
 
+void TweenSystem::AddTween(std::shared_ptr<iTween> tween, bool start/*=false*/) {
+    // TODO: check for duplicates etc
+    _tweens.push_back(tween);
+    if(start)
+        tween->Start();
+}
+
+void RemoveTween(std::shared_ptr<iTween> tween) {
+    // TODO:
+}
+
 TweenSystem& TweenSystem::Get() {
     static TweenSystem system;
     return system;
@@ -108,20 +119,12 @@ TweenSystem& TweenSystem::Get() {
     return LinearInterpolation;
  }
 
-std::shared_ptr<iTween> DummyTween(const float duration, std::function<void(void)> onComplete /* = nullptr*/) {
-    auto tween = Tween::Create(duration, TweenSystem::Easing::LINEAR,
-    nullptr, // onStart
-    [=](float dt, iTween& tween)->bool{ // onUpdate
-        return tween.getAlpha() >= 1.0f;
-    },
-    [onComplete](float t, iTween& tween)->bool { // onComplete
-        if(onComplete)
-            onComplete();
-        return false;
-    },
-    nullptr); // onCancel
-
+ std::shared_ptr<iTween> DummyTween(const float duration) {
+    auto tween = std::make_shared<TweenDummy>(duration);
+    TweenSystem::Get().AddTween(tween);
     return tween;
 }
-std::shared_ptr<iTween> Pause(const float duration) { return DummyTween(duration);}
 
+std::shared_ptr<iTween> Pause(const float duration) {
+    return DummyTween(duration);
+}

@@ -16,6 +16,7 @@ Color Color::Red(1.0f, 0.0f, 0.0f, 1.0f);
 Color Color::Fuchsia(1.0f, 0.0f, 1.0f, 1.0f);
 Color Color::Yellow(1.0f, 1.0f, 0.0f, 1.0f);
 Color Color::White(1.0f, 1.0f, 1.0f, 1.0f);
+Color Color::Orange(1.0f, 0.64f, 0.0f, 1.0f);
 
 Color::Color() {
 
@@ -38,3 +39,12 @@ Color::Color(const glm::vec3& c) :_color(c.x, c.y, c.z, 1.0f){
 Color::Color(const float r, const float g, const float b, const float a /* = 1.0f*/) 
     :_color(r, g, b, a) {
     }
+
+    // Helpers for basic math
+Color Color::operator*(const float v) {
+    return Color(v * _color);
+}
+
+Color Color::operator+(const Color& other) {
+    return Color(_color + other._color);
+}

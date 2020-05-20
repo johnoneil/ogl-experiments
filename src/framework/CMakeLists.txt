@@ -3,6 +3,7 @@ SET (PROJECT_NAME framework)
 #find_package(Freetype REQUIRED)
 
 SET( SRCS
+    canvaselement.cpp
     shaders.cpp
     mesh.cpp
     model.cpp
@@ -11,7 +12,8 @@ SET( SRCS
     color.cpp
     colorrect.cpp
     stage.cpp
-    tween.cpp)
+    tween.cpp
+    image.cpp)
 
 add_library(${PROJECT_NAME} STATIC ${SRCS} )
 

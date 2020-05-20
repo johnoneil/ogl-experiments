@@ -17,6 +17,11 @@ public:
     Color(const float r, const float g, const float b, const float a = 1.0f);
 
 public:
+    // Helpers for basic math
+    Color operator*(const float v);
+    Color operator+(const Color& other);
+
+public:
     float R() const {return _color.x;}
     float G() const {return _color.y;}
     float B() const {return _color.z;}
@@ -50,6 +55,7 @@ public:
     static Color Fuchsia;
     static Color Yellow;
     static Color White;
+    static Color Orange;
     
     /*
     black 	rgb(0,0,0)	
