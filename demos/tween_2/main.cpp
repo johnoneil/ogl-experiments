@@ -91,23 +91,23 @@ int main( void )
 	rect1->addChild(text2);
 	#endif
 
-	GetStage2D().addChild(std::make_shared<Image>("assets/brick.jpg", glm::vec2(100.0f, 100.0f), glm::vec2(0.0f, 0.0f)));
+	GetStage2D().addChild(std::make_shared<Image>("assets/brick.jpg", glm::vec2(0.0f, 0.0f), glm::vec2(100.0f, 100.0f)));
 	//GetStage2D().addChild(image1);
 	GetStage2D().addChild(std::make_shared<Image>("assets/grid.png", glm::vec2(100.0f, 100.0f), glm::vec2(100.0f, 100.0f)));
-	auto img3 = std::make_shared<Image>("assets/testpattern.jpg", glm::vec2(200.0f, 200.0f), glm::vec2(200.0f, 200.0f));
-	//img3->SetCenter(glm::vec2(0.75f, 0.75f));
-	img3->SetScale(glm::vec2(0.5f, 0.5f));
+	auto img3 = std::make_shared<Image>("assets/testpattern.jpg", glm::vec2(WINDOW_WIDTH/2, WINDOW_WIDTH/2), glm::vec2(100.0f, 100.0f));
+	img3->SetCenter(glm::vec2(0.5f, 0.5f));
+	//img3->SetScale(glm::vec2(0.5f, 0.5f));
 	GetStage2D().addChild(img3);
 
 	GetStage2D().Initialize();
 
 	#if 1
 	//Pause(1.0f)->Then(
-		TweenScale(img3, glm::vec2(2.0f, 2.0f), 4.0f, TweenSystem::Easing::LINEAR)->Then(
+		TweenScale(img3, glm::vec2(2.0f, 2.0f), 4.0f, TweenSystem::Easing::BOUNCE_OUT)->Then(
 		//Pause(1.0f))->Then(
-		TweenScale(img3, glm::vec2(0.5f, 3.0f), 4.0f, TweenSystem::Easing::LINEAR))->Then(
+		TweenScale(img3, glm::vec2(0.5f, 3.0f), 4.0f, TweenSystem::Easing::EXPONENTIAL_INOUT))->Then(
 		//Pause(1.0f))->Then(
-		TweenScale(img3, glm::vec2(4.0f, 1.0f), 4.0f, TweenSystem::Easing::LINEAR))->Start();
+		TweenScale(img3, glm::vec2(4.0f, 1.0f), 4.0f, TweenSystem::Easing::BOUNCE_OUT))->Start();
 	#endif
 
     // render loop

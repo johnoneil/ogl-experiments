@@ -44,7 +44,7 @@ Image& Image::operator=(const Image& rhs) {
 Image::Image(const std::string& path)
     :_imagePath(path){
 }
-Image::Image(const std::string& path, const glm::vec2& sz, const glm::vec2& pos)
+Image::Image(const std::string& path, const glm::vec2& pos, const glm::vec2& sz)
     :_imagePath(path) {
         _sz = sz;
         _pos = pos;
@@ -146,7 +146,7 @@ glm::mat4 Image::ModelTransformImpl() const {
     // 4) Finally, scale the object.
     glm::mat4 m = glm::mat4(1.0);
     m = glm::translate(m, glm::vec3(_pos.x - (_center.x * _sz.x * _scale.x), _pos.y - (_center.y * _sz.y * _scale.y), 0.0f));
-    m = glm::scale(m, glm::vec3(_sz.x * _scale.x, _sz.y * _scale.x, 1));
+    m = glm::scale(m, glm::vec3(_sz.x * _scale.x, _sz.y * _scale.y, 1));
     return m;
     #else
     glm::mat4 p = glm::mat4(1.0);
