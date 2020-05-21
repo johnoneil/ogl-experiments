@@ -58,7 +58,7 @@ Image::Image(const std::string& path, const glm::vec2& pos)
 
 bool Image::InitializeImpl() {
     _shader = Shader(sVShaderPath, sFShaderPath);
-    glGenVertexArrays(1, &_VAO);
+    //glGenVertexArrays(1, &_VAO);
     glBindVertexArray(_VAO);
     //glGenBuffers(1, &_VBO);
     glBindBuffer(GL_ARRAY_BUFFER, _VBO);

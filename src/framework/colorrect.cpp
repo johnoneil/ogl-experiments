@@ -42,7 +42,7 @@ ColorRect::ColorRect(const glm::vec2& pos, const glm::vec2& sz, const Color& col
 
 bool ColorRect::InitializeImpl() {
     _shader = Shader(sVShaderPath, sFShaderPath);
-    glGenVertexArrays(1, &_VAO);
+    //glGenVertexArrays(1, &_VAO);
     glBindVertexArray(_VAO);
     //glGenBuffers(1, &_VBO);
     glBindBuffer(GL_ARRAY_BUFFER, _VBO);

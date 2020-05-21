@@ -6,6 +6,7 @@
 #include "framework/gl.h"
 #include "framework/GL/texture.h"
 #include "framework/GL/buffer.h"
+#include "framework/GL/attributes.h"
 #include <glm/glm.hpp>
 #include <map>
 
@@ -27,7 +28,7 @@ struct Character {
         1.0f, 0.0f, 1.0f, 0.0f
     };
     resources::Buffer _VBO;
-    GLuint _VAO = 0;
+    Attributes _VAO;
     Character() = default;
     Character(const Character& other);
     Character& operator=(const Character& rhs);
