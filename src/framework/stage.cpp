@@ -25,11 +25,24 @@ glm::mat4 Stage2D::RenderImpl(const glm::mat4& parentTransform) {
     return glm::mat4(1.0);
 }
 
-#if 0
-glm::mat4 Stage2D::ModelTransformImpl() const {
-    return glm::mat4(1.0);
+std::shared_ptr<CanvasElement> Stage2D::GetByName(const std::string& name) {
+    auto e = _names.find(name);
+    if(e!=_names.end()) {
+        return e->second;
+    }
+    return nullptr;
 }
-#endif
+void Stage2D::Register(std::shared_ptr<CanvasElement> element) {
+    auto name = element->GetName();
+    if(name.size()) {
+        auto e = _names.find(name);
+        if(e!=_names.end()) {
+            // TODO: assert or return error.
+            return;
+        }
+        _names[name] = element;
+    }
+}
 
 Stage2D& GetStage2D() {
     static std::shared_ptr<Stage2D> _stage;

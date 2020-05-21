@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include <vector>
+#include <string>
 
 #include "framework/color.h"
 
@@ -16,7 +17,7 @@ public:
     virtual ~CanvasElement() = default;
 
 public:
-    void addChild(std::shared_ptr<CanvasElement> child);
+    void addChild(std::shared_ptr<CanvasElement> child, const std::string& name = std::string(""));
     void removeChild(std::shared_ptr<CanvasElement>& child);
     void setParent(std::weak_ptr<CanvasElement> parent) { _parent = parent;}
     std::weak_ptr<CanvasElement> getParent() const { return _parent; }
@@ -43,6 +44,7 @@ protected:
     glm::vec2 _rotation;
     glm::vec2 _rotationCenter;
     #endif
+    std::string _name;
 public:
     glm::vec2 GetPos() const { return _pos; }
     glm::vec2 GetSize() const { return _sz; }
@@ -56,4 +58,7 @@ public:
     void SetScale(const glm::vec2& scale) { _scale = scale; }
     void SetColor(const Color& color) { _color = color; }
     void SetRotation(const float rotation) { _rotation = rotation; }
+
+    std::string GetName() const { return _name; }
+    void SetName(const std::string& name) { _name = name; }
 };
