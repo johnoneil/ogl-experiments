@@ -35,8 +35,8 @@ Image& Image::operator=(const Image& rhs) {
         _color = rhs._color;
         _imagePath = rhs._imagePath;
         _VBO = rhs._VBO;
-        _VAO = rhs._VBO;
-        //_shader = rhs._shader;
+        _VAO = rhs._VAO;
+        _shader = rhs._shader;
     }
     return *this;
 }
@@ -58,9 +58,9 @@ Image::Image(const std::string& path, const glm::vec2& pos)
 
 bool Image::InitializeImpl() {
     _shader = Shader(sVShaderPath, sFShaderPath);
-    glGenVertexArrays(1, &_VAO);
+    //glGenVertexArrays(1, &_VAO);
     glBindVertexArray(_VAO);
-    glGenBuffers(1, &_VBO);
+    //glGenBuffers(1, &_VBO);
     glBindBuffer(GL_ARRAY_BUFFER, _VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(Image::_vertices), Image::_vertices, GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
@@ -98,7 +98,6 @@ bool Image::InitializeImpl() {
         if(_sz == glm::vec2(0.0f, 0.0f))
             _sz = glm::vec2(_initialWidth, _initialHeight);
 
-        glGenTextures(1, &_texture);
         glBindTexture(GL_TEXTURE_2D, _texture);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
@@ -114,11 +113,6 @@ bool Image::InitializeImpl() {
     }
     return true;
 }
-
-#if 0
-void Image::DeInitialize() {
-}
-#endif
 
 glm::mat4 Image::RenderImpl(const glm::mat4& parentTransform) {
 
@@ -146,17 +140,10 @@ glm::mat4 Image::RenderImpl(const glm::mat4& parentTransform) {
     return noSize;
 }
 
-#if 0
-glm::mat4 Image::ModelTransformImpl() const {
-    // 1) Translate the object to the position, e.g, vec3(position, 0.0f).
-    // 2) And then rotate the object.
-    // 3) Translate the point back to the origin, e.g, vec3(-originx * scale, -originy * scale, 0.0f).
-    // 4) Finally, scale the object.
-    glm::mat4 m = glm::mat4(1.0);
-    m = glm::translate(m, glm::vec3(_pos.x - (_center.x * _sz.x * _scale.x), _pos.y - (_center.y * _sz.y * _scale.y), 0.0f));
-    m = glm::scale(m, glm::vec3(_sz.x * _scale.x, _sz.y * _scale.y, 1));
-    return m;
+static unsigned int nextNameValue = 1;
+
+std::string Image::GenerateName() const {
+    unsigned int num = nextNameValue;
+    ++nextNameValue;
+    return std::string("Image") + std::to_string(num);
 }
-#endif
-
-

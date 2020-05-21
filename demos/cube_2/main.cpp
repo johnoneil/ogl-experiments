@@ -4,6 +4,7 @@
 
 #include <framework/gl.h>
 #include <GLFW/glfw3.h>
+#include "framework/GL/texture.h"
 
 // Include GLM
 #include <glm/glm.hpp>
@@ -55,7 +56,7 @@ glm::mat4 model;
 GLuint vertexbuffer = 0;
 GLuint colorbuffer = 0;
 GLuint MatrixID = 0;
-GLuint texture = 0;
+TextureResource texture;
 void renderLoop(void) {
 		angle_deg += 0.33f;
 
@@ -250,7 +251,6 @@ int main( void )
                                     &c,
                                     STBI_rgb_alpha);
 
-    glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
@@ -276,6 +276,7 @@ int main( void )
     #endif
 
 	// Cleanup VBO and shader
+	texture.Free();
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &vertexbuffer);
 	glDeleteProgram(programID);

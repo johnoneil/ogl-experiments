@@ -4,6 +4,8 @@
 #include "framework/color.h"
 #include "framework/shader.h"
 #include "framework/gl.h"
+#include "framework/GL/buffer.h"
+#include "framework/GL/attributes.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -19,8 +21,8 @@ private:
         1.0f, 1.0f,
         1.0f, 0.0f
     };
-    GLuint _VAO = 0;
-    GLuint _VBO = 0;
+    Attributes _VAO;
+    resources::Buffer _VBO;
 public:
     ColorRect();
     ColorRect& operator=(const ColorRect& rhs);
@@ -34,4 +36,5 @@ public:
     bool InitializeImpl() override;
     //void DeInitialize();
     glm::mat4 RenderImpl(const glm::mat4& parentTransform) override;
+    std::string GenerateName() const override;
 };

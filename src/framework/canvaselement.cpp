@@ -1,8 +1,15 @@
 #include "framework/canvaselement.h"
 
+#include "framework/stage.h"
 
-void CanvasElement::addChild(std::shared_ptr<CanvasElement> child) {
+
+void CanvasElement::addChild(std::shared_ptr<CanvasElement> child, const std::string& name) {
     // TODO: make sure the child is not anywhere in the tree already
+    if(name.size()) {
+        child->SetName(name);
+    }
+    GetStage2D().Register(child);
+
     if(auto spt = _parent.lock()) {
         spt->removeChild(child);
     }

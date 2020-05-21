@@ -4,6 +4,9 @@
 #include "framework/canvaselement.h"
 #include "framework/color.h"
 #include "framework/gl.h"
+#include "framework/GL/texture.h"
+#include "framework/GL/buffer.h"
+#include "framework/GL/attributes.h"
 #include <glm/glm.hpp>
 #include <map>
 
@@ -13,7 +16,7 @@
 class FontImpl;
 
 struct Character {
-    unsigned int TextureID; // ID handle of the glyph texture
+    Texture TextureID; // ID handle of the glyph texture
     glm::ivec2   Size;      // Size of glyph
     glm::ivec2   Bearing;   // Offset from baseline to left/top of glyph
     unsigned int Advance;   // Horizontal offset to advance to next glyph
@@ -24,18 +27,17 @@ struct Character {
         1.0f, 1.0f, 1.0f, 1.0f,
         1.0f, 0.0f, 1.0f, 0.0f
     };
-    GLuint _VBO = 0;
-    GLuint _VAO = 0;
+    resources::Buffer _VBO;
+    Attributes _VAO;
     Character() = default;
     Character(const Character& other);
     Character& operator=(const Character& rhs);
     ~Character() = default;
-    Character(const unsigned int texture, const glm::ivec2& size, const glm::ivec2& bearing, const unsigned int advance);
+    Character(Texture& texture, const glm::ivec2& size, const glm::ivec2& bearing, const unsigned int advance);
 };
 class Font
 {
 private:
-    //GLuint _texture = 0;
     Shader _shader;
     GLuint VAO = 0;
     GLuint VBO = 0;
@@ -73,8 +75,8 @@ public:
 
 public:
     bool InitializeImpl() override;
-    //void DeInitialize();
     glm::mat4 RenderImpl(const glm::mat4& parentTransform) override;
+    std::string GenerateName() const override;
 
 public:
     std::shared_ptr<Font> GetFont() const;

@@ -8,8 +8,9 @@
 #include "framework/gl.h"
 #include "framework/canvasElement.h"
 #include "framework/color.h"
-
-//#include <glm/gtc/matrix_transform.hpp>
+#include "framework/GL/texture.h"
+#include "framework/GL/buffer.h"
+#include "framework/GL/attributes.h"
 
 class Image: public CanvasElement
 {
@@ -24,9 +25,9 @@ private:
         1.0f, 1.0f, 1.0f, 1.0f,
         1.0f, 0.0f, 1.0f, 0.0f
     };
-    GLuint _VAO = 0;
-    GLuint _VBO = 0;
-    GLuint _texture = 0;
+    Attributes _VAO;
+    resources::Buffer _VBO;
+    Texture _texture;
     unsigned int _initialWidth = 0;
     unsigned int _initialHeight = 0;
 public:
@@ -41,4 +42,5 @@ public:
 private:
     bool InitializeImpl() override;
     glm::mat4 RenderImpl(const glm::mat4& parentTransform) override;
+    std::string GenerateName() const override;
 };

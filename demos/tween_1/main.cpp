@@ -74,7 +74,7 @@ int main( void )
 	}
 
 	auto rect1 = std::make_shared<ColorRect>(glm::vec2(400, 400), glm::vec2(200, 200), Color::Red);
-	GetStage2D().addChild(rect1);
+	GetStage2D().addChild(rect1, "parent");
 	//rect1->SetRotation(glm::quarter_pi<float>());
 	rect1->SetCenter(glm::vec2(0.5f, 0.5f));
 	auto rect2 = std::make_shared<ColorRect>(glm::vec2(0, 0), glm::vec2(100, 100), Color::Green);
@@ -89,12 +89,14 @@ int main( void )
 
 	GetStage2D().Initialize();
 
+	auto parent = GetStage2D().GetByName("parent");
+
 	#if 1
 	Pause(3.0f)->Then(
 	//TweenPos(rect1, glm::vec2(400.0f, 400.0f), 2.0f, TweenSystem::Easing::ELASTIC_IN))->Then(
-		TweenRotation(rect1, glm::half_pi<float>(), 2.0f, TweenSystem::Easing::LINEAR))->Then(
+		TweenRotation(parent, glm::half_pi<float>(), 2.0f, TweenSystem::Easing::LINEAR))->Then(
 		//Pause(3.0f))->Then(
-		TweenPos(rect1, glm::vec2(300.0f, 300.0f), 2.0f, TweenSystem::Easing::BACK_INOUT))->Then(
+		TweenPos(parent, glm::vec2(300.0f, 300.0f), 2.0f, TweenSystem::Easing::BACK_INOUT))->Then(
 		TweenPos(rect3, glm::vec2(100.0f, -120.0f), 2.0f, TweenSystem::Easing::BACK_INOUT))->Then(
 		TweenRotation(rect3, glm::half_pi<float>(), 2.0f, TweenSystem::Easing::BACK_INOUT))->Then(
 		TweenPos(rect2, glm::vec2(200.0f, 0.0f), 2.0f, TweenSystem::Easing::BOUNCE_OUT))->Then(
@@ -109,8 +111,8 @@ int main( void )
 		//TweenPos(rect3, glm::vec2(0.0f, 0.0f), 2.0f, TweenSystem::Easing::BACK_INOUT))->Then(
 		//TweenSize(rect3,glm::vec2(50.0f, 50.0f), 2.0f, TweenSystem::Easing::QUADRATIC_INOUT))->Then(
 		//TweenPos(rect2, glm::vec2(50.0f, 50.0f), 2.0f, TweenSystem::Easing::BOUNCE_OUT))->Then(
-		TweenScale(rect1, glm::vec2(2.0f, 2.0f), 2.0f, TweenSystem::Easing::LINEAR))->Then(
-		TweenRotation(rect1, glm::quarter_pi<float>(), 2.0f, TweenSystem::Easing::SIN_INOUT))->Then(
+		TweenScale(parent, glm::vec2(2.0f, 2.0f), 2.0f, TweenSystem::Easing::LINEAR))->Then(
+		TweenRotation(parent, glm::quarter_pi<float>(), 2.0f, TweenSystem::Easing::SIN_INOUT))->Then(
 		Pause(3.0f))->Start();
 	#endif
 

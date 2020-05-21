@@ -24,8 +24,8 @@ ColorRect& ColorRect::operator=(const ColorRect& rhs) {
         _pos = rhs._pos;
         _color = rhs._color;
         _VBO = rhs._VBO;
-        _VAO = rhs._VBO;
-        //_shader = rhs._shader;
+        _VAO = rhs._VAO;
+        _shader = rhs._shader;
     }
     return *this;
 }
@@ -42,9 +42,9 @@ ColorRect::ColorRect(const glm::vec2& pos, const glm::vec2& sz, const Color& col
 
 bool ColorRect::InitializeImpl() {
     _shader = Shader(sVShaderPath, sFShaderPath);
-    glGenVertexArrays(1, &_VAO);
+    //glGenVertexArrays(1, &_VAO);
     glBindVertexArray(_VAO);
-    glGenBuffers(1, &_VBO);
+    //glGenBuffers(1, &_VBO);
     glBindBuffer(GL_ARRAY_BUFFER, _VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(ColorRect::_vertices), ColorRect::_vertices, GL_STATIC_DRAW);
     // 1rst attribute buffer : vertices
@@ -60,11 +60,6 @@ bool ColorRect::InitializeImpl() {
     glBindVertexArray(0);
     return true;
 }
-
-#if 0
-void ColorRect::DeInitialize() {
-}
-#endif
 
 glm::mat4 ColorRect::RenderImpl(const glm::mat4& parentTransform) {
 
@@ -90,27 +85,10 @@ glm::mat4 ColorRect::RenderImpl(const glm::mat4& parentTransform) {
     return noSize;
 }
 
-#if 0
-glm::mat4 ColorRect::ModelTransformImpl() const {
-    // 1) Translate the object to the position, e.g, vec3(position, 0.0f).
-    // 2) And then rotate the object.
-    // 3) Translate the point back to the origin, e.g, vec3(-originx * scale, -originy * scale, 0.0f).
-    // 4) Finally, scale the object.
-    glm::mat4 m = glm::mat4(1.0);
-    #if 0
-    m = glm::translate(m, glm::vec3(_pos.x, _pos.y, 0.0f));
-    //m = glm::scale(m, glm::vec3(_sz.x, _sz.y, 1));
-    return m;
-    #else
-    m = glm::translate(m, glm::vec3(_pos.x - (_center.x * _sz.x * _scale.x), _pos.y - (_center.y * _sz.y * _scale.y), 0.0f));
+static unsigned int nextNameValue = 1;
 
-    if(auto parent = _parent.lock()) {
-        p = parent->GetModelTransform();
-    }
-
-    m = glm::scale(m, glm::vec3(_sz.x * _scale.x, _sz.y * _scale.y, 1));
-
-    return m;
-    #endif
+std::string ColorRect::GenerateName() const {
+    unsigned int num = nextNameValue;
+    ++nextNameValue;
+    return std::string("ColorRect") + std::to_string(num);
 }
-#endif
