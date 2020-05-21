@@ -5,6 +5,7 @@
 #include "framework/color.h"
 #include "framework/gl.h"
 #include "framework/GL/texture.h"
+#include "framework/GL/buffer.h"
 #include <glm/glm.hpp>
 #include <map>
 
@@ -25,7 +26,7 @@ struct Character {
         1.0f, 1.0f, 1.0f, 1.0f,
         1.0f, 0.0f, 1.0f, 0.0f
     };
-    GLuint _VBO = 0;
+    resources::Buffer _VBO;
     GLuint _VAO = 0;
     Character() = default;
     Character(const Character& other);

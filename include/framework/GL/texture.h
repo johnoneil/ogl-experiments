@@ -3,13 +3,24 @@
 #include <memory>
 
 #include "framework/gl.h"
-#include "framework/GL/resource.h"
 
-class TextureResource : public Resource<unsigned int>
+class TextureResource
 {
-protected:
-    void Acquire() override;
-    void Release() override;
+private:
+    unsigned int _resource = 0;
+public:
+    TextureResource();
+    TextureResource(const TextureResource& other);
+    TextureResource& operator=(const TextureResource& other);
+    ~TextureResource();
+
+private:
+    void Acquire();
+    void Release();
+public:
+    unsigned int Get();
+    operator unsigned int() { return Get(); }
+    void Free() { Release(); };
 };
 
 class Texture

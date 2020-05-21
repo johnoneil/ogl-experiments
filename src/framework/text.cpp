@@ -122,7 +122,7 @@ bool Font::Load(const std::string& font, const unsigned int size /* = 24*/) {
 
         #if 1
         glGenVertexArrays(1, &character._VAO);
-        glGenBuffers(1, &character._VBO);
+        //glGenBuffers(1, &character._VBO);
         glBindVertexArray(character._VAO);
         glBindBuffer(GL_ARRAY_BUFFER, character._VBO);
         glBufferData(GL_ARRAY_BUFFER, sizeof(float) * sizeof(character.vertices), character.vertices, GL_DYNAMIC_DRAW);

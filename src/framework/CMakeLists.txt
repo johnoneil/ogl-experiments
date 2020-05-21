@@ -15,7 +15,8 @@ SET( SRCS
     tween.cpp
     image.cpp
     GL/texture.cpp
-    GL/shader.cpp)
+    GL/shader.cpp
+    GL/buffer.cpp)
 
 add_library(${PROJECT_NAME} STATIC ${SRCS} )
 

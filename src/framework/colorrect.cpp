@@ -24,7 +24,7 @@ ColorRect& ColorRect::operator=(const ColorRect& rhs) {
         _pos = rhs._pos;
         _color = rhs._color;
         _VBO = rhs._VBO;
-        _VAO = rhs._VBO;
+        _VAO = rhs._VAO;
         //_shader = rhs._shader;
     }
     return *this;
@@ -44,7 +44,7 @@ bool ColorRect::InitializeImpl() {
     _shader = Shader(sVShaderPath, sFShaderPath);
     glGenVertexArrays(1, &_VAO);
     glBindVertexArray(_VAO);
-    glGenBuffers(1, &_VBO);
+    //glGenBuffers(1, &_VBO);
     glBindBuffer(GL_ARRAY_BUFFER, _VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(ColorRect::_vertices), ColorRect::_vertices, GL_STATIC_DRAW);
     // 1rst attribute buffer : vertices

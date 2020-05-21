@@ -35,7 +35,7 @@ Image& Image::operator=(const Image& rhs) {
         _color = rhs._color;
         _imagePath = rhs._imagePath;
         _VBO = rhs._VBO;
-        _VAO = rhs._VBO;
+        _VAO = rhs._VAO;
         //_shader = rhs._shader;
     }
     return *this;
@@ -60,7 +60,7 @@ bool Image::InitializeImpl() {
     _shader = Shader(sVShaderPath, sFShaderPath);
     glGenVertexArrays(1, &_VAO);
     glBindVertexArray(_VAO);
-    glGenBuffers(1, &_VBO);
+    //glGenBuffers(1, &_VBO);
     glBindBuffer(GL_ARRAY_BUFFER, _VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(Image::_vertices), Image::_vertices, GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
