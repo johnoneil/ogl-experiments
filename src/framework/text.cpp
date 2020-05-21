@@ -11,7 +11,7 @@
 
 constexpr float Character::vertices[];
 
-Character::Character(const unsigned int texture, const glm::ivec2& size, const glm::ivec2& bearing, const unsigned int advance)
+Character::Character(Texture& texture, const glm::ivec2& size, const glm::ivec2& bearing, const unsigned int advance)
     :TextureID(texture)
     ,Size(size)
     ,Bearing(bearing)
@@ -80,8 +80,7 @@ bool Font::Load(const std::string& font, const unsigned int size /* = 24*/) {
             continue;
         }
         // generate texture
-        GLuint texture = 0;
-        glGenTextures(1, &texture);
+        Texture texture;
         glBindTexture(GL_TEXTURE_2D, texture);
         #if 0
         GLenum err = GL_NO_ERROR;

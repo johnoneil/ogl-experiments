@@ -11,3 +11,17 @@ protected:
     void Acquire() override;
     void Release() override;
 };
+
+class Texture
+{
+public:
+    Texture();
+    Texture(const Texture& other);
+    Texture& operator=(const Texture& other);
+    ~Texture();
+
+    unsigned int Get();
+    operator unsigned int() { return Get(); }
+private:
+    std::shared_ptr<TextureResource> _texture;
+};

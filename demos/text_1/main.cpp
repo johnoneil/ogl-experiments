@@ -87,7 +87,6 @@ glm::mat4 model;
 GLuint vertexbuffer = 0;
 GLuint colorbuffer = 0;
 GLuint MatrixID = 0;
-GLuint texture = 0;
 GLuint modelUniformLoc = 0;
 GLuint viewUniformLoc = 0;
 GLuint projUniformLoc = 0;
@@ -105,48 +104,6 @@ void renderLoop(void) {
 	GetStage2D().Render(glm::mat4(1.0f));
 	#endif
 
-	#if 0
-	// Use our shader
-	glBindVertexArray(VAO);
-	glUseProgram(programID);
-
-	// Send our transformation to the currently bound shader, 
-	// in the "MVP" uniform
-	model = glm::mat4(1.0f);
-
-	model = glm::translate(model,glm::vec3(0,0,0)); //position = 0,0,0
-	model = glm::rotate(model,glm::radians(angle_deg),glm::vec3(1,0,0));//rotation x = 0.0 degrees
-	model = glm::rotate(model,glm::radians(angle_deg),glm::vec3(0,1,0));//rotation y = 0.0 degrees
-	model = glm::rotate(model,glm::radians(0.0f),glm::vec3(0,0,1));//rotation z = 0.0 degrees
-	model = glm::scale(model,glm::vec3(2, 2, 2));//scale = 2,2,2, because mesh is 0.5 based geom.
-	// Our ModelViewProjection : multiplication of our 3 matrices
-	//MVP = Projection * View * model; // Remember, matrix multiplication is the other way around
-	//glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
-
-	// Uniforms:
-	glUniformMatrix4fv(modelUniformLoc, 1, GL_FALSE, &model[0][0]);
-	glUniformMatrix4fv(viewUniformLoc, 1, GL_FALSE, &View[0][0]);
-	glUniformMatrix4fv(projUniformLoc, 1, GL_FALSE, &Projection[0][0]);
-	glm::vec3 lightPos(4, 3, -3);
-	glUniform3fv(lightPosUniformLoc, 1, &lightPos[0]);
-	glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
-	glUniform3fv(lightColorUniformLoc, 1, &lightColor[0]);
-	glm::vec3 objectColor(1.0f, 1.0f, 1.0f);
-	glUniform3fv(objectColorUniformLoc, 1, &objectColor[0]);
-
-	// Draw the triangle !
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glDrawArrays(GL_TRIANGLES, 0, 12*3); // 12*3 indices starting at 0 -> 12 triangles
-
-	glBindVertexArray(0);
-	glUseProgram(0);
-
-	#if 0
-	font.RenderText("text_1 opengl demo.", 10, 20, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-	font.RenderText("OGL Demo", 600.0f, 570.0f, 0.5f, glm::vec3(1.0f, 1.0f, 0.0f));
-	#endif
-	#endif
-	
 	// Swap buffers
 	glfwSwapBuffers(window);
 	glfwPollEvents();

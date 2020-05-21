@@ -1,5 +1,6 @@
 #pragma once
 
+
 template <typename T>
 class Resource {
 public:
@@ -20,7 +21,7 @@ public:
         return *this;
     }
 
-    ~Resource() {
+    virtual ~Resource() {
         Free();
     }
 
