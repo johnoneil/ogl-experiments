@@ -19,6 +19,7 @@ public:
 private:
     bool InitializeImpl() override;
     glm::mat4 RenderImpl(const glm::mat4& parentTransform) override;
+    std::string GenerateName() const override;
 private:
     glm::mat4 _projection;
 public:

@@ -61,4 +61,5 @@ public:
 
     std::string GetName() const { return _name; }
     void SetName(const std::string& name) { _name = name; }
+    virtual std::string GenerateName() const = 0; // per class generation of defalt names like "image01, text02" etc...
 };

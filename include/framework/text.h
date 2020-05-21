@@ -76,6 +76,7 @@ public:
 public:
     bool InitializeImpl() override;
     glm::mat4 RenderImpl(const glm::mat4& parentTransform) override;
+    std::string GenerateName() const override;
 
 public:
     std::shared_ptr<Font> GetFont() const;

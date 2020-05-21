@@ -84,3 +84,11 @@ glm::mat4 ColorRect::RenderImpl(const glm::mat4& parentTransform) {
     glBindVertexArray(0);
     return noSize;
 }
+
+static unsigned int nextNameValue = 1;
+
+std::string ColorRect::GenerateName() const {
+    unsigned int num = nextNameValue;
+    ++nextNameValue;
+    return std::string("ColorRect") + std::to_string(num);
+}

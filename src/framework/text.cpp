@@ -229,6 +229,14 @@ glm::mat4 Text::RenderImpl(const glm::mat4& parentTransform) {
     return noSize;
 }
 
+static unsigned int nextNameValue = 1;
+
+std::string Text::GenerateName() const {
+    unsigned int num = nextNameValue;
+    ++nextNameValue;
+    return std::string("Text") + std::to_string(num);
+}
+
 glm::vec2 Text::GetRect() const {
     if(_font)
         return _font->GetRect(_str);

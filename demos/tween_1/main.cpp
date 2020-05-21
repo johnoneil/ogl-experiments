@@ -78,14 +78,14 @@ int main( void )
 	//rect1->SetRotation(glm::quarter_pi<float>());
 	rect1->SetCenter(glm::vec2(0.5f, 0.5f));
 	auto rect2 = std::make_shared<ColorRect>(glm::vec2(0, 0), glm::vec2(100, 100), Color::Green);
-	rect1->addChild(rect2, "child1");
+	rect1->addChild(rect2);
 	auto rect3 = std::make_shared<ColorRect>(glm::vec2(50, 0), glm::vec2(50, 50), Color::Blue);
-	rect1->addChild(rect3, "child2");
+	rect1->addChild(rect3);
 
 	auto text1 = std::make_shared<Text>("A.g,p-C123%@", glm::vec2(0,0), Color::White, font);
 	auto text2 = std::make_shared<Text>("OpenGL Demo.", glm::vec2(0,0), Color(1.0f, 1.0f, 0.0f, 1.0f), font);
-	GetStage2D().addChild(text1, "text1");
-	rect1->addChild(text2, "text2");
+	GetStage2D().addChild(text1);
+	rect1->addChild(text2);
 
 	GetStage2D().Initialize();
 

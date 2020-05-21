@@ -139,3 +139,11 @@ glm::mat4 Image::RenderImpl(const glm::mat4& parentTransform) {
     glBindVertexArray(0);
     return noSize;
 }
+
+static unsigned int nextNameValue = 1;
+
+std::string Image::GenerateName() const {
+    unsigned int num = nextNameValue;
+    ++nextNameValue;
+    return std::string("Image") + std::to_string(num);
+}
