@@ -3,23 +3,11 @@
 #include <memory>
 
 #include "framework/gl.h"
+#include "framework/GL/resource.h"
 
-class TextureResource //: public enable_shared_from_this<Texture>
+class TextureResource : public Resource<unsigned int>
 {
-public:
-    TextureResource();
-    TextureResource(const TextureResource& other);
-    TextureResource& operator=(const TextureResource& other);
-    ~TextureResource();
-
-//public:
-//    static std::shared_ptr<Texture> Create(const std::string& filename);
-
-public:
-    GLuint ID();
-    // Implicity conversion to a gl name
-    operator unsigned int() { return ID(); }
-    void Release();
-private:
-    GLuint _id = 0;
+protected:
+    void Acquire() override;
+    void Release() override;
 };
