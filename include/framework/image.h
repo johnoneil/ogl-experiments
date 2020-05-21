@@ -12,8 +12,6 @@
 #include "framework/GL/buffer.h"
 #include "framework/GL/attributes.h"
 
-//#include <glm/gtc/matrix_transform.hpp>
-
 class Image: public CanvasElement
 {
 private:

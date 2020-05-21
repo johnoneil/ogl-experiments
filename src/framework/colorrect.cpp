@@ -25,7 +25,7 @@ ColorRect& ColorRect::operator=(const ColorRect& rhs) {
         _color = rhs._color;
         _VBO = rhs._VBO;
         _VAO = rhs._VAO;
-        //_shader = rhs._shader;
+        _shader = rhs._shader;
     }
     return *this;
 }
@@ -61,11 +61,6 @@ bool ColorRect::InitializeImpl() {
     return true;
 }
 
-#if 0
-void ColorRect::DeInitialize() {
-}
-#endif
-
 glm::mat4 ColorRect::RenderImpl(const glm::mat4& parentTransform) {
 
     glm::mat4 model = parentTransform;
@@ -89,28 +84,3 @@ glm::mat4 ColorRect::RenderImpl(const glm::mat4& parentTransform) {
     glBindVertexArray(0);
     return noSize;
 }
-
-#if 0
-glm::mat4 ColorRect::ModelTransformImpl() const {
-    // 1) Translate the object to the position, e.g, vec3(position, 0.0f).
-    // 2) And then rotate the object.
-    // 3) Translate the point back to the origin, e.g, vec3(-originx * scale, -originy * scale, 0.0f).
-    // 4) Finally, scale the object.
-    glm::mat4 m = glm::mat4(1.0);
-    #if 0
-    m = glm::translate(m, glm::vec3(_pos.x, _pos.y, 0.0f));
-    //m = glm::scale(m, glm::vec3(_sz.x, _sz.y, 1));
-    return m;
-    #else
-    m = glm::translate(m, glm::vec3(_pos.x - (_center.x * _sz.x * _scale.x), _pos.y - (_center.y * _sz.y * _scale.y), 0.0f));
-
-    if(auto parent = _parent.lock()) {
-        p = parent->GetModelTransform();
-    }
-
-    m = glm::scale(m, glm::vec3(_sz.x * _scale.x, _sz.y * _scale.y, 1));
-
-    return m;
-    #endif
-}
-#endif

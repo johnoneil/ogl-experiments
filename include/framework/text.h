@@ -75,7 +75,6 @@ public:
 
 public:
     bool InitializeImpl() override;
-    //void DeInitialize();
     glm::mat4 RenderImpl(const glm::mat4& parentTransform) override;
 
 public:

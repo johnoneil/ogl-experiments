@@ -2,10 +2,8 @@
 
 #include "framework/stage.h"
 
-#if 1
 #include <ft2build.h>
 #include FT_FREETYPE_H
-#endif
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -82,12 +80,6 @@ bool Font::Load(const std::string& font, const unsigned int size /* = 24*/) {
         // generate texture
         Texture texture;
         glBindTexture(GL_TEXTURE_2D, texture);
-        #if 0
-        GLenum err = GL_NO_ERROR;
-        if((err = glGetError()) != GL_NO_ERROR) {
-            printf("Gl error %d before teximage2d call.\n", err);
-        }
-        #endif
         glTexImage2D(
             GL_TEXTURE_2D,
             0,
@@ -99,28 +91,19 @@ bool Font::Load(const std::string& font, const unsigned int size /* = 24*/) {
             GL_UNSIGNED_BYTE,
             face->glyph->bitmap.buffer
         );
-        #if 0
-        printf("Uploaded texture with width: %d height: %d\n", face->glyph->bitmap.width, face->glyph->bitmap.rows);
-        if((err = glGetError()) != GL_NO_ERROR) {
-            printf("Gl error %d AFTER teximage2d call.\n", err);
-        }
-        #endif
+
         // set texture options
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         // now store character for later use
-        #if 0
-        printf("glyph texture id: %u\n", texture);
-        #endif
         Character character(
             texture,
             glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
             glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
             static_cast<unsigned int>(face->glyph->advance.x));
 
-        #if 1
         //glGenVertexArrays(1, &character._VAO);
         //glGenBuffers(1, &character._VBO);
         glBindVertexArray(character._VAO);
@@ -132,7 +115,6 @@ bool Font::Load(const std::string& font, const unsigned int size /* = 24*/) {
         glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
-        #endif
 
         Characters.insert(std::pair<char, Character>(c, character));
     }
@@ -209,28 +191,11 @@ glm::vec2 Font::GetRect(const std::string& str) const {
         if(rect.y < h)
             rect.y = h;
 
-        //float xpos = _x + ch.Bearing.x;
-        //float ypos = _y + (_size - ch.Bearing.y);
-
         // now advance cursors for next glyph (note that advance is number of 1/64 pixels)
         _x += (ch.Advance >> 6); // bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
     }
     return rect;
 }
-
-#if 0
-Text::Text() {}
-Text& Text::operator=(const Text& rhs) {
-    if(&rhs != this) {
-        _str = rhs._str;
-        _pos = rhs._pos;
-        _color = rhs._color;
-        _scale = rhs._scale;
-        _font = rhs._font;
-    }
-    return *this;
-}
-#endif
 
 Text::Text(const std::string& str, const glm::vec2& pos, const Color& color, std::shared_ptr<Font> font) 
     :_font(font)
@@ -263,23 +228,6 @@ glm::mat4 Text::RenderImpl(const glm::mat4& parentTransform) {
     _font->RenderText(_str, model, _color.Vec4());
     return noSize;
 }
-
-#if 0
-glm::mat4 Text::ModelTransformImpl() const {
-    #if 0
-    return glm::mat4(1.0);
-    #else
-    glm::mat4 p = glm::mat4(1.0);
-    if(auto parent = _parent.lock()) {
-        p = parent->GetModelTransform();
-    }
-    glm::mat4 m = glm::mat4(1.0);
-    m = glm::translate(m, glm::vec3(_pos.x, _pos.y, 0.0f));
-    //m = glm::scale(m, glm::vec3(_sz.x, _sz.y, 1));
-    return p * m;
-    #endif
-}
-#endif
 
 glm::vec2 Text::GetRect() const {
     if(_font)
