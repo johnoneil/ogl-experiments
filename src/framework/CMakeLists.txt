@@ -13,7 +13,8 @@ SET( SRCS
     colorrect.cpp
     stage.cpp
     tween.cpp
-    image.cpp)
+    image.cpp
+    GL/texture.cpp)
 
 add_library(${PROJECT_NAME} STATIC ${SRCS} )
 

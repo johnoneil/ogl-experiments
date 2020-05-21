@@ -1,6 +1,7 @@
 
 
 #include <framework/gl.h>
+#include "framework/GL/texture.h"
 #include <GLFW/glfw3.h>
 
 #include <iostream>
@@ -51,7 +52,7 @@ const char *fragmentShaderSource = "#version 330 core\n"
 GLFWwindow* window = nullptr;
 GLuint VBO = 0;
 GLuint VAO = 0;
-GLuint texture = 0;
+TextureResource texture;
 
 void renderLoop(void) {
     // input
@@ -192,7 +193,6 @@ int main()
                                     &c,
                                     STBI_rgb_alpha);
 
-    glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
@@ -219,6 +219,7 @@ int main()
 
     // optional: de-allocate all resources once they've outlived their purpose:
     // ------------------------------------------------------------------------
+    texture.Release();
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
     glDeleteProgram(shaderProgram);
