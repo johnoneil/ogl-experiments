@@ -98,7 +98,6 @@ bool Image::InitializeImpl() {
         if(_sz == glm::vec2(0.0f, 0.0f))
             _sz = glm::vec2(_initialWidth, _initialHeight);
 
-        glGenTextures(1, &_texture);
         glBindTexture(GL_TEXTURE_2D, _texture);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);

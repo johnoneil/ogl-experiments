@@ -8,6 +8,7 @@
 #include "framework/gl.h"
 #include "framework/canvasElement.h"
 #include "framework/color.h"
+#include "framework/GL/texture.h"
 
 //#include <glm/gtc/matrix_transform.hpp>
 
@@ -26,7 +27,7 @@ private:
     };
     GLuint _VAO = 0;
     GLuint _VBO = 0;
-    GLuint _texture = 0;
+    Texture _texture;
     unsigned int _initialWidth = 0;
     unsigned int _initialHeight = 0;
 public:
