@@ -23,6 +23,8 @@ using namespace glm;
 
 static unsigned int WINDOW_WIDTH = 1024;
 static unsigned int WINDOW_HEIGHT = 768;
+static unsigned int OFFSCREEN_SURFACE_WIDTH = 512;
+static unsigned int OFFSCREEN_SURFACE_HEIGHT = 512;
 
 
 #ifdef __EMSCRIPTEN__
@@ -113,7 +115,7 @@ void renderLoop(void) {
 	// Render to our framebuffer managed offscreen texture
 	glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);
 	// the offscreen texture we're rendering to should match the window width and height
-	glViewport(0,0,WINDOW_WIDTH, WINDOW_HEIGHT);
+	glViewport(0,0,OFFSCREEN_SURFACE_WIDTH, OFFSCREEN_SURFACE_HEIGHT);
 
 	TweenSystem::Get().Update(dt);
 
@@ -364,7 +366,7 @@ int main( void )
 	glBindTexture(GL_TEXTURE_2D, renderedTexture);
 
 	// Give an empty image to OpenGL ( the last "0" )
-	glTexImage2D(GL_TEXTURE_2D, 0,GL_RGBA, WINDOW_WIDTH, WINDOW_HEIGHT, 0,GL_RGBA, GL_UNSIGNED_BYTE, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0,GL_RGBA, OFFSCREEN_SURFACE_WIDTH, OFFSCREEN_SURFACE_HEIGHT, 0,GL_RGBA, GL_UNSIGNED_BYTE, 0);
 
 	// Poor filtering. Needed !
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -398,7 +400,7 @@ int main( void )
 	#endif
 
 	#if 1
-GetStage2D().SetSize(glm::vec2(WINDOW_WIDTH, WINDOW_HEIGHT));
+	GetStage2D().SetSize(glm::vec2(OFFSCREEN_SURFACE_WIDTH, OFFSCREEN_SURFACE_HEIGHT));
 	GetStage2D().SetColor(Color::Gray);
 	GetStage2D().Initialize();
 
@@ -410,7 +412,7 @@ GetStage2D().SetSize(glm::vec2(WINDOW_WIDTH, WINDOW_HEIGHT));
 		printf("Failed to initialize font!\n");
 	}
 
-	auto rect1 = std::make_shared<ColorRect>(glm::vec2(400, 400), glm::vec2(200, 200), Color::Red);
+	auto rect1 = std::make_shared<ColorRect>(glm::vec2(128, 128), glm::vec2(256, 256), Color::Red);
 	GetStage2D().addChild(rect1, "parent");
 	//rect1->SetRotation(glm::quarter_pi<float>());
 	rect1->SetCenter(glm::vec2(0.5f, 0.5f));
@@ -419,7 +421,7 @@ GetStage2D().SetSize(glm::vec2(WINDOW_WIDTH, WINDOW_HEIGHT));
 	auto rect3 = std::make_shared<ColorRect>(glm::vec2(50, 0), glm::vec2(50, 50), Color::Blue);
 	rect1->addChild(rect3);
 
-	auto text1 = std::make_shared<Text>("A.g,p-C123%@", glm::vec2(0,0), Color::White, font);
+	auto text1 = std::make_shared<Text>("OPenGL Offscreen Render Demo", glm::vec2(0,0), Color::White, font);
 	auto text2 = std::make_shared<Text>("OpenGL Demo.", glm::vec2(0,0), Color(1.0f, 1.0f, 0.0f, 1.0f), font);
 	GetStage2D().addChild(text1);
 	rect1->addChild(text2);
@@ -433,7 +435,7 @@ GetStage2D().SetSize(glm::vec2(WINDOW_WIDTH, WINDOW_HEIGHT));
 	//TweenPos(rect1, glm::vec2(400.0f, 400.0f), 2.0f, TweenSystem::Easing::ELASTIC_IN))->Then(
 		TweenRotation(parent, glm::half_pi<float>(), 2.0f, TweenSystem::Easing::LINEAR))->Then(
 		//Pause(3.0f))->Then(
-		TweenPos(parent, glm::vec2(300.0f, 300.0f), 2.0f, TweenSystem::Easing::BACK_INOUT))->Then(
+		//TweenPos(parent, glm::vec2(300.0f, 300.0f), 2.0f, TweenSystem::Easing::BACK_INOUT))->Then(
 		TweenPos(rect3, glm::vec2(100.0f, -120.0f), 2.0f, TweenSystem::Easing::BACK_INOUT))->Then(
 		TweenRotation(rect3, glm::half_pi<float>(), 2.0f, TweenSystem::Easing::BACK_INOUT))->Then(
 		TweenPos(rect2, glm::vec2(200.0f, 0.0f), 2.0f, TweenSystem::Easing::BOUNCE_OUT))->Then(
