@@ -106,77 +106,19 @@ double lastTimeElapsed = 0.0;
 void renderLoop(void) {
 	angle_deg += 0.33f;
 
-	#if 0
-
-	#if 1
-	//Projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
-	Projection = glm::perspective(glm::radians(45.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.0f);
-	// Camera matrix
-	View       = glm::lookAt(
-								glm::vec3(4,3,-3), // Camera is at (4,3,-3), in World Space
-								glm::vec3(0,0,0), // and looks at the origin
-								glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
-						   );
-	#endif
-
-	#if 1
-	// Render to our framebuffer managed offscreen texture
-	glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);
-	// the offscreen texture we're rendering to should match the window width and height
-	glViewport(0,0,WINDOW_WIDTH, WINDOW_HEIGHT);
-	#endif
-
-	// Clear the screen
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	// Use our shader
-	glBindVertexArray(VAO);
-	glUseProgram(programID);
-
-	// Send our transformation to the currently bound shader, 
-	// in the "MVP" uniform
-	model = glm::mat4(1.0f);
-
-	model = glm::translate(model,glm::vec3(0,0,0)); //position = 0,0,0
-	model = glm::rotate(model,glm::radians(angle_deg),glm::vec3(1,0,0));//rotation x = 0.0 degrees
-	model = glm::rotate(model,glm::radians(angle_deg),glm::vec3(0,1,0));//rotation y = 0.0 degrees
-	model = glm::rotate(model,glm::radians(0.0f),glm::vec3(0,0,1));//rotation z = 0.0 degrees
-	model = glm::scale(model,glm::vec3(2, 2, 2));//scale = 2,2,2, because mesh is 0.5 based geom.
-	// Our ModelViewProjection : multiplication of our 3 matrices
-	//MVP = Projection * View * model; // Remember, matrix multiplication is the other way around
-	//glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
-
-	// Uniforms:
-	glUniformMatrix4fv(modelUniformLoc, 1, GL_FALSE, &model[0][0]);
-	glUniformMatrix4fv(viewUniformLoc, 1, GL_FALSE, &View[0][0]);
-	glUniformMatrix4fv(projUniformLoc, 1, GL_FALSE, &Projection[0][0]);
-	glm::vec3 lightPos(4, 3, -3);
-	glUniform3fv(lightPosUniformLoc, 1, &lightPos[0]);
-	glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
-	glUniform3fv(lightColorUniformLoc, 1, &lightColor[0]);
-	glm::vec3 objectColor(1.0f, 1.0f, 1.0f);
-	glUniform3fv(objectColorUniformLoc, 1, &objectColor[0]);
-
-	// Draw the triangle !
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glDrawArrays(GL_TRIANGLES, 0, 12*3); // 12*3 indices starting at 0 -> 12 triangles
-	
-	#else
 	double timeElapsed = glfwGetTime();
 	double dt = timeElapsed - lastTimeElapsed;
 	lastTimeElapsed = timeElapsed;
 
-	#if 1
 	// Render to our framebuffer managed offscreen texture
 	glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);
 	// the offscreen texture we're rendering to should match the window width and height
 	glViewport(0,0,WINDOW_WIDTH, WINDOW_HEIGHT);
-	#endif
 
 	TweenSystem::Get().Update(dt);
 
 	GetStage2D().Render();
-	#endif
+
 
 	glBindVertexArray(0);
 	glUseProgram(0);
@@ -203,9 +145,6 @@ void renderLoop(void) {
 		model = glm::rotate(model,glm::radians(angle_deg),glm::vec3(0,1,0));//rotation y = 0.0 degrees
 		model = glm::rotate(model,glm::radians(0.0f),glm::vec3(0,0,1));//rotation z = 0.0 degrees
 		model = glm::scale(model,glm::vec3(2, 2, 2));//scale = 2,2,2, because mesh is 0.5 based geom.
-		// Our ModelViewProjection : multiplication of our 3 matrices
-		//MVP = Projection * View * model; // Remember, matrix multiplication is the other way around
-		//glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
 
 		// Uniforms:
 		glUniformMatrix4fv(modelUniformLoc, 1, GL_FALSE, &model[0][0]);
