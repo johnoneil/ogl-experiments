@@ -383,7 +383,7 @@ int main( void )
 	GLuint depthRenderbuffer = 0;
 	glGenRenderbuffers(1, &depthRenderbuffer);
 	glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, WINDOW_WIDTH, WINDOW_HEIGHT);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, OFFSCREEN_SURFACE_WIDTH, OFFSCREEN_SURFACE_HEIGHT);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRenderbuffer);
 	#endif
 
