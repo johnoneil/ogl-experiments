@@ -417,8 +417,10 @@ int main( void )
 	//rect1->SetRotation(glm::quarter_pi<float>());
 	rect1->SetCenter(glm::vec2(0.5f, 0.5f));
 	auto rect2 = std::make_shared<ColorRect>(glm::vec2(0, 0), glm::vec2(100, 100), Color::Green);
+	rect2->SetCenter(glm::vec2(0.5f, 0.5f));
 	rect1->addChild(rect2);
 	auto rect3 = std::make_shared<ColorRect>(glm::vec2(50, 0), glm::vec2(50, 50), Color::Blue);
+	rect3->SetCenter(glm::vec2(0.5f, 0.5f));
 	rect1->addChild(rect3);
 
 	auto text1 = std::make_shared<Text>("OPenGL Offscreen Render Demo", glm::vec2(0,0), Color::White, font);
@@ -440,18 +442,21 @@ int main( void )
 		TweenRotation(rect3, glm::half_pi<float>(), 2.0f, TweenSystem::Easing::BACK_INOUT))->Then(
 		TweenPos(rect2, glm::vec2(200.0f, 0.0f), 2.0f, TweenSystem::Easing::BOUNCE_OUT))->Then(
 		TweenRotation(rect2, glm::half_pi<float>(), 2.0f, TweenSystem::Easing::BACK_INOUT))->Then(
-
+		TweenPos(rect3, glm::vec2(50.0f, 0.0f), 2.0f, TweenSystem::Easing::BOUNCE_OUT))->Then(
+		TweenRotation(rect2, glm::three_over_two_pi<float>(), 2.0f, TweenSystem::Easing::BACK_INOUT))->Then(
 		//Pause(3.0f))->Then(
-		//TweenColor(rect1, Color::Olive, 2.0f, TweenSystem::Easing::SIN_IN))->Then(
+		TweenColor(rect1, Color::Olive, 2.0f, TweenSystem::Easing::SIN_IN))->Then(
 		//Pause(3.0f))->Then(
-		//TweenColor(text2, Color::Orange, 2.0f, TweenSystem::Easing::SIN_IN))->Then(
+		TweenColor(text2, Color::Orange, 2.0f, TweenSystem::Easing::SIN_IN))->Then(
 		//Pause(3.0f))->Then(
-		//TweenColor(text1, Color(1.0f, 1.0f, 1.0f, 0.5f), 2.0f, TweenSystem::Easing::SIN_IN))->Then(
-		//TweenPos(rect3, glm::vec2(0.0f, 0.0f), 2.0f, TweenSystem::Easing::BACK_INOUT))->Then(
-		//TweenSize(rect3,glm::vec2(50.0f, 50.0f), 2.0f, TweenSystem::Easing::QUADRATIC_INOUT))->Then(
-		//TweenPos(rect2, glm::vec2(50.0f, 50.0f), 2.0f, TweenSystem::Easing::BOUNCE_OUT))->Then(
+		TweenColor(text1, Color(1.0f, 1.0f, 1.0f, 0.5f), 2.0f, TweenSystem::Easing::SIN_IN))->Then(
+		TweenPos(rect3, glm::vec2(0.0f, 0.0f), 2.0f, TweenSystem::Easing::BACK_INOUT))->Then(
+		TweenPos(rect2, glm::vec2(50.0f, 50.0f), 2.0f, TweenSystem::Easing::BOUNCE_OUT))->Then(
+		TweenRotation(rect2, 0.0f, 2.0f, TweenSystem::Easing::BACK_INOUT))->Then(
+		TweenRotation(rect3, 0.0f, 2.0f, TweenSystem::Easing::BACK_INOUT))->Then(
 		TweenScale(parent, glm::vec2(2.0f, 2.0f), 2.0f, TweenSystem::Easing::LINEAR))->Then(
 		TweenRotation(parent, glm::quarter_pi<float>(), 2.0f, TweenSystem::Easing::SIN_INOUT))->Then(
+		TweenColor(parent, Color(1.0f, 0.0f, 0.0f, 1.0f), 2.0f, TweenSystem::Easing::SIN_IN))->Then(
 		Pause(3.0f))->Start();
 	#endif
 	#endif
