@@ -55,7 +55,7 @@ const char *fragmentShaderSource = "#version 300 es\n"
 const char *fragmentShaderSource = "#version 330 core\n"
 #endif
 "precision mediump float;\n"
-"layout(location = 0) out vec3 color;"
+"layout(location = 0) out vec4 color;"
 "in vec2 TexCoord;\n"
 "in vec3 Normal;  \n"
 "in vec3 FragPos;  \n"
@@ -76,7 +76,7 @@ const char *fragmentShaderSource = "#version 330 core\n"
 "    float diff = max(dot(norm, lightDir), 0.0);\n"
 "    vec3 diffuse = diff * lightColor;     \n"
 "    vec3 result = (ambient + diffuse) * modulatedColor;\n"
-"    color = result;\n"
+"    color = vec4(result, 1.0);\n"
 "}\n";
 
 // Isolated render loop to aid porting
@@ -119,12 +119,16 @@ void renderLoop(void) {
 
 	GetStage2D().Render();
 
-
 	glBindVertexArray(0);
 	glUseProgram(0);
 
 	#if 1
 	{
+		// Enable depth test
+		glEnable(GL_DEPTH_TEST);
+		// Accept fragment if it closer to the camera than the former one
+		glDepthFunc(GL_LESS);
+
 		// now render all over again to the screen
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		// The window framebuffer might be differently sized, so we use the entire viewport
@@ -360,7 +364,7 @@ int main( void )
 	glBindTexture(GL_TEXTURE_2D, renderedTexture);
 
 	// Give an empty image to OpenGL ( the last "0" )
-	glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, WINDOW_WIDTH, WINDOW_HEIGHT, 0,GL_RGB, GL_UNSIGNED_BYTE, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0,GL_RGBA, WINDOW_WIDTH, WINDOW_HEIGHT, 0,GL_RGBA, GL_UNSIGNED_BYTE, 0);
 
 	// Poor filtering. Needed !
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
