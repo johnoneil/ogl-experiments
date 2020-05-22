@@ -95,13 +95,27 @@ GLuint objectColorUniformLoc = 0;
 GLuint FramebufferName = 0;
 GLuint depthrenderbuffer = 0;
 GLuint renderedTexture = 0;
+int viewportWidth = 0, viewportHeight = 0;
+
 void renderLoop(void) {
 	angle_deg += 0.33f;
 
 	#if 1
+	//Projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
+	Projection = glm::perspective(glm::radians(45.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.0f);
+	// Camera matrix
+	View       = glm::lookAt(
+								glm::vec3(4,3,-3), // Camera is at (4,3,-3), in World Space
+								glm::vec3(0,0,0), // and looks at the origin
+								glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
+						   );
+	#endif
+
+	#if 1
 	// Render to our framebuffer managed offscreen texture
 	glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);
-	//glViewport(0,0,WINDOW_WIDTH, WINDOW_HEIGHT); // Render on the whole framebuffer, complete from the lower left corner to the upper right
+	// the offscreen texture we're rendering to should match the window width and height
+	glViewport(0,0,WINDOW_WIDTH, WINDOW_HEIGHT);
 	#endif
 
 	// Clear the screen
@@ -146,7 +160,8 @@ void renderLoop(void) {
 	{
 		// now render all over again to the screen
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		//glViewport(0,0,WINDOW_WIDTH, WINDOW_HEIGHT); // Render on the whole framebuffer, complete from the lower left corner to the upper right
+		// The window framebuffer might be differently sized, so we use the entire viewport
+		glViewport(0,0, viewportWidth, viewportHeight);
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -364,6 +379,9 @@ int main( void )
     glGenerateMipmap(GL_TEXTURE_2D);
 
     stbi_image_free(image);
+
+	// glfw can provide a frame buffer of different dimentions from the actual window sie
+	glfwGetFramebufferSize(window, &viewportWidth, &viewportHeight);
 
 	#if 1
 	// The framebuffer, which groups 0 or more textures, and 0 or 1 depth buffer.
