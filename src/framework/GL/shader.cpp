@@ -1,4 +1,4 @@
-#include "framework/GL/Shader.h"
+#include "framework/GL/shader.h"
 
 #include "framework/gl.h"
 

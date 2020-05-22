@@ -6,7 +6,7 @@
 
 #include "framework/shader.h"
 #include "framework/gl.h"
-#include "framework/canvasElement.h"
+#include "framework/canvaselement.h"
 #include "framework/color.h"
 #include "framework/GL/texture.h"
 #include "framework/GL/buffer.h"

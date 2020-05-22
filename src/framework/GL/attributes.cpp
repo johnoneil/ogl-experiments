@@ -1,4 +1,4 @@
-#include "framework/GL/Attributes.h"
+#include "framework/GL/attributes.h"
 
 AttributesResource::AttributesResource() {}
 
