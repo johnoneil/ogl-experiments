@@ -10,6 +10,12 @@
 #include <glm/gtc/matrix_transform.hpp>
 using namespace glm;
 
+#include <framework/text.h>
+#include <framework/colorrect.h>
+#include <framework/stage.h>
+#include <framework/tween.h>
+#include <glm/gtc/constants.hpp>
+
 #include <framework/shaders.h>
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -96,9 +102,11 @@ GLuint FramebufferName = 0;
 GLuint depthrenderbuffer = 0;
 GLuint renderedTexture = 0;
 int viewportWidth = 0, viewportHeight = 0;
-
+double lastTimeElapsed = 0.0;
 void renderLoop(void) {
 	angle_deg += 0.33f;
+
+	#if 0
 
 	#if 1
 	//Projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
@@ -152,6 +160,23 @@ void renderLoop(void) {
 	// Draw the triangle !
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glDrawArrays(GL_TRIANGLES, 0, 12*3); // 12*3 indices starting at 0 -> 12 triangles
+	
+	#else
+	double timeElapsed = glfwGetTime();
+	double dt = timeElapsed - lastTimeElapsed;
+	lastTimeElapsed = timeElapsed;
+
+	#if 1
+	// Render to our framebuffer managed offscreen texture
+	glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);
+	// the offscreen texture we're rendering to should match the window width and height
+	glViewport(0,0,WINDOW_WIDTH, WINDOW_HEIGHT);
+	#endif
+
+	TweenSystem::Get().Update(dt);
+
+	GetStage2D().Render();
+	#endif
 
 	glBindVertexArray(0);
 	glUseProgram(0);
@@ -427,6 +452,63 @@ int main( void )
 		//return 1;
 	}
 
+	#endif
+
+	#if 1
+GetStage2D().SetSize(glm::vec2(WINDOW_WIDTH, WINDOW_HEIGHT));
+	GetStage2D().SetColor(Color::Gray);
+	GetStage2D().Initialize();
+
+	// Initialize subsystems
+	TweenSystem::Get().Startup();
+
+	auto font = std::make_shared<Font>();
+	if(!font->Load("assets/arial.ttf")) {
+		printf("Failed to initialize font!\n");
+	}
+
+	auto rect1 = std::make_shared<ColorRect>(glm::vec2(400, 400), glm::vec2(200, 200), Color::Red);
+	GetStage2D().addChild(rect1, "parent");
+	//rect1->SetRotation(glm::quarter_pi<float>());
+	rect1->SetCenter(glm::vec2(0.5f, 0.5f));
+	auto rect2 = std::make_shared<ColorRect>(glm::vec2(0, 0), glm::vec2(100, 100), Color::Green);
+	rect1->addChild(rect2);
+	auto rect3 = std::make_shared<ColorRect>(glm::vec2(50, 0), glm::vec2(50, 50), Color::Blue);
+	rect1->addChild(rect3);
+
+	auto text1 = std::make_shared<Text>("A.g,p-C123%@", glm::vec2(0,0), Color::White, font);
+	auto text2 = std::make_shared<Text>("OpenGL Demo.", glm::vec2(0,0), Color(1.0f, 1.0f, 0.0f, 1.0f), font);
+	GetStage2D().addChild(text1);
+	rect1->addChild(text2);
+
+	GetStage2D().Initialize();
+
+	auto parent = GetStage2D().GetByName("parent");
+
+	#if 1
+	Pause(3.0f)->Then(
+	//TweenPos(rect1, glm::vec2(400.0f, 400.0f), 2.0f, TweenSystem::Easing::ELASTIC_IN))->Then(
+		TweenRotation(parent, glm::half_pi<float>(), 2.0f, TweenSystem::Easing::LINEAR))->Then(
+		//Pause(3.0f))->Then(
+		TweenPos(parent, glm::vec2(300.0f, 300.0f), 2.0f, TweenSystem::Easing::BACK_INOUT))->Then(
+		TweenPos(rect3, glm::vec2(100.0f, -120.0f), 2.0f, TweenSystem::Easing::BACK_INOUT))->Then(
+		TweenRotation(rect3, glm::half_pi<float>(), 2.0f, TweenSystem::Easing::BACK_INOUT))->Then(
+		TweenPos(rect2, glm::vec2(200.0f, 0.0f), 2.0f, TweenSystem::Easing::BOUNCE_OUT))->Then(
+		TweenRotation(rect2, glm::half_pi<float>(), 2.0f, TweenSystem::Easing::BACK_INOUT))->Then(
+
+		//Pause(3.0f))->Then(
+		//TweenColor(rect1, Color::Olive, 2.0f, TweenSystem::Easing::SIN_IN))->Then(
+		//Pause(3.0f))->Then(
+		//TweenColor(text2, Color::Orange, 2.0f, TweenSystem::Easing::SIN_IN))->Then(
+		//Pause(3.0f))->Then(
+		//TweenColor(text1, Color(1.0f, 1.0f, 1.0f, 0.5f), 2.0f, TweenSystem::Easing::SIN_IN))->Then(
+		//TweenPos(rect3, glm::vec2(0.0f, 0.0f), 2.0f, TweenSystem::Easing::BACK_INOUT))->Then(
+		//TweenSize(rect3,glm::vec2(50.0f, 50.0f), 2.0f, TweenSystem::Easing::QUADRATIC_INOUT))->Then(
+		//TweenPos(rect2, glm::vec2(50.0f, 50.0f), 2.0f, TweenSystem::Easing::BOUNCE_OUT))->Then(
+		TweenScale(parent, glm::vec2(2.0f, 2.0f), 2.0f, TweenSystem::Easing::LINEAR))->Then(
+		TweenRotation(parent, glm::quarter_pi<float>(), 2.0f, TweenSystem::Easing::SIN_INOUT))->Then(
+		Pause(3.0f))->Start();
+	#endif
 	#endif
 
     // render loop
