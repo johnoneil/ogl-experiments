@@ -12,8 +12,6 @@ using namespace glm;
 
 #include <framework/shaders.h>
 
-//#define IMGUI_IMPL_OPENGL_LOADER_CUSTOM \"framework/gl.h\"
-
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
@@ -76,8 +74,10 @@ const char *fragmentShaderSource = "#version 330 core\n"
 "    FragColor = vec4(result, 1.0);\n"
 "}\n";
 
+bool my_tool_active = true;
+float my_color[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 void doMenu() {
-	#if 1
+	#if 0
 	// render your GUI
     ImGui::Begin("Demo window");
     ImGui::Button("Hello!");
@@ -85,7 +85,7 @@ void doMenu() {
 
 	#else
 	// Create a window called "My First Tool", with a menu bar.
-	ImGui::Begin("My First Tool", &my_tool_active, ImGuiWindowFlags_MenuBar);
+	ImGui::Begin("My First Tool", &my_tool_active, 0);
 	if (ImGui::BeginMenuBar())
 	{
 		if (ImGui::BeginMenu("File"))
