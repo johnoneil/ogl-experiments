@@ -28,7 +28,7 @@ struct Vertex {
     glm::vec3 Bitangent;
 };
 
-struct Texture {
+struct MeshTexture {
     GLuint id;
     std::string type;
     std::string path;
@@ -39,13 +39,13 @@ public:
     // mesh Data
     std::vector<Vertex> _vertices;
     std::vector<unsigned int> _indices;
-    std::vector<Texture>      _textures;
+    std::vector<MeshTexture>      _textures;
     GLuint _VAO;
 
     // constructor
     Mesh(const std::vector<Vertex>& vertices,
         const std::vector<unsigned int>& indices,
-        const std::vector<Texture>& textures);
+        const std::vector<MeshTexture>& textures);
 
     // render the mesh
     void Draw(Shader& shader);
