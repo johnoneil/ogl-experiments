@@ -231,7 +231,7 @@ int main( void )
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
-	ImGuiIO &io = ImGui::GetIO();
+	//ImGuiIO &io = ImGui::GetIO();
 	// Setup Platform/Renderer bindings
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	const char* glsl_version = "#version 100";
@@ -348,7 +348,7 @@ int main( void )
 		1,                  // attribute. No particular reason for 0, but must match the layout in the shader.
 		2,                  // size
 		GL_FLOAT,           // type
-		GL_FALSE,           // normalized?
+		GL_FALSE,           // normalized? 
 		8*sizeof(float),    // stride
 		(void*)(3 * sizeof(float))// array buffer offset
 	);
