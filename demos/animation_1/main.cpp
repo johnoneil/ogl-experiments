@@ -129,6 +129,12 @@ float angle_deg = 0.0f;
 GLuint modelUniformLoc = 0;
 GLuint viewUniformLoc = 0;
 GLuint projUniformLoc = 0;
+const glm::vec3 positions [] = {
+    glm::vec3{ 1.0f, 0.0f, 1.0f },
+    glm::vec3{ 1.0f, 0.0f, -1.0f },
+    glm::vec3{ -1.0f, 0.0f, 1.0f },
+    glm::vec3{ -1.0f, 0.0f, -1.0f },
+};
 void renderLoop(void) {
 
 	#if defined(DEBUG_GUI)
@@ -147,7 +153,7 @@ void renderLoop(void) {
 
     glUseProgram(shaderProgram);
 
-    #if 0
+    #if 1
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     #endif
@@ -176,23 +182,26 @@ void renderLoop(void) {
 								glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
     );
 
-	model = glm::mat4(1.0f);
-	model = glm::translate(model,glm::vec3(0,0,0)); //position = 0,0,0
-	model = glm::rotate(model,glm::radians(angle_deg),glm::vec3(1,0,0));//rotation x = 0.0 degrees
-	model = glm::rotate(model,glm::radians(angle_deg),glm::vec3(0,1,0));//rotation y = 0.0 degrees
-	model = glm::rotate(model,glm::radians(0.0f),glm::vec3(0,0,1));//rotation z = 0.0 degrees
-	model = glm::scale(model,glm::vec3(2, 2, 2));//scale = 2,2,2, because mesh is 0.5 based geom.
+    for(auto pos : positions) {
 
-	// Uniforms:
-	glUniformMatrix4fv(modelUniformLoc, 1, GL_FALSE, &model[0][0]);
-	glUniformMatrix4fv(viewUniformLoc, 1, GL_FALSE, &View[0][0]);
-	glUniformMatrix4fv(projUniformLoc, 1, GL_FALSE, &Projection[0][0]);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, pos); //position = 0,0,0
+        model = glm::rotate(model,glm::radians(angle_deg),glm::vec3(1,0,0));//rotation x = 0.0 degrees
+        model = glm::rotate(model,glm::radians(angle_deg),glm::vec3(0,1,0));//rotation y = 0.0 degrees
+        model = glm::rotate(model,glm::radians(0.0f),glm::vec3(0,0,1));//rotation z = 0.0 degrees
+        model = glm::scale(model,glm::vec3(2, 2, 2));//scale = 2,2,2, because mesh is 0.5 based geom.
 
-	// render the triangle
-    //glBindTexture(GL_TEXTURE_2D, texture);
-    glBindVertexArray(VAO);
-    //glDrawArrays(GL_TRIANGLES, 0, 3);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+        // Uniforms:
+        glUniformMatrix4fv(modelUniformLoc, 1, GL_FALSE, &model[0][0]);
+        glUniformMatrix4fv(viewUniformLoc, 1, GL_FALSE, &View[0][0]);
+        glUniformMatrix4fv(projUniformLoc, 1, GL_FALSE, &Projection[0][0]);
+
+        // render the triangle
+        //glBindTexture(GL_TEXTURE_2D, texture);
+        glBindVertexArray(VAO);
+        //glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    }
 
     glBindVertexArray(0);
     #else
@@ -308,10 +317,10 @@ int main( void )
     // ------------------------------------------------------------------
     float vertices[] = {
 		// positions         // colors          // tex coords
-        -1.0f, 1.0f, 0.0f,   1.0f, 0.0f, 0.0f,  0.0f, 0.0f, // bottom right
-        -1.0f, -1.0f, 0.0f,  0.0f, 1.0f, 0.0f,  0.0f, 1.0f, // bottom left
-        1.0f, 1.0f, 0.0f,    0.0f, 0.0f, 1.0f,  1.0f, 0.0f,// top
-        1.0f, -1.0f, 0.0f,   0.0f, 0.0f, 1.0f,  1.0f, 1.0f,// top
+        -0.5f, 0.5f, 0.0f,   1.0f, 0.0f, 0.0f,  0.0f, 0.0f, // bottom right
+        -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  0.0f, 1.0f, // bottom left
+        0.5f, 0.5f, 0.0f,    0.0f, 0.0f, 1.0f,  1.0f, 0.0f,// top
+        0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,  1.0f, 1.0f,// top
     };
 
     glGenVertexArrays(1, &VAO);
