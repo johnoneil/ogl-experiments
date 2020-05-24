@@ -109,9 +109,10 @@ std::unique_ptr<uint32_t[]> buffer;
 size_t frameCount = 0;
 std::unique_ptr<rlottie::Animation> player;
 int frame = 0;
+GLuint shaderProgram = 0;
 void renderLoop(void) {
 
-	#if 1
+	#if 0
 	// feed inputs to dear imgui, start new frame
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
@@ -125,8 +126,12 @@ void renderLoop(void) {
         frame = 0;
     frame++;
 
+    glUseProgram(shaderProgram);
+    
+    #if 1
     rlottie::Surface surface(buffer.get(), _w, _h, _w * 4);
 	player->renderSync(frame, surface);
+    glBindTexture(GL_TEXTURE_2D, texture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _w, _h, 0, GL_RGBA, GL_UNSIGNED_BYTE, (void*)buffer.get());
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
@@ -137,16 +142,21 @@ void renderLoop(void) {
     glGenerateMipmap(GL_TEXTURE_2D);
 
 	// render the triangle
-    glBindTexture(GL_TEXTURE_2D, texture);
+    //glBindTexture(GL_TEXTURE_2D, texture);
     glBindVertexArray(VAO);
     //glDrawArrays(GL_TRIANGLES, 0, 3);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    #else
+    glBindVertexArray(VAO);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    #endif
 
-	#if 1
+	#if 0
 	doMenu();
 	#endif
 
-	#if 1
+	#if 0
     // Render dear imgui into screen
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -227,7 +237,7 @@ int main( void )
         std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
     }
     // link shaders
-    int shaderProgram = glCreateProgram();
+    shaderProgram = glCreateProgram();
     glAttachShader(shaderProgram, vertexShader);
     glAttachShader(shaderProgram, fragmentShader);
     glLinkProgram(shaderProgram);
@@ -270,12 +280,14 @@ int main( void )
 
     // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
     // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
-    // glBindVertexArray(0);
+    glBindVertexArray(0);
 
     // as we only have a single shader, we could also just activate our shader once beforehand if we want to 
     glUseProgram(shaderProgram);
 
     #if 0
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
     auto w = 0, h = 0, c = 0;
     stbi_set_flip_vertically_on_load(true);
     auto image = stbi_load("assets/brick.jpg",
@@ -295,7 +307,7 @@ int main( void )
     glGenerateMipmap(GL_TEXTURE_2D);
 
     stbi_image_free(image);
-    #endif
+    #else
 
 	player = rlottie::Animation::loadFromFile("assets/alien.lottie.json");
 
@@ -306,7 +318,7 @@ int main( void )
 
 	frameCount = player->totalFrame();
 
-    #if 0
+    #if 1
 	rlottie::Surface surface(buffer.get(), _w, _h, _w * 4);
 	player->renderSync(100, surface);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _w, _h, 0, GL_RGBA, GL_UNSIGNED_BYTE, (void*)buffer.get());
@@ -317,6 +329,8 @@ int main( void )
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glGenerateMipmap(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    #endif
     #endif
 
 	// Dark blue background

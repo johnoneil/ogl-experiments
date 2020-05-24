@@ -5,9 +5,11 @@ ADD_SUBDIRECTORY(assimp)
 #ADD_SUBDIRECTORY(yoga)
 ADD_SUBDIRECTORY(easing)
 ADD_SUBDIRECTORY(imgui)
+
+option(LOTTIE_THREAD "" OFF)
+set(LOTTIE_THREAD OFF CACHE BOOL "Enable LOTTIE THREAD SUPPORT" FORCE)
 ADD_SUBDIRECTORY(rlottie)
 target_include_directories(rlottie
     PUBLIC
-        "${PROJECT_SOURCE_DIR}/thirdparty/rlottie/inc"
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/rlottie/inc>
     )
-
