@@ -6,4 +6,8 @@ ADD_SUBDIRECTORY(assimp)
 ADD_SUBDIRECTORY(easing)
 ADD_SUBDIRECTORY(imgui)
 ADD_SUBDIRECTORY(rlottie)
+target_include_directories(rlottie
+    PUBLIC
+        "${PROJECT_SOURCE_DIR}/thirdparty/rlottie/inc"
+    )
 
