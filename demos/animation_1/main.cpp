@@ -263,6 +263,7 @@ int main( void )
     // as we only have a single shader, we could also just activate our shader once beforehand if we want to 
     glUseProgram(shaderProgram);
 
+    #if 0
     auto w = 0, h = 0, c = 0;
     stbi_set_flip_vertically_on_load(true);
     auto image = stbi_load("assets/brick.jpg",
@@ -282,27 +283,35 @@ int main( void )
     glGenerateMipmap(GL_TEXTURE_2D);
 
     stbi_image_free(image);
+    #endif
 
-	#if 1
 	auto player = rlottie::Animation::loadFromFile("assets/alien.lottie.json");
 
-	#if 1
-	int _w = 200, _h = 200;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    int _w = 200, _h = 200;
 	auto buffer = std::unique_ptr<uint32_t[]>(new uint32_t[_w * _h]);
-	#endif
+
 	size_t frameCount = player->totalFrame();
 
-	#if 0
-	GifBuilder builder(gifName.data(), w, h, bgColor);
-	#endif
+    #if 1
+	rlottie::Surface surface(buffer.get(), _w, _h, _w * 4);
+	player->renderSync(100, surface);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _w, _h, 0, GL_RGBA, GL_UNSIGNED_BYTE, (void*)buffer.get());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    #else
 	for (size_t i = 0; i < frameCount ; i++) {
 		rlottie::Surface surface(buffer.get(), _w, _h, _w * 4);
 		player->renderSync(i, surface);
-		#if 0
-		builder.addFrame(surface);
-		#endif
 	}
-	#endif
+    #endif
 
 	// Dark blue background
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
