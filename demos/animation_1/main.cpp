@@ -1,6 +1,7 @@
 // Include standard headers
 #include <stdio.h>
 #include <stdlib.h>
+#include <iostream>
 
 #include "framework/gl.h"
 #include <GLFW/glfw3.h>
@@ -16,7 +17,7 @@
 
 #include <rlottie.h>
 
-#if 0
+#if 1
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 #endif
@@ -62,8 +63,47 @@ void doMenu() {
 	#endif
 }
 
-// Isolated render loop to aid porting
+// settings
+//const unsigned int SCR_WIDTH = 800;
+//const unsigned int SCR_HEIGHT = 600;
+
+#ifdef __EMSCRIPTEN__
+const char *vertexShaderSource = "#version 300 es\n"
+#else
+const char *vertexShaderSource = "#version 330 core\n"
+#endif
+    "precision mediump float;\n"
+    "layout (location = 0) in vec3 aPos;\n"
+    "layout (location = 1) in vec3 aColor;\n"
+    "layout (location = 2) in vec2 aTexCoord;\n"
+    "out vec3 ourColor;\n"
+    "out vec2 TexCoord;\n"
+    "void main()\n"
+    "{\n"
+    "   gl_Position = vec4(aPos, 1.0);\n"
+    "   ourColor = aColor;\n"
+    "   TexCoord = aTexCoord;\n"
+    "}\0";
+
+#ifdef __EMSCRIPTEN__
+const char *fragmentShaderSource = "#version 300 es\n"
+#else
+const char *fragmentShaderSource = "#version 330 core\n"
+#endif
+    "precision mediump float;\n"
+    "out vec4 FragColor;\n"
+    "in vec3 ourColor;\n"
+    "in vec2 TexCoord;\n"
+    "uniform sampler2D ourTexture;\n"
+    "void main()\n"
+    "{\n"
+    "   FragColor = texture(ourTexture, TexCoord);\n"
+    "}\n\0";
+
 GLFWwindow* window = nullptr;
+GLuint VBO = 0;
+GLuint VAO = 0;
+GLuint texture;
 void renderLoop(void) {
 
 	#if 1
@@ -75,6 +115,11 @@ void renderLoop(void) {
 
 	// Clear the screen
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// render the triangle
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glBindVertexArray(VAO);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
 
 	#if 1
 	doMenu();
@@ -134,12 +179,107 @@ int main( void )
 	ImGui::StyleColorsDark();
 	#endif
 
+	// build and compile our shader program
+    // ------------------------------------
+    // vertex shader
+    int vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+    glCompileShader(vertexShader);
+    // check for shader compile errors
+    int success;
+    char infoLog[512];
+    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+    if (!success)
+    {
+        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+    }
+    // fragment shader
+    int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+    glCompileShader(fragmentShader);
+    // check for shader compile errors
+    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+    if (!success)
+    {
+        glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
+    }
+    // link shaders
+    int shaderProgram = glCreateProgram();
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, fragmentShader);
+    glLinkProgram(shaderProgram);
+    // check for linking errors
+    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+    if (!success) {
+        glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+        std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+    }
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+
+    // set up vertex data (and buffer(s)) and configure vertex attributes
+    // ------------------------------------------------------------------
+    float vertices[] = {
+        // positions         // colors          // tex coords
+         0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  0.0f, 0.0f, // bottom right
+        -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  1.0f, 0.0f, // bottom left
+         0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f,  0.5f, 1.0f,// top 
+
+    };
+
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+    glBindVertexArray(VAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    // position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    // color attribute
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
+
+    // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
+    // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
+    // glBindVertexArray(0);
+
+    // as we only have a single shader, we could also just activate our shader once beforehand if we want to 
+    glUseProgram(shaderProgram);
+
+    auto w = 0, h = 0, c = 0;
+    stbi_set_flip_vertically_on_load(true);
+    auto image = stbi_load("assets/brick.jpg",
+                                    &w,
+                                    &h,
+                                    &c,
+                                    STBI_rgb_alpha);
+
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    stbi_image_free(image);
+
 	#if 1
 	auto player = rlottie::Animation::loadFromFile("assets/alien.lottie.json");
 
 	#if 1
-	static const int w=200, h=200;
-	auto buffer = std::unique_ptr<uint32_t[]>(new uint32_t[w * h]);
+	int _w = 200, _h = 200;
+	auto buffer = std::unique_ptr<uint32_t[]>(new uint32_t[_w * _h]);
 	#endif
 	size_t frameCount = player->totalFrame();
 
@@ -147,7 +287,7 @@ int main( void )
 	GifBuilder builder(gifName.data(), w, h, bgColor);
 	#endif
 	for (size_t i = 0; i < frameCount ; i++) {
-		rlottie::Surface surface(buffer.get(), w, h, w * 4);
+		rlottie::Surface surface(buffer.get(), _w, _h, _w * 4);
 		player->renderSync(i, surface);
 		#if 0
 		builder.addFrame(surface);
