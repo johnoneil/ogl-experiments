@@ -127,6 +127,11 @@ void renderLoop(void) {
     frame++;
 
     glUseProgram(shaderProgram);
+
+    #if 1
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    #endif
     
     #if 1
     rlottie::Surface surface(buffer.get(), _w, _h, _w * 4);
@@ -185,9 +190,9 @@ int main( void )
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// Open a window and create its OpenGL context
-	window = glfwCreateWindow( 1024, 768, "Colored Cube", NULL, NULL);
+	window = glfwCreateWindow( 1024, 768, "Lottie animatimation demo 1", NULL, NULL);
 	if( window == NULL ){
-		fprintf( stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n" );
+		fprintf( stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 4.1 compatible. Try the 2.1 version of the tutorials.\n" );
 		getchar();
 		glfwTerminate();
 		return -1;
@@ -309,7 +314,10 @@ int main( void )
     stbi_image_free(image);
     #else
 
-	player = rlottie::Animation::loadFromFile("assets/alien.lottie.json");
+	//player = rlottie::Animation::loadFromFile("assets/alien.lottie.json");
+	//player = rlottie::Animation::loadFromFile("assets/origami.lottie.json");
+	player = rlottie::Animation::loadFromFile("assets/swinging.lottie.json");
+	//player = rlottie::Animation::loadFromFile("assets/checkmark.lottie.json");
 
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
