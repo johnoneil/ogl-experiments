@@ -4,9 +4,10 @@
 #include <iostream>
 
 #include "framework/gl.h"
+#include "framework/shaders.h"
 #include <GLFW/glfw3.h>
 
-#if 0
+#if 1
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #endif
@@ -76,11 +77,15 @@ const char *vertexShaderSource = "#version 330 core\n"
     "layout (location = 0) in vec3 aPos;\n"
     "layout (location = 1) in vec3 aColor;\n"
     "layout (location = 2) in vec2 aTexCoord;\n"
+    "uniform mat4 model;\n"
+    "uniform mat4 view;\n"
+    "uniform mat4 projection;\n"
     "out vec3 ourColor;\n"
     "out vec2 TexCoord;\n"
     "void main()\n"
     "{\n"
     "   gl_Position = vec4(aPos, 1.0);\n"
+    "   gl_Position = projection * view * model * vec4(aPos, 1.0);\n"
     "   ourColor = aColor;\n"
     "   TexCoord = aTexCoord;\n"
     "}\0";
@@ -110,6 +115,14 @@ size_t frameCount = 0;
 std::unique_ptr<rlottie::Animation> player;
 int frame = 0;
 GLuint shaderProgram = 0;
+glm::mat4 Projection;
+glm::mat4 View;
+glm::mat4 MVP;
+glm::mat4 model;
+float angle_deg = 0.0f;
+GLuint modelUniformLoc = 0;
+GLuint viewUniformLoc = 0;
+GLuint projUniformLoc = 0;
 void renderLoop(void) {
 
 	#if 0
@@ -128,7 +141,7 @@ void renderLoop(void) {
 
     glUseProgram(shaderProgram);
 
-    #if 1
+    #if 0
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     #endif
@@ -145,6 +158,29 @@ void renderLoop(void) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glGenerateMipmap(GL_TEXTURE_2D);
+
+    glBindVertexArray(VAO);
+	glUseProgram(shaderProgram);
+
+    Projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
+	// Camera matrix
+	View       = glm::lookAt(
+								glm::vec3(4,3,-3), // Camera is at (4,3,-3), in World Space
+								glm::vec3(0,0,0), // and looks at the origin
+								glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
+    );
+
+	model = glm::mat4(1.0f);
+	model = glm::translate(model,glm::vec3(0,0,0)); //position = 0,0,0
+	model = glm::rotate(model,glm::radians(angle_deg),glm::vec3(1,0,0));//rotation x = 0.0 degrees
+	model = glm::rotate(model,glm::radians(angle_deg),glm::vec3(0,1,0));//rotation y = 0.0 degrees
+	model = glm::rotate(model,glm::radians(0.0f),glm::vec3(0,0,1));//rotation z = 0.0 degrees
+	model = glm::scale(model,glm::vec3(2, 2, 2));//scale = 2,2,2, because mesh is 0.5 based geom.
+
+	// Uniforms:
+	glUniformMatrix4fv(modelUniformLoc, 1, GL_FALSE, &model[0][0]);
+	glUniformMatrix4fv(viewUniformLoc, 1, GL_FALSE, &View[0][0]);
+	glUniformMatrix4fv(projUniformLoc, 1, GL_FALSE, &Projection[0][0]);
 
 	// render the triangle
     //glBindTexture(GL_TEXTURE_2D, texture);
@@ -215,6 +251,7 @@ int main( void )
 	ImGui::StyleColorsDark();
 	#endif
 
+    #if 0
 	// build and compile our shader program
     // ------------------------------------
     // vertex shader
@@ -254,6 +291,12 @@ int main( void )
     }
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
+    #else
+    shaderProgram = LoadShaderFromSource( vertexShaderSource, fragmentShaderSource);
+    modelUniformLoc = glGetUniformLocation(shaderProgram, "model");
+	viewUniformLoc = glGetUniformLocation(shaderProgram, "view");
+	projUniformLoc = glGetUniformLocation(shaderProgram, "projection");
+    #endif
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
