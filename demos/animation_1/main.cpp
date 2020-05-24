@@ -103,7 +103,12 @@ const char *fragmentShaderSource = "#version 330 core\n"
 GLFWwindow* window = nullptr;
 GLuint VBO = 0;
 GLuint VAO = 0;
-GLuint texture;
+GLuint texture = 0;
+int _w = 200, _h = 200;
+std::unique_ptr<uint32_t[]> buffer;
+size_t frameCount = 0;
+std::unique_ptr<rlottie::Animation> player;
+int frame = 0;
 void renderLoop(void) {
 
 	#if 1
@@ -115,6 +120,21 @@ void renderLoop(void) {
 
 	// Clear the screen
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    if(frame > frameCount)
+        frame = 0;
+    frame++;
+
+    rlottie::Surface surface(buffer.get(), _w, _h, _w * 4);
+	player->renderSync(frame, surface);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _w, _h, 0, GL_RGBA, GL_UNSIGNED_BYTE, (void*)buffer.get());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glGenerateMipmap(GL_TEXTURE_2D);
 
 	// render the triangle
     glBindTexture(GL_TEXTURE_2D, texture);
@@ -285,17 +305,16 @@ int main( void )
     stbi_image_free(image);
     #endif
 
-	auto player = rlottie::Animation::loadFromFile("assets/alien.lottie.json");
+	player = rlottie::Animation::loadFromFile("assets/alien.lottie.json");
 
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
 
-    int _w = 200, _h = 200;
-	auto buffer = std::unique_ptr<uint32_t[]>(new uint32_t[_w * _h]);
+	buffer = std::unique_ptr<uint32_t[]>(new uint32_t[_w * _h]);
 
-	size_t frameCount = player->totalFrame();
+	frameCount = player->totalFrame();
 
-    #if 1
+    #if 0
 	rlottie::Surface surface(buffer.get(), _w, _h, _w * 4);
 	player->renderSync(100, surface);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _w, _h, 0, GL_RGBA, GL_UNSIGNED_BYTE, (void*)buffer.get());
@@ -306,11 +325,6 @@ int main( void )
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glGenerateMipmap(GL_TEXTURE_2D);
-    #else
-	for (size_t i = 0; i < frameCount ; i++) {
-		rlottie::Surface surface(buffer.get(), _w, _h, _w * 4);
-		player->renderSync(i, surface);
-	}
     #endif
 
 	// Dark blue background
