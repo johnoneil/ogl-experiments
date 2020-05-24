@@ -12,9 +12,13 @@
 #include <glm/gtc/matrix_transform.hpp>
 #endif
 
+#define DEBUG_GUI
+
+#if defined(DEBUG_GUI)
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
+#endif
 
 #include <rlottie.h>
 
@@ -23,6 +27,7 @@
 #include <stb_image.h>
 #endif
 
+#if defined(DEBUG_GUI)
 bool my_tool_active = true;
 float my_color[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 void doMenu() {
@@ -63,6 +68,7 @@ void doMenu() {
 	ImGui::End();
 	#endif
 }
+#endif
 
 // settings
 //const unsigned int SCR_WIDTH = 800;
@@ -125,7 +131,7 @@ GLuint viewUniformLoc = 0;
 GLuint projUniformLoc = 0;
 void renderLoop(void) {
 
-	#if 0
+	#if defined(DEBUG_GUI)
 	// feed inputs to dear imgui, start new frame
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
@@ -187,17 +193,17 @@ void renderLoop(void) {
     glBindVertexArray(VAO);
     //glDrawArrays(GL_TRIANGLES, 0, 3);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+    glBindVertexArray(0);
     #else
     glBindVertexArray(VAO);
     glBindTexture(GL_TEXTURE_2D, texture);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     #endif
 
-	#if 0
+	#if defined(DEBUG_GUI)
 	doMenu();
-	#endif
 
-	#if 0
     // Render dear imgui into screen
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -238,7 +244,7 @@ int main( void )
 	// Ensure we can capture the escape key being pressed below
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 
-	#if 1
+	#if defined(DEBUG_GUI)
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -357,9 +363,9 @@ int main( void )
     stbi_image_free(image);
     #else
 
-	//player = rlottie::Animation::loadFromFile("assets/alien.lottie.json");
+	player = rlottie::Animation::loadFromFile("assets/alien.lottie.json");
 	//player = rlottie::Animation::loadFromFile("assets/origami.lottie.json");
-	player = rlottie::Animation::loadFromFile("assets/swinging.lottie.json");
+	//player = rlottie::Animation::loadFromFile("assets/swinging.lottie.json");
 	//player = rlottie::Animation::loadFromFile("assets/checkmark.lottie.json");
 
     glGenTextures(1, &texture);
