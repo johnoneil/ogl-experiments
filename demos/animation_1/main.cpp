@@ -97,7 +97,7 @@ const char *fragmentShaderSource = "#version 330 core\n"
     "uniform sampler2D ourTexture;\n"
     "void main()\n"
     "{\n"
-    "   FragColor = texture(ourTexture, TexCoord);\n"
+    "   FragColor = texture(ourTexture, TexCoord).zyxw;\n"
     "}\n\0";
 
 GLFWwindow* window = nullptr;
@@ -243,19 +243,11 @@ int main( void )
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
     float vertices[] = {
-		#if 1
 		// positions         // colors          // tex coords
-        -1.0f, 1.0f, 0.0f,  1.0f, 0.0f, 0.0f,  0.0f, 1.0f, // bottom right
-        -1.0f, -1.0f, 0.0f,  0.0f, 1.0f, 0.0f,  0.0f, 0.0f, // bottom left
-        1.0f, 1.0f, 0.0f,  0.0f, 0.0f, 1.0f,  1.0f, 1.0f,// top
-        1.0f, -1.0f, 0.0f,  0.0f, 0.0f, 1.0f,  1.0f, 0.0f,// top
-		 #else
-		// positions         // colors          // tex coords
-        0.0f, 1.0f, 0.0f,  1.0f, 0.0f, 0.0f,  0.0f, 1.0f, // bottom right
-        0.0f, 0.0f, 0.0f,  0.0f, 1.0f, 0.0f,  0.0f, 0.0f, // bottom left
-        1.0f, 1.0f, 0.0f,  0.0f, 0.0f, 1.0f,  1.0f, 1.0f,// top
-        1.0f, 0.0f, 0.0f,  0.0f, 0.0f, 1.0f,  1.0f, 0.0f,// top
-		 #endif
+        -1.0f, 1.0f, 0.0f,   1.0f, 0.0f, 0.0f,  0.0f, 0.0f, // bottom right
+        -1.0f, -1.0f, 0.0f,  0.0f, 1.0f, 0.0f,  0.0f, 1.0f, // bottom left
+        1.0f, 1.0f, 0.0f,    0.0f, 0.0f, 1.0f,  1.0f, 0.0f,// top
+        1.0f, -1.0f, 0.0f,   0.0f, 0.0f, 1.0f,  1.0f, 1.0f,// top
     };
 
     glGenVertexArrays(1, &VAO);
